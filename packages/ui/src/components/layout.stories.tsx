@@ -18,7 +18,9 @@ const Box = ({ label }: { label: string }) => (
       padding: "12px 16px",
     }}
   >
-    <Text size="sm" muted>{label}</Text>
+    <Text size="sm" muted>
+      {label}
+    </Text>
   </div>
 );
 
@@ -26,8 +28,14 @@ export const ContainerSizes: StoryObj = {
   render: () => (
     <div className="flex flex-col gap-4 py-4">
       {(["sm", "md", "lg", "xl", "full"] as const).map((size) => (
-        <Container key={size} size={size} style={{ background: "rgba(255,255,255,0.02)", padding: 16 }}>
-          <Text size="sm" muted>Container size="{size}"</Text>
+        <Container
+          key={size}
+          size={size}
+          style={{ background: "rgba(255,255,255,0.02)", padding: 16 }}
+        >
+          <Text size="sm" muted>
+            Container size="{size}"
+          </Text>
         </Container>
       ))}
     </div>
@@ -62,8 +70,8 @@ export const GridLayout: StoryObj = {
   render: () => (
     <Container size="lg" style={{ paddingTop: 32 }}>
       <Grid cols={3} gap="4">
-        {Array.from({ length: 6 }, (_, i) => (
-          <Box key={i} label={`Werk ${i + 1}`} />
+        {(["Werk 1", "Werk 2", "Werk 3", "Werk 4", "Werk 5", "Werk 6"] as const).map((label) => (
+          <Box key={label} label={label} />
         ))}
       </Grid>
     </Container>

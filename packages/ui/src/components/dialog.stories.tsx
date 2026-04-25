@@ -27,8 +27,8 @@ export const Default: StoryObj = {
         <DialogHeader>
           <DialogTitle>Kauf bestätigen</DialogTitle>
           <DialogDescription>
-            Du kaufst „Neon Decay #003" von DJ Parallax für 320 €. Diese Aktion
-            kann nicht rückgängig gemacht werden.
+            Du kaufst „Neon Decay #003" von DJ Parallax für 320 €. Diese Aktion kann nicht
+            rückgängig gemacht werden.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
@@ -50,8 +50,8 @@ export const Destructive: StoryObj = {
         <DialogHeader>
           <DialogTitle>Konto unwiderruflich löschen?</DialogTitle>
           <DialogDescription>
-            Alle Daten, Werke und Transaktionen werden dauerhaft gelöscht.
-            Diese Aktion kann nicht rückgängig gemacht werden.
+            Alle Daten, Werke und Transaktionen werden dauerhaft gelöscht. Diese Aktion kann nicht
+            rückgängig gemacht werden.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>

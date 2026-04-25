@@ -29,8 +29,12 @@ export const TextVariants: StoryObj = {
       <Text size="md">MD – Standard-Fließtext überall in der App</Text>
       <Text size="sm">SM – Metadaten, Labels, Hinweise</Text>
       <Text size="xs">XS – Timestamps, Rechtliches</Text>
-      <Text size="md" muted>Muted – Sekundäre Information</Text>
-      <Text size="md" weight="semibold">Semibold – Hervorhebung</Text>
+      <Text size="md" muted>
+        Muted – Sekundäre Information
+      </Text>
+      <Text size="md" weight="semibold">
+        Semibold – Hervorhebung
+      </Text>
     </div>
   ),
 };
@@ -51,7 +55,9 @@ export const NumericVariant: StoryObj = {
       <Numeric accent>320,00 €</Numeric>
       <div className="flex items-baseline gap-2">
         <Numeric accent>320 €</Numeric>
-        <Text size="sm" muted>inkl. MwSt.</Text>
+        <Text size="sm" muted>
+          inkl. MwSt.
+        </Text>
       </div>
     </div>
   ),
@@ -62,10 +68,14 @@ export const ArtworkCard: StoryObj = {
     <div className="flex flex-col gap-1" style={{ maxWidth: 280 }}>
       <Caption>Limitiert · 3 von 20</Caption>
       <Heading level="h4">Neon Decay #003</Heading>
-      <Text size="sm" muted>DJ Parallax × NOIA</Text>
+      <Text size="sm" muted>
+        DJ Parallax × NOIA
+      </Text>
       <div className="flex items-baseline gap-2 mt-2">
         <Numeric accent>320,00 €</Numeric>
-        <Text size="xs" muted>+ Versand</Text>
+        <Text size="xs" muted>
+          + Versand
+        </Text>
       </div>
     </div>
   ),
