@@ -86,10 +86,43 @@ Nie blank designen wenn eine Referenz-URL existiert.
 ## Critical Path
 Phase 0 (Legal + Stripe KYC) → Phase 3 (Infra: R2 + Supabase + Sanity) → Phase 7 (Single Canvas) — alle drei blockieren nachfolgende Phasen.
 
+## Phase Status
+| Phase | Status | Tag |
+|-------|--------|-----|
+| Phase 0 | 🔄 Läuft (legal TBD) | — |
+| Phase 1 | ✅ Done | v0.1.0 |
+| Phase 2 | ⏳ Next | — |
+| Phase 3–7 | 🔒 Blocked | — |
+
+## Phase 2 Entry — Nächste Schritte
+1. Supabase project anlegen (EU-Frankfurt) + RLS-Schema
+2. Cloudflare R2 bucket + `cdn.elbtronika.art` CNAME
+3. Sanity v4 studio scaffold + content schemas
+4. Doppler environment config (dev/preview/prod)
+5. `NETLIFY_SITE_ID` + `NETLIFY_AUTH_TOKEN` → GitHub repo secrets setzen
+
+## Cowork Tool Rules (gelernt in Phase 1)
+**Vollständig:** `docs/agent-preflight-protocol.md` — IMMER lesen beim Session-Start.
+
+Kurzfassung:
+- Shell → IMMER `cmd` (PowerShell blockt pnpm)
+- Git commit → `echo msg > D:\msg.txt && git commit -F D:\msg.txt`
+- CI prüfen → `gh run list --repo DiggAiHH/elbtronika` (kein Browser nötig)
+- Biome → `node_modules\.bin\biome` (nie `npx biome` → falsche Version)
+- upload-artifact `.next/` → `include-hidden-files: true` (dotdir!)
+- `pnpm.onlyBuiltDependencies: ["esbuild", "sharp"]` in root package.json
+- Workspace bash oft nicht verfügbar → Desktop Commander als Fallback
+- Tools bulk laden: `ToolSearch({ query: "computer-use", max_results: 30 })`
+
+## Repo
+- Org: DiggAiHH | Repo: elbtronika | Branch: main
+- CI: github.com/DiggAiHH/elbtronika/actions
+- Aktueller Tag: v0.1.0 (Phase 1)
+
 ## Preferences
 - Deutsch als primäre Arbeitssprache, Code + Commits auf Englisch
 - Claude-First: Anthropic SDK, Sonnet 4.6 als Default
 - Privacy by Architecture: jedes External-API läuft über Edge-Proxy oder cookieless
 - Solo-Dev, Pair mit Claude — Freigabe-Gate vor jedem Code-Commit
 - Netlify-Hosting (User-Vorgabe), pnpm-Monorepo
-- Dokumentation nach jedem Phase-DoD
+- Dokumentation nach jedem Phase-DoD: Notion + Airtable + Miro + lokal D:\ + GitHub
