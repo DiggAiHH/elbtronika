@@ -1,0 +1,56 @@
+# Dependencies
+node_modules
+.pnpm-store
+
+# Build outputs
+.next
+dist
+build
+out
+.turbo
+
+# Environment files – NEVER commit these
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+
+# Doppler local cache
+.doppler
+
+# TypeScript
+*.tsbuildinfo
+
+# Testing
+coverage
+playwright-report
+test-results
+
+# Supabase
+supabase/.temp
+supabase/.branches
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/settings.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Sentry
+.sentryclirc
+
+# Storybook
+storybook-static

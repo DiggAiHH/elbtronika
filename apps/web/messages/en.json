@@ -1,0 +1,51 @@
+{
+  "metadata": {
+    "title": "ELBTRONIKA – Immersive Art Gallery",
+    "description": "Discover contemporary art and electronic music in an immersive 3D gallery."
+  },
+  "nav": {
+    "gallery": "Gallery",
+    "shop": "Shop",
+    "artists": "Artists",
+    "djs": "DJs",
+    "about": "About"
+  },
+  "common": {
+    "enterExperience": "Enter Experience",
+    "acquireArtwork": "Acquire Artwork",
+    "learnMore": "Learn More",
+    "loading": "Loading …",
+    "error": "Something went wrong.",
+    "backToShop": "Back to Shop"
+  },
+  "immersive": {
+    "enterTitle": "Enter the Gallery",
+    "enterSubtitle": "With spatial audio and 3D space",
+    "enterCta": "Enter",
+    "noAudio": "Audio is recommended for the full experience."
+  },
+  "shop": {
+    "title": "Shop",
+    "filterByArtist": "Filter by Artist",
+    "filterByDj": "Filter by DJ",
+    "filterByPrice": "Filter by Price",
+    "noResults": "No artworks found.",
+    "priceFrom": "From {price}",
+    "sold": "Sold"
+  },
+  "artwork": {
+    "byArtist": "By {artist}",
+    "setBy": "Set by {dj}",
+    "story": "Story",
+    "dimensions": "Dimensions",
+    "medium": "Medium",
+    "acquire": "Acquire",
+    "exclusive": "Exclusive Edition"
+  },
+  "legal": {
+    "imprint": "Imprint",
+    "privacy": "Privacy Policy",
+    "terms": "Terms & Conditions",
+    "legalNote": "German legal documents are binding."
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "_comment": "designlang MCP Server — manuelle Eintragung in Claude Desktop Config",
+  "_instructions": [
+    "1. Claude Desktop Config öffnen:",
+    "   Windows: %APPDATA%\\Claude\\claude_desktop_config.json",
+    "   macOS:   ~/Library/Application Support/Claude/claude_desktop_config.json",
+    "2. Den 'mcpServers' Block unten in die Config einfügen (oder ergänzen wenn schon vorhanden)",
+    "3. D:\\Elbtronika\\Elbtonika\\design-extract-output ABSOLUTEN Pfad anpassen",
+    "4. Claude Desktop neu starten"
+  ],
+  "mcpServers": {
+    "designlang": {
+      "command": "npx",
+      "args": [
+        "designlang",
+        "mcp",
+        "--output-dir",
+        "D:\\Elbtronika\\Elbtonika\\design-extract-output"
+      ]
+    }
+  },
+  "_mcp_resources": [
+    "designlang://tokens/primitive   — primitive Token-Layer",
+    "designlang://tokens/semantic    — semantic Token-Layer (DTCG alias refs)",
+    "designlang://regions            — klassifizierte Seiten-Bereiche (nav, hero, pricing...)",
+    "designlang://components         — wiederverwendbare Component-Cluster mit Varianten",
+    "designlang://health             — CSS Health Audit"
+  ],
+  "_mcp_tools": [
+    "search_tokens        — Tokens nach Name, Value oder Type suchen",
+    "find_nearest_color   — Farbe auf nächsten Palette-Token snappen",
+    "get_region           — Klassifizierten Bereich per Name fetchen",
+    "get_component        — Component-Cluster per ID fetchen",
+    "list_failing_contrast_pairs — WCAG-failing fg/bg Paare mit Remediation"
+  ]
+}

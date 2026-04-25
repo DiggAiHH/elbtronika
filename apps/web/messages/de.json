@@ -1,0 +1,51 @@
+{
+  "metadata": {
+    "title": "ELBTRONIKA – Immersive Kunstgalerie",
+    "description": "Entdecke zeitgenössische Kunst und elektronische Musik in einer immersiven 3D-Galerie."
+  },
+  "nav": {
+    "gallery": "Galerie",
+    "shop": "Shop",
+    "artists": "Künstler",
+    "djs": "DJs",
+    "about": "Über uns"
+  },
+  "common": {
+    "enterExperience": "Erlebnis betreten",
+    "acquireArtwork": "Kunstwerk erwerben",
+    "learnMore": "Mehr erfahren",
+    "loading": "Wird geladen …",
+    "error": "Ein Fehler ist aufgetreten.",
+    "backToShop": "Zurück zum Shop"
+  },
+  "immersive": {
+    "enterTitle": "Betritt die Galerie",
+    "enterSubtitle": "Mit Ton und 3D-Raum",
+    "enterCta": "Eintreten",
+    "noAudio": "Ton ist für die volle Erfahrung empfohlen."
+  },
+  "shop": {
+    "title": "Shop",
+    "filterByArtist": "Nach Künstler filtern",
+    "filterByDj": "Nach DJ filtern",
+    "filterByPrice": "Nach Preis filtern",
+    "noResults": "Keine Kunstwerke gefunden.",
+    "priceFrom": "Ab {price}",
+    "sold": "Verkauft"
+  },
+  "artwork": {
+    "byArtist": "Von {artist}",
+    "setBy": "Set von {dj}",
+    "story": "Geschichte",
+    "dimensions": "Dimensionen",
+    "medium": "Medium",
+    "acquire": "Erwerben",
+    "exclusive": "Exklusive Edition"
+  },
+  "legal": {
+    "imprint": "Impressum",
+    "privacy": "Datenschutz",
+    "terms": "AGB",
+    "legalNote": "Die deutschen Rechtstexte sind verbindlich."
+  }
+}
