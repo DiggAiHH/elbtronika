@@ -9,8 +9,8 @@ const nextConfig: NextConfig = {
 
   // Experimental features
   experimental: {
-    // Enable React Compiler (React 19+)
-    reactCompiler: true,
+    // React Compiler disabled until babel-plugin-react-compiler added (Phase 7+)
+    // reactCompiler: true,
     // Typed routes for type-safe navigation
     typedRoutes: true,
   },
