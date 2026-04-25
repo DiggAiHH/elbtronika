@@ -33,6 +33,9 @@
     ]
   },
   "pnpm": {
-    "onlyBuiltDependencies": ["esbuild", "sharp"]
+    "onlyBuiltDependencies": ["esbuild", "sharp"],
+    "overrides": {
+      "vite": "^8.0.0"
+    }
   }
 }
