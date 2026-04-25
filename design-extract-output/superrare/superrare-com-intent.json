@@ -1,0 +1,392 @@
+{
+  "pageIntent": {
+    "type": "landing",
+    "confidence": 0.29,
+    "path": "/",
+    "title": "SuperRare | Premier Digital Art Gallery & Auction House",
+    "description": "Since 2018, SuperRare has elevated digital art into cultural history—providing a trusted destination to discover, collect, and exhibit original digital works.",
+    "signals": [
+      {
+        "kind": "dom",
+        "type": "blog-post",
+        "weight": 0.35,
+        "detail": "byline|min-read"
+      },
+      {
+        "kind": "dom",
+        "type": "legal",
+        "weight": 0.4
+      },
+      {
+        "kind": "url",
+        "type": "landing",
+        "weight": 0.45,
+        "detail": "root-path"
+      }
+    ],
+    "alternates": [
+      {
+        "type": "legal",
+        "score": 0.4
+      },
+      {
+        "type": "blog-post",
+        "score": 0.35
+      }
+    ],
+    "needsSmart": true
+  },
+  "sectionRoles": {
+    "sections": [
+      {
+        "index": 0,
+        "tag": "header",
+        "role": "nav",
+        "subrole": null,
+        "confidence": 0.4,
+        "heading": null,
+        "bounds": {
+          "x": 0,
+          "y": 0,
+          "w": 1280,
+          "h": 69
+        },
+        "buttonCount": 5,
+        "cardCount": 17,
+        "slots": {
+          "ctaCount": 5,
+          "lede": "CURATION\nMARKETPLACE\nRARE PROTOCOL\nLog In"
+        },
+        "needsSmart": true
+      },
+      {
+        "index": 1,
+        "tag": "nav",
+        "role": "nav",
+        "subrole": null,
+        "confidence": 0.9,
+        "heading": null,
+        "bounds": {
+          "x": 0,
+          "y": 22,
+          "w": 1280,
+          "h": 20
+        },
+        "buttonCount": 2,
+        "cardCount": 8,
+        "slots": {
+          "ctaCount": 2,
+          "lede": "CURATION\nMARKETPLACE\nRARE PROTOCOL"
+        },
+        "needsSmart": false
+      },
+      {
+        "index": 2,
+        "tag": "nav",
+        "role": "nav",
+        "subrole": null,
+        "confidence": 0.9,
+        "heading": null,
+        "bounds": {
+          "x": 469.0625,
+          "y": 22,
+          "w": 341.859375,
+          "h": 20
+        },
+        "buttonCount": 2,
+        "cardCount": 8,
+        "slots": {
+          "ctaCount": 2,
+          "lede": "CURATION\nMARKETPLACE\nRARE PROTOCOL"
+        },
+        "needsSmart": false
+      },
+      {
+        "index": 3,
+        "tag": "nav",
+        "role": "nav",
+        "subrole": null,
+        "confidence": 0.9,
+        "heading": null,
+        "bounds": {
+          "x": 1167.125,
+          "y": 16,
+          "w": 88.875,
+          "h": 32
+        },
+        "buttonCount": 2,
+        "cardCount": 6,
+        "slots": {
+          "ctaCount": 2,
+          "lede": "Log In"
+        },
+        "needsSmart": false
+      },
+      {
+        "index": 4,
+        "tag": "main",
+        "role": "pricing-table",
+        "subrole": null,
+        "confidence": 0.9,
+        "heading": "Featured",
+        "bounds": {
+          "x": 0,
+          "y": -3356,
+          "w": 1280,
+          "h": 3790.84375
+        },
+        "buttonCount": 15,
+        "cardCount": 100,
+        "slots": {
+          "heading": "Featured",
+          "subheadings": [
+            "Panorama Tableau",
+            "Auctions",
+            "Human After All by Elnaz Mansouri",
+            ""
+          ],
+          "ctaCount": 15,
+          "lede": "Panorama by Yigit Duman"
+        },
+        "needsSmart": false
+      },
+      {
+        "index": 5,
+        "tag": "section",
+        "role": "content",
+        "subrole": null,
+        "confidence": 0.3,
+        "heading": null,
+        "bounds": {
+          "x": 0,
+          "y": -3356,
+          "w": 1280,
+          "h": 652
+        },
+        "buttonCount": 3,
+        "cardCount": 9,
+        "slots": {
+          "ctaCount": 3,
+          "lede": "Panorama by Yigit Duman"
+        },
+        "needsSmart": true
+      },
+      {
+        "index": 6,
+        "tag": "section",
+        "role": "pricing-table",
+        "subrole": null,
+        "confidence": 0.9,
+        "heading": "Featured",
+        "bounds": {
+          "x": 24,
+          "y": -2672,
+          "w": 1232,
+          "h": 644.34375
+        },
+        "buttonCount": 3,
+        "cardCount": 24,
+        "slots": {
+          "heading": "Featured",
+          "ctaCount": 3,
+          "lede": "Featured\nTaking Turns\n1dontknows\nPlace a Bid\nReserve\n0.500Ξ ($1.2K)\nbefore the storm\nwiresandtrees\nPlace a Bid\nReserve\n0.427Ξ ($987)\nStay Right Here\narrogantkei\nPlace a Bid\nReserve\n0.200Ξ ($462)"
+        },
+        "needsSmart": false
+      },
+      {
+        "index": 7,
+        "tag": "section",
+        "role": "hero",
+        "subrole": null,
+        "confidence": 0.85,
+        "heading": "Panorama Tableau",
+        "bounds": {
+          "x": 0,
+          "y": -1915.65625,
+          "w": 1280,
+          "h": 678
+        },
+        "buttonCount": 1,
+        "cardCount": 8,
+        "slots": {
+          "heading": "Panorama Tableau",
+          "ctaCount": 1
+        },
+        "needsSmart": false
+      },
+      {
+        "index": 8,
+        "tag": "section",
+        "role": "pricing-table",
+        "subrole": null,
+        "confidence": 0.9,
+        "heading": "Human After All by Elnaz Mansouri",
+        "bounds": {
+          "x": 24,
+          "y": -405.3125,
+          "w": 1232,
+          "h": 540.15625
+        },
+        "buttonCount": 4,
+        "cardCount": 31,
+        "slots": {
+          "heading": "Human After All by Elnaz Mansouri",
+          "subheadings": [
+            ""
+          ],
+          "ctaCount": 4,
+          "lede": "Human After All by Elnaz Mansouri\nIn a world of glitches, I find myself\nelnaz555\nPlace a Bid\nReserve\n0.110Ξ ($254)\nInner Garden\nelnaz555\nabracadabra\nMake an Offer"
+        },
+        "needsSmart": false
+      },
+      {
+        "index": 9,
+        "tag": "section",
+        "role": "content",
+        "subrole": null,
+        "confidence": 0.3,
+        "heading": "Subscribe for weekly updates on art and culture",
+        "bounds": {
+          "x": 24,
+          "y": 214.84375,
+          "w": 1232,
+          "h": 220
+        },
+        "buttonCount": 1,
+        "cardCount": 0,
+        "slots": {
+          "heading": "Subscribe for weekly updates on art and culture",
+          "ctaCount": 1
+        },
+        "needsSmart": true
+      },
+      {
+        "index": 10,
+        "tag": "nav",
+        "role": "nav",
+        "subrole": null,
+        "confidence": 0.9,
+        "heading": null,
+        "bounds": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0
+        },
+        "buttonCount": 4,
+        "cardCount": 0,
+        "slots": {
+          "ctaCount": 4
+        },
+        "needsSmart": false
+      },
+      {
+        "index": 11,
+        "tag": "footer",
+        "role": "footer",
+        "subrole": null,
+        "confidence": 0.95,
+        "heading": null,
+        "bounds": {
+          "x": 0,
+          "y": 594.84375,
+          "w": 1280,
+          "h": 205
+        },
+        "buttonCount": 2,
+        "cardCount": 13,
+        "slots": {
+          "ctaCount": 2,
+          "lede": "Support\nHelp Center\nRare Protocol\nArtist Application\nTerms of Service\nPrivacy Notice\nReport Content\nCookie Preferences\nCommunity Guidelines\n$RARE Bridge\n© 2026 SuperRare"
+        },
+        "needsSmart": false
+      },
+      {
+        "index": 12,
+        "tag": "nav",
+        "role": "nav",
+        "subrole": null,
+        "confidence": 0.9,
+        "heading": null,
+        "bounds": {
+          "x": 24,
+          "y": 643.84375,
+          "w": 121.078125,
+          "h": 108
+        },
+        "buttonCount": 1,
+        "cardCount": 5,
+        "slots": {
+          "ctaCount": 1,
+          "lede": "Support\nHelp Center\nRare Protocol\nArtist Application"
+        },
+        "needsSmart": false
+      },
+      {
+        "index": 13,
+        "tag": "nav",
+        "role": "nav",
+        "subrole": null,
+        "confidence": 0.9,
+        "heading": null,
+        "bounds": {
+          "x": 634.6875,
+          "y": 643.84375,
+          "w": 111.6875,
+          "h": 108
+        },
+        "buttonCount": 1,
+        "cardCount": 3,
+        "slots": {
+          "ctaCount": 1,
+          "lede": "Terms of Service\nPrivacy Notice\nReport Content\nCookie Preferences"
+        },
+        "needsSmart": false
+      },
+      {
+        "index": 14,
+        "tag": "nav",
+        "role": "nav",
+        "subrole": null,
+        "confidence": 0.9,
+        "heading": null,
+        "bounds": {
+          "x": 810.375,
+          "y": 643.84375,
+          "w": 127.890625,
+          "h": 48
+        },
+        "buttonCount": 0,
+        "cardCount": 2,
+        "slots": {
+          "lede": "Community Guidelines\n$RARE Bridge"
+        },
+        "needsSmart": false
+      }
+    ],
+    "counts": {
+      "nav": 8,
+      "pricing-table": 3,
+      "content": 2,
+      "hero": 1,
+      "footer": 1
+    },
+    "readingOrder": [
+      "pricing-table",
+      "content",
+      "pricing-table",
+      "hero",
+      "pricing-table",
+      "nav",
+      "nav",
+      "nav",
+      "nav",
+      "nav",
+      "content",
+      "footer",
+      "nav",
+      "nav",
+      "nav"
+    ]
+  }
+}

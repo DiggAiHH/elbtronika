@@ -1,0 +1,36 @@
+{
+  "openGraph": {
+    "title": "SuperRare | Premier Digital Art Gallery & Auction House",
+    "description": "Since 2018, SuperRare has elevated digital art into cultural history—providing a trusted destination to discover, collect, and exhibit original digital works.",
+    "image": "https://superrare.com/assets/open-graphmain.png"
+  },
+  "twitter": {
+    "card": "summary_large_image",
+    "title": "SuperRare | Premier Digital Art Gallery & Auction House",
+    "description": "Since 2018, SuperRare has elevated digital art into cultural history—providing a trusted destination to discover, collect, and exhibit original digital works.",
+    "image": "https://superrare.com/assets/open-graphmain.png"
+  },
+  "description": "Since 2018, SuperRare has elevated digital art into cultural history—providing a trusted destination to discover, collect, and exhibit original digital works.",
+  "canonical": null,
+  "themeColor": "#fff",
+  "viewport": "width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover",
+  "favicons": [
+    {
+      "rel": "icon",
+      "href": "https://superrare.com/favicon.ico?favicon.06hez0vqvk0z6.ico",
+      "sizes": "640x640",
+      "type": "image/x-icon"
+    }
+  ],
+  "manifest": null,
+  "structuredData": [],
+  "score": {
+    "hasOg": true,
+    "hasTwitter": true,
+    "hasDescription": true,
+    "hasCanonical": false,
+    "hasStructuredData": false,
+    "hasFavicon": true,
+    "hasThemeColor": true
+  }
+}

@@ -1,0 +1,8 @@
+Clone the design language of this landing page and build a fresh equivalent.
+Visual feel: flat. Tone: neutral · Headings: Sentence case · CTA verbs: [object Object], [object Object], [object Object], [object Object]
+Primary palette: #000000, #ffffff, #0f863e, #f2f2f2, #c6248b.
+Typography: [object Object], [object Object], [object Object].
+Corner radius vocabulary: 4, 12, 50, 9999.
+Shadow vocabulary: rgba(0, 0, 0, 0) 0px 0px 0px 1px | rgba(0, 0, 0, 0.05) 0px 0px 0px 1px inset.
+Page structure:
+- footer — heading: "Company"

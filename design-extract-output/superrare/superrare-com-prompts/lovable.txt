@@ -1,0 +1,13 @@
+Clone the design language of this landing page and build a fresh equivalent.
+Visual feel: flat. Tone: friendly · Headings: Sentence case · CTA verbs: [object Object], [object Object], [object Object], [object Object], [object Object], [object Object]
+Primary palette: #e5e7eb, #000000, #ffffff, #f0f0f0, #6b6b6b.
+Typography: [object Object], [object Object], [object Object].
+Corner radius vocabulary: 2, 20, 50, 9999.
+Shadow vocabulary: rgb(204, 204, 204) 0px 0px 2px 2px.
+Use: Use plain Tailwind CSS without a component library.
+Page structure:
+- pricing-table — heading: "Featured"
+- pricing-table — heading: "Featured"
+- hero — heading: "Panorama Tableau"
+- pricing-table — heading: "Human After All by Elnaz Mansouri"
+- footer

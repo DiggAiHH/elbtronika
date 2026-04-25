@@ -1,0 +1,267 @@
+{
+  "colors": {
+    "all": [
+      {
+        "hex": "#000000",
+        "rgb": {
+          "r": 0,
+          "g": 0,
+          "b": 0,
+          "a": 1
+        },
+        "hsl": {
+          "h": 0,
+          "s": 0,
+          "l": 0
+        },
+        "count": 1269,
+        "contexts": [
+          "text",
+          "border",
+          "background"
+        ]
+      },
+      {
+        "hex": "#ffffff",
+        "rgb": {
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "a": 1
+        },
+        "hsl": {
+          "h": 0,
+          "s": 0,
+          "l": 100
+        },
+        "count": 112,
+        "contexts": [
+          "text",
+          "border",
+          "background"
+        ]
+      },
+      {
+        "hex": "#0f863e",
+        "rgb": {
+          "r": 15,
+          "g": 134,
+          "b": 62,
+          "a": 1
+        },
+        "hsl": {
+          "h": 144,
+          "s": 80,
+          "l": 29
+        },
+        "count": 28,
+        "contexts": [
+          "text",
+          "border"
+        ]
+      },
+      {
+        "hex": "#f2f2f2",
+        "rgb": {
+          "r": 242,
+          "g": 242,
+          "b": 242,
+          "a": 1
+        },
+        "hsl": {
+          "h": 0,
+          "s": 0,
+          "l": 95
+        },
+        "count": 19,
+        "contexts": [
+          "background"
+        ]
+      },
+      {
+        "hex": "#c6248b",
+        "rgb": {
+          "r": 198,
+          "g": 36,
+          "b": 139,
+          "a": 1
+        },
+        "hsl": {
+          "h": 322,
+          "s": 69,
+          "l": 46
+        },
+        "count": 2,
+        "contexts": [
+          "text",
+          "border"
+        ]
+      },
+      {
+        "hex": "#2a2a2a",
+        "rgb": {
+          "r": 42,
+          "g": 42,
+          "b": 42,
+          "a": 1
+        },
+        "hsl": {
+          "h": 0,
+          "s": 0,
+          "l": 16
+        },
+        "count": 2,
+        "contexts": [
+          "border"
+        ]
+      },
+      {
+        "hex": "#1a1a1a",
+        "rgb": {
+          "r": 26,
+          "g": 26,
+          "b": 26,
+          "a": 1
+        },
+        "hsl": {
+          "h": 0,
+          "s": 0,
+          "l": 10
+        },
+        "count": 1,
+        "contexts": [
+          "background"
+        ]
+      }
+    ]
+  },
+  "regions": [
+    {
+      "role": "content",
+      "tag": "section",
+      "bounds": {
+        "x": 48,
+        "y": -3819,
+        "w": 1184,
+        "h": 720
+      },
+      "heading": null,
+      "buttonCount": 1,
+      "cardCount": 0,
+      "className": "st--c-jAzxOm"
+    },
+    {
+      "role": "footer",
+      "tag": "footer",
+      "bounds": {
+        "x": 0,
+        "y": 518.3125,
+        "w": 1280,
+        "h": 282
+      },
+      "heading": "Company",
+      "buttonCount": 0,
+      "cardCount": 0,
+      "className": "st--c-pddCN"
+    }
+  ],
+  "componentClusters": [
+    {
+      "kind": "button",
+      "structuralHash": "button",
+      "instanceCount": 3,
+      "variants": [
+        {
+          "css": {
+            "background": "rgba(0, 0, 0, 0)",
+            "color": "rgba(0, 0, 0, 0.7)",
+            "padding": "0px 32px 0px 16px",
+            "borderRadius": "9999px",
+            "border": "1px solid rgba(0, 0, 0, 0)",
+            "fontSize": "14px",
+            "fontWeight": "500"
+          },
+          "instanceCount": 3
+        }
+      ]
+    },
+    {
+      "kind": "button",
+      "structuralHash": "button>svg>span",
+      "instanceCount": 2,
+      "variants": [
+        {
+          "css": {
+            "background": "rgba(0, 0, 0, 0.05)",
+            "color": "rgb(0, 0, 0)",
+            "padding": "0px 16px 0px 16px",
+            "borderRadius": "9999px",
+            "border": "1px solid rgba(0, 0, 0, 0)",
+            "fontSize": "14px",
+            "fontWeight": "500"
+          },
+          "instanceCount": 2
+        }
+      ]
+    }
+  ],
+  "accessibility": {
+    "remediation": []
+  },
+  "cssHealth": {
+    "sheets": [
+      {
+        "url": "https://foundation.app/_next/static/css/56a1a8e517bace08.css",
+        "totalBytes": 6830,
+        "usedBytes": 537,
+        "unusedBytes": 6293,
+        "unusedPercent": 92
+      },
+      {
+        "url": "https://foundation.app/_next/static/css/0458c5b50a6f68e6.css",
+        "totalBytes": 543,
+        "usedBytes": 0,
+        "unusedBytes": 543,
+        "unusedPercent": 100
+      },
+      {
+        "url": "https://foundation.app/",
+        "totalBytes": 14568,
+        "usedBytes": 10086,
+        "unusedBytes": 4482,
+        "unusedPercent": 31
+      }
+    ],
+    "totalBytes": 21941,
+    "usedBytes": 10623,
+    "unusedBytes": 11318,
+    "unusedPercent": 52,
+    "importantCount": 26,
+    "duplicates": 139,
+    "vendorPrefixes": {
+      "webkit": 9,
+      "moz": 3,
+      "ms": 0,
+      "o": 0
+    },
+    "keyframes": [],
+    "specificity": {
+      "max": [
+        1,
+        5,
+        5
+      ],
+      "average": [
+        0.08,
+        0.76,
+        0.5
+      ],
+      "count": 137
+    },
+    "issues": [
+      "26 !important rules",
+      "139 duplicate declarations",
+      "52% unused CSS"
+    ]
+  }
+}

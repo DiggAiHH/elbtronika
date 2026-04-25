@@ -1,0 +1,677 @@
+{
+  "colors": {
+    "all": [
+      {
+        "hex": "#e5e7eb",
+        "rgb": {
+          "r": 229,
+          "g": 231,
+          "b": 235,
+          "a": 1
+        },
+        "hsl": {
+          "h": 220,
+          "s": 13,
+          "l": 91
+        },
+        "count": 766,
+        "contexts": [
+          "border"
+        ]
+      },
+      {
+        "hex": "#000000",
+        "rgb": {
+          "r": 0,
+          "g": 0,
+          "b": 0,
+          "a": 1
+        },
+        "hsl": {
+          "h": 0,
+          "s": 0,
+          "l": 0
+        },
+        "count": 723,
+        "contexts": [
+          "text",
+          "background",
+          "border"
+        ]
+      },
+      {
+        "hex": "#ffffff",
+        "rgb": {
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "a": 1
+        },
+        "hsl": {
+          "h": 0,
+          "s": 0,
+          "l": 100
+        },
+        "count": 67,
+        "contexts": [
+          "background",
+          "text",
+          "border"
+        ]
+      },
+      {
+        "hex": "#f0f0f0",
+        "rgb": {
+          "r": 240,
+          "g": 240,
+          "b": 240,
+          "a": 1
+        },
+        "hsl": {
+          "h": 0,
+          "s": 0,
+          "l": 94
+        },
+        "count": 24,
+        "contexts": [
+          "border",
+          "background"
+        ]
+      },
+      {
+        "hex": "#6b6b6b",
+        "rgb": {
+          "r": 107,
+          "g": 107,
+          "b": 107,
+          "a": 1
+        },
+        "hsl": {
+          "h": 0,
+          "s": 0,
+          "l": 42
+        },
+        "count": 24,
+        "contexts": [
+          "text"
+        ]
+      },
+      {
+        "hex": "#a0a0a0",
+        "rgb": {
+          "r": 160,
+          "g": 160,
+          "b": 160,
+          "a": 1
+        },
+        "hsl": {
+          "h": 0,
+          "s": 0,
+          "l": 63
+        },
+        "count": 18,
+        "contexts": [
+          "text"
+        ]
+      },
+      {
+        "hex": "#0a0a0a",
+        "rgb": {
+          "r": 10,
+          "g": 10,
+          "b": 10,
+          "a": 1
+        },
+        "hsl": {
+          "h": 0,
+          "s": 0,
+          "l": 4
+        },
+        "count": 9,
+        "contexts": [
+          "border"
+        ]
+      },
+      {
+        "hex": "#dcdcdc",
+        "rgb": {
+          "r": 220,
+          "g": 220,
+          "b": 220,
+          "a": 1
+        },
+        "hsl": {
+          "h": 0,
+          "s": 0,
+          "l": 86
+        },
+        "count": 4,
+        "contexts": [
+          "border"
+        ]
+      },
+      {
+        "hex": "#bdbdbd",
+        "rgb": {
+          "r": 189,
+          "g": 189,
+          "b": 189,
+          "a": 1
+        },
+        "hsl": {
+          "h": 0,
+          "s": 0,
+          "l": 74
+        },
+        "count": 2,
+        "contexts": [
+          "border"
+        ]
+      },
+      {
+        "hex": "#180d43",
+        "rgb": {
+          "r": 24,
+          "g": 13,
+          "b": 67,
+          "a": 1
+        },
+        "hsl": {
+          "h": 252,
+          "s": 68,
+          "l": 16
+        },
+        "count": 1,
+        "contexts": [
+          "background"
+        ]
+      },
+      {
+        "hex": "#aaaaaa",
+        "rgb": {
+          "r": 170,
+          "g": 170,
+          "b": 170,
+          "a": 1
+        },
+        "hsl": {
+          "h": 0,
+          "s": 0,
+          "l": 67
+        },
+        "count": 1,
+        "contexts": [
+          "text"
+        ]
+      }
+    ]
+  },
+  "regions": [
+    {
+      "role": "nav",
+      "tag": "header",
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "w": 1280,
+        "h": 69
+      },
+      "heading": null,
+      "buttonCount": 5,
+      "cardCount": 17,
+      "className": "sticky top-0 z-[88] border-b border-sr-border-quaternary bg-sr-bg-primary [@media(min-width:2000px)]:px-48"
+    },
+    {
+      "role": "nav",
+      "tag": "nav",
+      "bounds": {
+        "x": 0,
+        "y": 22,
+        "w": 1280,
+        "h": 20
+      },
+      "heading": null,
+      "buttonCount": 2,
+      "cardCount": 8,
+      "className": "\n        my-auto mr-2 flex w-full items-center justify-end gap-x-2\n        lg:absolute lg:left-1/2 lg:top-1/2 lg:mr-0 lg:-translate-x-1/2 lg:-translate-y-1/2 lg:justify-center lg:gap-x-6\n      "
+    },
+    {
+      "role": "nav",
+      "tag": "nav",
+      "bounds": {
+        "x": 469.0625,
+        "y": 22,
+        "w": 341.859375,
+        "h": 20
+      },
+      "heading": null,
+      "buttonCount": 2,
+      "cardCount": 8,
+      "className": "lg:relative"
+    },
+    {
+      "role": "nav",
+      "tag": "nav",
+      "bounds": {
+        "x": 1167.125,
+        "y": 16,
+        "w": 88.875,
+        "h": 32
+      },
+      "heading": null,
+      "buttonCount": 2,
+      "cardCount": 6,
+      "className": "\n        relative\n        md:m-auto md:h-full\n      "
+    },
+    {
+      "role": "features",
+      "tag": "main",
+      "bounds": {
+        "x": 0,
+        "y": -3356,
+        "w": 1280,
+        "h": 3790.84375
+      },
+      "heading": "Featured",
+      "buttonCount": 15,
+      "cardCount": 100,
+      "className": "flex flex-col"
+    },
+    {
+      "role": "content",
+      "tag": "section",
+      "bounds": {
+        "x": 0,
+        "y": -3356,
+        "w": 1280,
+        "h": 652
+      },
+      "heading": null,
+      "buttonCount": 3,
+      "cardCount": 9,
+      "className": "relative h-[calc(100svh-68px)] md:h-[calc(90vh-68px)] mb-6 md:mb-8"
+    },
+    {
+      "role": "features",
+      "tag": "section",
+      "bounds": {
+        "x": 24,
+        "y": -2672,
+        "w": 1232,
+        "h": 644.34375
+      },
+      "heading": "Featured",
+      "buttonCount": 3,
+      "cardCount": 24,
+      "className": null
+    },
+    {
+      "role": "hero",
+      "tag": "section",
+      "bounds": {
+        "x": 0,
+        "y": -1915.65625,
+        "w": 1280,
+        "h": 678
+      },
+      "heading": "Panorama Tableau",
+      "buttonCount": 1,
+      "cardCount": 8,
+      "className": "relative items-center px-0 md:mt-8"
+    },
+    {
+      "role": "content",
+      "tag": "section",
+      "bounds": {
+        "x": 24,
+        "y": -405.3125,
+        "w": 1232,
+        "h": 540.15625
+      },
+      "heading": "Human After All by Elnaz Mansouri",
+      "buttonCount": 4,
+      "cardCount": 31,
+      "className": null
+    },
+    {
+      "role": "content",
+      "tag": "section",
+      "bounds": {
+        "x": 24,
+        "y": 214.84375,
+        "w": 1232,
+        "h": 220
+      },
+      "heading": "Subscribe for weekly updates on art and culture",
+      "buttonCount": 1,
+      "cardCount": 0,
+      "className": "w-full rounded bg-sr-bg-tertiary p-6 md:px-16 xl:px-32 flex flex-col items-center gap-6"
+    },
+    {
+      "role": "nav",
+      "tag": "nav",
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      },
+      "heading": null,
+      "buttonCount": 4,
+      "cardCount": 0,
+      "className": "flex rounded-md border border-sr-border-secondary dim:border-sr-border-tertiary lg:border w-full"
+    },
+    {
+      "role": "footer",
+      "tag": "footer",
+      "bounds": {
+        "x": 0,
+        "y": 594.84375,
+        "w": 1280,
+        "h": 205
+      },
+      "heading": null,
+      "buttonCount": 2,
+      "cardCount": 13,
+      "className": "\n        mt-24 border-t border-sr-border-tertiary bg-sr-bg-quaternary pb-12 pt-12\n        dark:bg-sr-850\n        dim:bg-sr-900\n        md:mt-40\n      "
+    },
+    {
+      "role": "nav",
+      "tag": "nav",
+      "bounds": {
+        "x": 24,
+        "y": 643.84375,
+        "w": 121.078125,
+        "h": 108
+      },
+      "heading": null,
+      "buttonCount": 1,
+      "cardCount": 5,
+      "className": "flex flex-col items-start gap-y-3"
+    },
+    {
+      "role": "nav",
+      "tag": "nav",
+      "bounds": {
+        "x": 634.6875,
+        "y": 643.84375,
+        "w": 111.6875,
+        "h": 108
+      },
+      "heading": null,
+      "buttonCount": 1,
+      "cardCount": 3,
+      "className": "flex flex-col items-start gap-y-3"
+    },
+    {
+      "role": "nav",
+      "tag": "nav",
+      "bounds": {
+        "x": 810.375,
+        "y": 643.84375,
+        "w": 127.890625,
+        "h": 48
+      },
+      "heading": null,
+      "buttonCount": 0,
+      "cardCount": 2,
+      "className": "flex flex-col items-start gap-y-3"
+    }
+  ],
+  "componentClusters": [
+    {
+      "kind": "button",
+      "structuralHash": "button>svg",
+      "instanceCount": 6,
+      "variants": [
+        {
+          "css": {
+            "background": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "padding": "0px 0px 0px 0px",
+            "borderRadius": "50%",
+            "border": "2px solid rgba(0, 0, 0, 0)",
+            "fontSize": "16px",
+            "fontWeight": "400"
+          },
+          "instanceCount": 2
+        },
+        {
+          "css": {
+            "background": "rgba(0, 0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "padding": "0px 0px 0px 0px",
+            "borderRadius": "0px",
+            "border": "0px solid rgb(229, 231, 235)",
+            "fontSize": "14px",
+            "fontWeight": "400"
+          },
+          "instanceCount": 3
+        },
+        {
+          "css": {
+            "background": "rgb(0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "padding": "12px 12px 12px 12px",
+            "borderRadius": "9999px",
+            "border": "0px solid rgb(229, 231, 235)",
+            "fontSize": "14px",
+            "fontWeight": "400"
+          },
+          "instanceCount": 1
+        }
+      ]
+    },
+    {
+      "kind": "button",
+      "structuralHash": "div>button>button>button",
+      "instanceCount": 1,
+      "variants": [
+        {
+          "css": {
+            "background": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "padding": "0px 0px 0px 0px",
+            "borderRadius": "0px",
+            "border": "0px solid rgb(229, 231, 235)",
+            "fontSize": "16px",
+            "fontWeight": "400"
+          },
+          "instanceCount": 1
+        }
+      ]
+    },
+    {
+      "kind": "button",
+      "structuralHash": "button",
+      "instanceCount": 5,
+      "variants": [
+        {
+          "css": {
+            "background": "rgb(0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "padding": "0px 0px 0px 0px",
+            "borderRadius": "20px",
+            "border": "1px solid rgb(255, 255, 255)",
+            "fontSize": "12px",
+            "fontWeight": "400"
+          },
+          "instanceCount": 3
+        },
+        {
+          "css": {
+            "background": "rgb(251, 250, 244)",
+            "color": "rgb(255, 255, 255)",
+            "padding": "6px 9px 6px 9px",
+            "borderRadius": "3px",
+            "border": "1px solid rgb(255, 255, 255)",
+            "fontSize": "12px",
+            "fontWeight": "450"
+          },
+          "instanceCount": 1
+        },
+        {
+          "css": {
+            "background": "rgba(0, 0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "padding": "0px 0px 0px 0px",
+            "borderRadius": "0px",
+            "border": "0px solid rgb(229, 231, 235)",
+            "fontSize": "12px",
+            "fontWeight": "400"
+          },
+          "instanceCount": 1
+        }
+      ]
+    },
+    {
+      "kind": "button",
+      "structuralHash": "button>span",
+      "instanceCount": 11,
+      "variants": [
+        {
+          "css": {
+            "background": "rgba(0, 0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "padding": "0px 0px 0px 0px",
+            "borderRadius": "0px",
+            "border": "0px solid rgb(229, 231, 235)",
+            "fontSize": "14px",
+            "fontWeight": "400"
+          },
+          "instanceCount": 3
+        },
+        {
+          "css": {
+            "background": "rgb(255, 255, 255)",
+            "color": "rgb(0, 0, 0)",
+            "padding": "0px 16px 0px 16px",
+            "borderRadius": "4px",
+            "border": "1px solid rgb(10, 10, 10)",
+            "fontSize": "12px",
+            "fontWeight": "400"
+          },
+          "instanceCount": 8
+        }
+      ]
+    },
+    {
+      "kind": "button",
+      "structuralHash": "button>div",
+      "instanceCount": 3,
+      "variants": [
+        {
+          "css": {
+            "background": "rgb(0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "padding": "0px 16px 0px 16px",
+            "borderRadius": "4px",
+            "border": "0px solid rgb(229, 231, 235)",
+            "fontSize": "12px",
+            "fontWeight": "400"
+          },
+          "instanceCount": 3
+        }
+      ]
+    },
+    {
+      "kind": "input",
+      "structuralHash": "input",
+      "instanceCount": 1,
+      "variants": [
+        {
+          "css": {
+            "background": "rgb(255, 255, 255)",
+            "color": "rgb(0, 0, 0)",
+            "padding": "16px 80px 16px 24px",
+            "borderRadius": "9999px",
+            "border": "1px solid rgb(229, 229, 229)",
+            "fontSize": "14px",
+            "fontWeight": "400"
+          },
+          "instanceCount": 1
+        }
+      ]
+    }
+  ],
+  "accessibility": {
+    "remediation": [
+      {
+        "fg": "#ffffff",
+        "bg": "#fbfaf4",
+        "ratio": 1.05,
+        "rule": "AA-normal",
+        "suggestion": {
+          "replace": "fg",
+          "color": "#000000",
+          "newRatio": 20.08
+        }
+      }
+    ]
+  },
+  "cssHealth": {
+    "sheets": [
+      {
+        "url": "https://superrare.com/_next/static/chunks/02y84dvcpbjo_.css",
+        "totalBytes": 101689,
+        "usedBytes": 16760,
+        "unusedBytes": 84929,
+        "unusedPercent": 84
+      },
+      {
+        "url": "https://superrare.com/",
+        "totalBytes": 1473,
+        "usedBytes": 0,
+        "unusedBytes": 1473,
+        "unusedPercent": 100
+      },
+      {
+        "url": "https://superrare.com/",
+        "totalBytes": 1473,
+        "usedBytes": 0,
+        "unusedBytes": 1473,
+        "unusedPercent": 100
+      }
+    ],
+    "totalBytes": 104635,
+    "usedBytes": 16760,
+    "unusedBytes": 87875,
+    "unusedPercent": 84,
+    "importantCount": 98,
+    "duplicates": 1156,
+    "vendorPrefixes": {
+      "webkit": 94,
+      "moz": 31,
+      "ms": 3,
+      "o": 3
+    },
+    "keyframes": [
+      {
+        "name": "nprogress-spinner",
+        "steps": 2
+      },
+      {
+        "name": "nprogress-spinner",
+        "steps": 2
+      }
+    ],
+    "specificity": {
+      "max": [
+        1,
+        7,
+        8
+      ],
+      "average": [
+        0.02,
+        1.66,
+        0.08
+      ],
+      "count": 1795
+    },
+    "issues": [
+      "98 !important rules",
+      "1156 duplicate declarations",
+      "84% unused CSS"
+    ]
+  }
+}

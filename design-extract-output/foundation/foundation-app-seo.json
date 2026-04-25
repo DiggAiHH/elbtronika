@@ -1,0 +1,64 @@
+{
+  "openGraph": {
+    "title": "Foundation",
+    "url": "https://prod.foundation.app",
+    "description": "The start of something new",
+    "image": "https://prod.foundation.app/opengraph.jpg",
+    "image:alt": "Foundation",
+    "image:width": "1200",
+    "image:height": "630",
+    "type": "website",
+    "site_name": "Foundation",
+    "locale": "en-US"
+  },
+  "twitter": {
+    "card": "summary_large_image",
+    "title": "Foundation",
+    "site": "@foundation",
+    "creator": "@foundation",
+    "url": "https://prod.foundation.app",
+    "image": "https://prod.foundation.app/opengraph.jpg",
+    "image:alt": "Foundation"
+  },
+  "description": "The start of something new",
+  "canonical": null,
+  "themeColor": "#ffffff",
+  "viewport": "width=device-width, initial-scale=1",
+  "favicons": [
+    {
+      "rel": "apple-touch-icon",
+      "href": "https://foundation.app/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": ""
+    },
+    {
+      "rel": "icon",
+      "href": "https://foundation.app/favicons/32x32/app-light.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "rel": "icon",
+      "href": "https://foundation.app/favicons/16x16/app-light.png",
+      "sizes": "16x16",
+      "type": "image/png"
+    },
+    {
+      "rel": "shortcut icon",
+      "href": "https://foundation.app/icon-metamask.png",
+      "sizes": "",
+      "type": "image/png"
+    }
+  ],
+  "manifest": "https://foundation.app/site.webmanifest",
+  "structuredData": [],
+  "score": {
+    "hasOg": true,
+    "hasTwitter": true,
+    "hasDescription": true,
+    "hasCanonical": false,
+    "hasStructuredData": false,
+    "hasFavicon": true,
+    "hasThemeColor": true
+  }
+}

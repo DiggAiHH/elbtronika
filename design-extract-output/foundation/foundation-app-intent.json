@@ -1,0 +1,86 @@
+{
+  "pageIntent": {
+    "type": "landing",
+    "confidence": 0.29,
+    "path": "/",
+    "title": "Foundation",
+    "description": "The start of something new",
+    "signals": [
+      {
+        "kind": "dom",
+        "type": "legal",
+        "weight": 0.4
+      },
+      {
+        "kind": "url",
+        "type": "landing",
+        "weight": 0.45,
+        "detail": "root-path"
+      }
+    ],
+    "alternates": [
+      {
+        "type": "legal",
+        "score": 0.4
+      }
+    ],
+    "needsSmart": true
+  },
+  "sectionRoles": {
+    "sections": [
+      {
+        "index": 0,
+        "tag": "section",
+        "role": "content",
+        "subrole": null,
+        "confidence": 0.3,
+        "heading": null,
+        "bounds": {
+          "x": 48,
+          "y": -3819,
+          "w": 1184,
+          "h": 720
+        },
+        "buttonCount": 1,
+        "cardCount": 0,
+        "slots": {
+          "ctaCount": 1,
+          "lede": "NFT\nEQUILIBRIUM\n@claravega_live\nRats live on no evil star. /////\nSee details\nCurrent bid\n0.001ETH\n0x5880…94E3\nEnds in\n1d 5h 57m 26s\nPlace bid"
+        },
+        "needsSmart": true
+      },
+      {
+        "index": 1,
+        "tag": "footer",
+        "role": "footer",
+        "subrole": null,
+        "confidence": 0.95,
+        "heading": "Company",
+        "bounds": {
+          "x": 0,
+          "y": 518.3125,
+          "w": 1280,
+          "h": 282
+        },
+        "buttonCount": 0,
+        "cardCount": 0,
+        "slots": {
+          "heading": "Company",
+          "subheadings": [
+            "Connect"
+          ],
+          "lede": "Foundation\nCompany\nHelp Center\nSubscribe\nConnect\nX\nInstagram\nBlog\n© 2026 Foundation Labs\nPrivacy Policy\nTerms of Service"
+        },
+        "needsSmart": false
+      }
+    ],
+    "counts": {
+      "content": 1,
+      "footer": 1
+    },
+    "readingOrder": [
+      "content",
+      "footer"
+    ]
+  }
+}

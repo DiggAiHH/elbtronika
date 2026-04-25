@@ -1,0 +1,86 @@
+{
+  "library": "unknown",
+  "confidence": 0,
+  "alternates": [],
+  "stats": {
+    "count": 11,
+    "strokeOnly": 0,
+    "fillOnly": 1,
+    "mixed": 2,
+    "avgStrokeWidth": 2.5,
+    "gridDistribution": {
+      "20": 2,
+      "24": 3
+    },
+    "roundedCapsFraction": 0.09
+  },
+  "signals": [],
+  "icons": [
+    {
+      "class": "",
+      "grid": 20,
+      "strokeWidth": null,
+      "style": "mixed"
+    },
+    {
+      "class": "",
+      "grid": 20,
+      "strokeWidth": null,
+      "style": "mixed"
+    },
+    {
+      "class": "dark:invert h-5 w-5 text-sr-text-primary",
+      "grid": null,
+      "strokeWidth": null,
+      "style": "mixed"
+    },
+    {
+      "class": "dark:invert duration-300 rotate-0 w-4 h-4 lg:size-5",
+      "grid": null,
+      "strokeWidth": null,
+      "style": "mixed"
+    },
+    {
+      "class": "",
+      "grid": 24,
+      "strokeWidth": 2,
+      "style": "mixed"
+    },
+    {
+      "class": "dark:invert size-4",
+      "grid": null,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "dark:invert size-4",
+      "grid": null,
+      "strokeWidth": null,
+      "style": "mixed"
+    },
+    {
+      "class": "dark:invert size-4",
+      "grid": null,
+      "strokeWidth": null,
+      "style": "mixed"
+    },
+    {
+      "class": "dark:invert size-4",
+      "grid": null,
+      "strokeWidth": 3,
+      "style": "mixed"
+    },
+    {
+      "class": "mt-1.5 size-4",
+      "grid": 24,
+      "strokeWidth": null,
+      "style": "mixed"
+    },
+    {
+      "class": "size-7",
+      "grid": 24,
+      "strokeWidth": null,
+      "style": "mixed"
+    }
+  ]
+}

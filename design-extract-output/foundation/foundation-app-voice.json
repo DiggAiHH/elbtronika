@@ -1,0 +1,50 @@
+{
+  "tone": "neutral",
+  "pronoun": "third-person",
+  "headingStyle": "Sentence case",
+  "headingLengthClass": "tight",
+  "ctaVerbs": [
+    {
+      "value": "save",
+      "count": 2
+    },
+    {
+      "value": "trending",
+      "count": 1
+    },
+    {
+      "value": "connect",
+      "count": 1
+    },
+    {
+      "value": "place",
+      "count": 1
+    }
+  ],
+  "buttonPatterns": [
+    {
+      "value": "save",
+      "count": 2
+    },
+    {
+      "value": "trending",
+      "count": 1
+    },
+    {
+      "value": "connect",
+      "count": 1
+    },
+    {
+      "value": "place bid",
+      "count": 1
+    }
+  ],
+  "sampleHeadings": [
+    "Company",
+    "Connect"
+  ],
+  "stats": {
+    "buttons": 5,
+    "headings": 2
+  }
+}

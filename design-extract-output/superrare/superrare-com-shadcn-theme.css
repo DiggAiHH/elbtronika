@@ -1,0 +1,15 @@
+/* shadcn/ui Theme — extracted from https://superrare.com */
+/* Paste into your globals.css */
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 0%;
+    --primary: 252 68% 16%;
+    --primary-foreground: 0 0% 100%;
+    --muted: 0 0% 67%;
+    --muted-foreground: 220 13% 91%;
+    --border: 0 0% 42%;
+    --radius: 2px;
+  }
+}

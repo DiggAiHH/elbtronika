@@ -1,0 +1,17 @@
+/* shadcn/ui Theme — extracted from https://foundation.app */
+/* Paste into your globals.css */
+
+@layer base {
+  :root {
+    --background: 0 0% 0%;
+    --foreground: 0 0% 0%;
+    --primary: 144 80% 29%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 322 69% 46%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 10%;
+    --muted-foreground: 0 0% 0%;
+    --border: 0 0% 10%;
+    --radius: 4px;
+  }
+}

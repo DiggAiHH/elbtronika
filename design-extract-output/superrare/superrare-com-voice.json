@@ -1,0 +1,120 @@
+{
+  "tone": "friendly",
+  "pronoun": "you-only",
+  "headingStyle": "Sentence case",
+  "headingLengthClass": "tight",
+  "ctaVerbs": [
+    {
+      "value": "place",
+      "count": 6
+    },
+    {
+      "value": "h",
+      "count": 3
+    },
+    {
+      "value": "close",
+      "count": 2
+    },
+    {
+      "value": "manage",
+      "count": 2
+    },
+    {
+      "value": "make",
+      "count": 2
+    },
+    {
+      "value": "accept",
+      "count": 1
+    },
+    {
+      "value": "reject",
+      "count": 1
+    },
+    {
+      "value": "log",
+      "count": 1
+    },
+    {
+      "value": "support",
+      "count": 1
+    },
+    {
+      "value": "cookie",
+      "count": 1
+    }
+  ],
+  "buttonPatterns": [
+    {
+      "value": "place a bid",
+      "count": 6
+    },
+    {
+      "value": "make an offer",
+      "count": 2
+    },
+    {
+      "value": "close this dialog",
+      "count": 1
+    },
+    {
+      "value": "manage preferences\naccept all\nreject non-essential",
+      "count": 1
+    },
+    {
+      "value": "manage preferences",
+      "count": 1
+    },
+    {
+      "value": "accept all",
+      "count": 1
+    },
+    {
+      "value": "reject non-essential",
+      "count": 1
+    },
+    {
+      "value": "close cookie preferences",
+      "count": 1
+    },
+    {
+      "value": "log in",
+      "count": 1
+    },
+    {
+      "value": "20h 8m 14s",
+      "count": 1
+    },
+    {
+      "value": "7h 42m 50s",
+      "count": 1
+    },
+    {
+      "value": "4h 12m 38s",
+      "count": 1
+    },
+    {
+      "value": "support",
+      "count": 1
+    },
+    {
+      "value": "cookie preferences",
+      "count": 1
+    }
+  ],
+  "sampleHeadings": [
+    "Featured",
+    "Panorama Tableau",
+    "Auctions",
+    "Human After All by Elnaz Mansouri",
+    "Featured",
+    "Panorama Tableau",
+    "Human After All by Elnaz Mansouri",
+    "Subscribe for weekly updates on art and culture"
+  ],
+  "stats": {
+    "buttons": 20,
+    "headings": 8
+  }
+}
