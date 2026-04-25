@@ -2,28 +2,28 @@
 // Client factories (browser / server / middleware) live in apps/web/src/lib/supabase/
 // — they need Next.js cookies() and are not framework-agnostic.
 export type {
+  AiDecisionRow,
+  ArtistRow,
+  ArtworkRow,
+  AuditEventRow,
+  CompositeTypes,
+  ConsentLogRow,
+  ConsentType,
   Database,
+  DjRow,
+  Enums,
   Json,
+  OrderRow,
+  // Status / role branded types
+  OrderStatus,
+  ProfileRole,
+  // Row aliases
+  ProfileRow,
+  SetRow,
   Tables,
   TablesInsert,
   TablesUpdate,
-  Enums,
-  CompositeTypes,
-  // Row aliases
-  ProfileRow,
-  ArtistRow,
-  DjRow,
-  ArtworkRow,
-  SetRow,
-  OrderRow,
   TransactionRow,
-  ConsentLogRow,
-  WebhookEventRow,
-  AiDecisionRow,
-  AuditEventRow,
-  // Status / role branded types
-  OrderStatus,
   TransactionStatus,
-  ProfileRole,
-  ConsentType,
+  WebhookEventRow,
 } from "./types.js";

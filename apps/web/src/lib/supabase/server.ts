@@ -1,16 +1,16 @@
 // Server Supabase client — for Server Components, Route Handlers, Server Actions
 // Eselbrücke: "cookies in, cookies out" — createServerClient wires Next.js cookie jar
 
+import type { Database } from "@elbtronika/contracts";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
-import type { Database } from "@elbtronika/contracts";
 
 export async function createClient() {
   const cookieStore = await cookies();
 
   return createServerClient<Database>(
-    process.env["NEXT_PUBLIC_SUPABASE_URL"]!,
-    process.env["NEXT_PUBLIC_SUPABASE_ANON_KEY"]!,
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
         getAll() {
