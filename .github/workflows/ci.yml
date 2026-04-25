@@ -120,6 +120,7 @@ jobs:
           path: apps/web/.next/
           retention-days: 1
           if-no-files-found: error
+          include-hidden-files: true
 
   # ─────────────────────────────────────────────────────────
   # 6. Deploy to Netlify
