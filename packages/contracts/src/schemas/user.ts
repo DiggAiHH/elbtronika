@@ -1,13 +1,6 @@
 import { z } from "zod";
 
-export const UserRoleSchema = z.enum([
-  "visitor",
-  "collector",
-  "artist",
-  "dj",
-  "curator",
-  "admin",
-]);
+export const UserRoleSchema = z.enum(["visitor", "collector", "artist", "dj", "curator", "admin"]);
 export type UserRole = z.infer<typeof UserRoleSchema>;
 
 export const ProfileSchema = z.object({
@@ -17,9 +10,7 @@ export const ProfileSchema = z.object({
   displayName: z.string().min(1).max(100),
   avatarUrl: z.string().url().optional(),
   stripeAccountId: z.string().optional(),
-  stripeStatus: z
-    .enum(["pending", "enabled", "disabled"])
-    .optional(),
+  stripeStatus: z.enum(["pending", "enabled", "disabled"]).optional(),
   countryCode: z.string().length(2).optional(), // ISO 3166-1 alpha-2
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),

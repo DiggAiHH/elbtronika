@@ -13,16 +13,16 @@
   --color-border: rgba(255, 255, 255, 0.08);
 
   /* Brand colors */
-  --color-primary: #00f5d4;       /* Neon Cyan */
+  --color-primary: #00f5d4; /* Neon Cyan */
   --color-primary-hover: #00d4b8;
-  --color-secondary: #f720b8;     /* Neon Magenta */
+  --color-secondary: #f720b8; /* Neon Magenta */
   --color-secondary-hover: #d4169e;
-  --color-accent: #7b2fff;        /* Violet */
+  --color-accent: #7b2fff; /* Violet */
 
   /* Text */
   --color-text-primary: rgba(255, 255, 255, 0.92);
   --color-text-secondary: rgba(255, 255, 255, 0.55);
-  --color-text-muted: rgba(255, 255, 255, 0.30);
+  --color-text-muted: rgba(255, 255, 255, 0.3);
   --color-text-inverse: #0a0a0b;
 
   /* Feedback */
@@ -76,7 +76,9 @@
 /* ============================================================
    Base styles
    ============================================================ */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
@@ -98,7 +100,9 @@ body {
 
 /* Respect reduced motion preference */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;

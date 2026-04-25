@@ -1,11 +1,6 @@
 import { z } from "zod";
 
-export const ArtworkStatusSchema = z.enum([
-  "draft",
-  "published",
-  "sold",
-  "archived",
-]);
+export const ArtworkStatusSchema = z.enum(["draft", "published", "sold", "archived"]);
 export type ArtworkStatus = z.infer<typeof ArtworkStatusSchema>;
 
 export const ArtworkSchema = z.object({

@@ -6,7 +6,7 @@ export function GET() {
     {
       status: "ok",
       timestamp: new Date().toISOString(),
-      version: process.env["npm_package_version"] ?? "unknown",
+      version: process.env.npm_package_version ?? "unknown",
     },
     { status: 200 },
   );
