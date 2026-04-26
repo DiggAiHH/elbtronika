@@ -1,5 +1,6 @@
 // Supabase session refresh for Next.js middleware
-// Eselbrücke: "border control" — runs before every request, renews JWT if needed
+// Eselbrücke: "border control" — renews JWT before every request, no auth guard here
+// Auth protection lives in route layouts (server components) — not middleware.
 
 import type { Database } from "@elbtronika/contracts";
 import { createServerClient } from "@supabase/ssr";
@@ -29,17 +30,9 @@ export async function updateSession(request: NextRequest) {
     },
   );
 
-  // Refresh session — do NOT remove: keeps user session alive
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  // Redirect unauthenticated users away from protected routes
-  if (!user && request.nextUrl.pathname.startsWith("/dashboard")) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/login";
-    return NextResponse.redirect(url);
-  }
+  // MUST NOT remove: keeps user session alive by refreshing the JWT.
+  // Do not add auth guard here — use server component layouts instead.
+  await supabase.auth.getUser();
 
   return supabaseResponse;
 }
