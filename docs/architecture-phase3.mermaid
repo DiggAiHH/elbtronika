@@ -1,0 +1,68 @@
+graph TB
+    subgraph Browser["Browser (User)"]
+        UI["Next.js 15 App Router\nReact 19 + Tailwind v4"]
+        Studio["/studio\nSanity Embedded Studio"]
+    end
+
+    subgraph Edge["Edge / CDN"]
+        NF["Netlify Edge Functions\n(Deno runtime)"]
+        CF["Cloudflare CDN\ncdn.elbtronika.art"]
+    end
+
+    subgraph Data["Data Layer"]
+        SB["Supabase\nPostgres 16 + RLS\nEU-Frankfurt\n11 tables · 30 RLS policies"]
+        PGV["pgvector\nvector(1536)\nHNSW index"]
+        SB --> PGV
+    end
+
+    subgraph CMS["Content Layer"]
+        SAN["Sanity v4\n6 schemas\nartist/artwork/dj/set/room/story"]
+        GROQ["GROQ Queries\n(CDN-cached in prod)"]
+        SAN --> GROQ
+    end
+
+    subgraph Storage["Asset Storage"]
+        R2["Cloudflare R2\nelbtronika-assets\nEEUR region\nZero egress"]
+        R2A["audio/sets/ HLS"]
+        R2B["images/ optimized"]
+        R2C["rooms/ HDR skybox"]
+        R2 --> R2A
+        R2 --> R2B
+        R2 --> R2C
+    end
+
+    subgraph Secrets["Secrets Management"]
+        DOP["Doppler\ndev / preview / prd\n16 secrets"]
+        GHS["GitHub Secrets\nNETLIFY_SITE_ID\nNETLIFY_AUTH_TOKEN\nDOPPLER_TOKEN"]
+    end
+
+    subgraph CI["CI/CD (GitHub Actions)"]
+        GHA["CI Pipeline\nInstall→Lint→TS→Test→Build→Deploy"]
+        NLD["netlify-cli deploy\n→ Netlify"]
+        GHA --> NLD
+    end
+
+    subgraph Payments["Payments (Phase 10+)"]
+        STR["Stripe Connect\nSeparate Charges + Transfers\n60/20/20 split"]
+    end
+
+    UI -->|"server components\nfetch"| SB
+    UI -->|"GROQ"| GROQ
+    UI -->|"signed URL"| CF
+    CF -->|"serve assets"| R2
+    Studio -->|"write"| SAN
+    NF -->|"auth middleware\nJWT refresh"| SB
+    NF -->|"upload proxy\nsigned URLs"| R2
+    SB -->|"webhook events"| STR
+    DOP -->|"inject at runtime"| GHA
+    DOP -->|"inject locally\ndoppler run --"| UI
+    GHS -->|"CI secrets"| GHA
+
+    style Browser fill:#1a1a2e,stroke:#00f5d4,color:#fff
+    style Edge fill:#16213e,stroke:#7b2fff,color:#fff
+    style Data fill:#0f3460,stroke:#00f5d4,color:#fff
+    style CMS fill:#0f3460,stroke:#f720b8,color:#fff
+    style Storage fill:#0f3460,stroke:#00f5d4,color:#fff
+    style Secrets fill:#16213e,stroke:#7b2fff,color:#fff
+    style CI fill:#16213e,stroke:#f720b8,color:#fff
+    style Payments fill:#1a1a2e,stroke:#f720b8,color:#fff
