@@ -1,8 +1,8 @@
 # Agent Pre-Flight Protocol — ELBTRONIKA Cowork
 
 > **When to read this:** Start of every new chat session before touching code or tools.
-> Written from real pain in Phase 1 + Phase 2. Each entry has a root cause.
-> *Last updated: 2026-04-25 — Phase 2 complete (Design System)*
+> Written from real pain in Phase 1–4. Each entry has a root cause.
+> *Last updated: 2026-04-26 — Phase 4 complete (Auth + Onboarding)*
 
 ---
 
@@ -486,6 +486,12 @@ experimental: { typedRoutes: true }
 | Stack/Spacer gap/size as number | TS2322 type error | Props are string literals: `gap="4"` not `gap={4}` |
 | Turbo telemetry in CI logs | Clutters output | `TURBO_TELEMETRY_DISABLED=1` in CI env |
 | Desktop Commander timeout | Process state unknown | Check `git log` / `gh run list` — often completed |
+| `md [locale]` fails | "Syntax incorrect" on Windows | Use Node.js `fs.mkdirSync` via `.cjs` script |
+| `process.env.KEY!` Biome error | `noNonNullAssertion` violation | Wrap in `getX()` with `if (!key) throw` guard |
+| `startTransition` in useCallback deps | `useExhaustiveDependencies` error | Remove — it's stable like `setState` |
+| `@/*` alias misses `app/` routes | TS can't find `i18n/routing` | Use dual alias: `["./\*", "./src/\*"]` |
+| Next.js middleware false redirects | Prefetches trigger auth redirect | Guard in Server Component layout, not middleware |
+| Supabase cookies lost after locale redirect | Session gone after `/` → `/de/` | Merge Supabase cookies into i18n response (see ADR 0004) |
 
 ---
 
@@ -509,19 +515,18 @@ Shell bash:                   Linux mount paths (see §4)
 Org:    DiggAiHH
 Repo:   elbtronika
 Branch: main
-Tags:   v0.1.0 = Phase 1 complete
+Tags:   v0.1.0=Phase1  v0.2.0=Phase2  v0.3.0=Phase3  v0.4.0=Phase4
 
 Phase 1: ✅ Done (v0.1.0) — monorepo, CI, Next.js 15, tokens
-Phase 2: ✅ Done         — design system, 16 components, Storybook 10, ADR 0002
-Phase 3: ⏳ Next         — Supabase + R2 + Sanity + Doppler + Netlify secrets
-Phase 7: 🔒 Blocked      — awaits Phase 0 (legal) + Phase 3 (infra)
+Phase 2: ✅ Done (v0.2.0) — design system, 16 components, Storybook 10, ADR 0002
+Phase 3: ✅ Done (v0.3.0) — Supabase + RLS + Sanity + R2 runbook + Doppler + ADR 0003
+Phase 4: ✅ Done (v0.4.0) — Auth + protected routes + profile flow + Stripe KYC + ADR 0004
+Phase 5–7: 🔒 Blocked    — awaits Phase 0 (legal)
 
-Phase 3 entry steps:
-  1. Supabase project (EU-Frankfurt) + RLS schema
-  2. Cloudflare R2 bucket + cdn.elbtronika.art CNAME
-  3. Sanity v4 studio scaffold + content schemas
-  4. Doppler env config (dev/preview/prod)
-  5. NETLIFY_SITE_ID + NETLIFY_AUTH_TOKEN → GitHub secrets
+Phase 5 entry (when Phase 0 unblocked):
+  1. Phase 5: Content ingestion — R2 upload flow, Sanity publishing
+  2. Phase 6: E-commerce — cart, checkout, Stripe Payment Intents
+  3. Phase 7: Single Canvas — WebGPU Immersive Mode
 ```
 
 ---
@@ -556,4 +561,4 @@ Do NOT let engineering progress mask blocked legal work.
 
 ---
 
-*Authors: Claude (Cowork) + Lou | Phase 1: 2026-04-24 | Phase 2: 2026-04-25*
+*Authors: Claude (Cowork) + Lou | Phase 1: 2026-04-24 | Phase 2: 2026-04-25 | Phase 3: 2026-04-26 | Phase 4: 2026-04-26*

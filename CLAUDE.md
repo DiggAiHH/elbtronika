@@ -93,7 +93,7 @@ Phase 0 (Legal + Stripe KYC) → Phase 3 (Infra: R2 + Supabase + Sanity) → Pha
 | Phase 1 | ✅ Done | v0.1.0 |
 | Phase 2 | ✅ Done | v0.2.0 |
 | Phase 3 | ✅ Done | v0.3.0 |
-| Phase 4 | ⏳ Next | — |
+| Phase 4 | ✅ Done | v0.4.0 |
 | Phase 5–7 | 🔒 Blocked | — |
 
 ## Phase 3 Manual Steps (Lou ausstehend)
@@ -102,11 +102,23 @@ Phase 0 (Legal + Stripe KYC) → Phase 3 (Infra: R2 + Supabase + Sanity) → Pha
 - Doppler project + secrets befüllen → `docs/phase-3-doppler-setup.md`
 - Netlify site + GitHub secrets setzen → `docs/phase-3-netlify-github-secrets.md`
 
-## Phase 4 Entry — Nächste Schritte
-1. Supabase Auth UI (magic link + OAuth)
-2. Protected routes + middleware auth guard
-3. Profile creation flow (trigger already in place)
-4. Stripe Connect KYC onboarding für Artists/DJs
+## Phase 4 Deliverables (Done 2026-04-26)
+- `apps/web/app/[locale]/(auth)/login/page.tsx` — magic link + GitHub OAuth UI
+- `apps/web/app/auth/callback/route.ts` — OAuth/magic-link exchange, new-user detect
+- `apps/web/app/[locale]/dashboard/layout.tsx` — server component auth guard
+- `apps/web/app/[locale]/dashboard/page.tsx` — creator KYC banner, status cards
+- `apps/web/app/[locale]/profile/setup/page.tsx` — post-signup display_name + role
+- `apps/web/app/[locale]/artist-onboarding/stripe/page.tsx` — Stripe KYC redirect
+- `apps/web/app/api/stripe/connect/route.ts` — create/reuse Express account
+- `apps/web/app/api/stripe/webhook/route.ts` — idempotent account.updated handler
+- `apps/web/src/lib/supabase/auth-actions.ts` — server actions for auth + profiles
+- `docs/adr/0004-auth-phase4.md`
+
+## Phase 5 Entry — Nächste Schritte
+Phase 5–7 blocked on Phase 0 (legal/KYC). When unblocked:
+1. Phase 5: Content ingestion (R2 upload flow, Sanity publishing)
+2. Phase 6: E-commerce (cart, checkout, Stripe Payment Intents)
+3. Phase 7: Single Canvas (WebGPU Immersive Mode)
 
 ## Cowork Tool Rules (gelernt in Phase 1)
 **Vollständig:** `docs/agent-preflight-protocol.md` — IMMER lesen beim Session-Start.
@@ -120,11 +132,14 @@ Kurzfassung:
 - `pnpm.onlyBuiltDependencies: ["esbuild", "sharp"]` in root package.json
 - Workspace bash oft nicht verfügbar → Desktop Commander als Fallback
 - Tools bulk laden: `ToolSearch({ query: "computer-use", max_results: 30 })`
+- `[locale]`-Verzeichnisse → nur per Node.js `fs.mkdirSync` erstellen (CMD + PS scheitern an Brackets)
+- `noNonNullAssertion`: process.env in lazy `getStripe()`-Getter kapseln, nie `!` auf Modulebene
+- `useTransition.startTransition` ist stabil → nie in useCallback/useEffect-Deps aufnehmen
 
 ## Repo
 - Org: DiggAiHH | Repo: elbtronika | Branch: main
 - CI: github.com/DiggAiHH/elbtronika/actions
-- Aktueller Tag: v0.1.0 (Phase 1)
+- Aktueller Tag: v0.4.0 (Phase 4)
 
 ## Preferences
 - Deutsch als primäre Arbeitssprache, Code + Commits auf Englisch
