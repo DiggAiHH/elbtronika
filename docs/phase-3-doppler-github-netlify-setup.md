@@ -1,6 +1,6 @@
 # Phase 3 — Doppler → GitHub Actions → Netlify Setup
 
-Generated: 2026-04-26 | Status: Doppler ✅ done, GitHub + Netlify = manual steps below
+Generated: 2026-04-26 | Updated: 2026-04-27 | Status: Doppler ✅ done, GitHub ✅ done, Netlify = pending
 
 ---
 
@@ -16,16 +16,17 @@ Generated: 2026-04-26 | Status: Doppler ✅ done, GitHub + Netlify = manual step
 
 ---
 
-## Step 1 — Add Doppler Tokens to GitHub Actions
+## Step 1 — Add Doppler Tokens to GitHub Actions ✅ DONE (2026-04-27)
 
-Run in repo root (`D:\Elbtronika\Elbtonika`):
+`DOPPLER_TOKEN_PRD` and `DOPPLER_TOKEN_STG` are now set as GitHub Actions secrets.
 
+Verified via: `gh secret list --repo DiggAiHH/elbtronika`
+
+If tokens need to be rotated: revoke in Doppler prd/stg Access tab, create new token named `github-actions-prd` / `netlify-preview-stg`, re-run:
 ```cmd
-gh secret set DOPPLER_TOKEN_PRD --body "<get from Doppler: elbtronika/prd/Access/github-actions-prd>" --repo DiggAiHH/elbtronika
-gh secret set DOPPLER_TOKEN_STG --body "<get from Doppler: elbtronika/stg/Access/netlify-preview-stg>" --repo DiggAiHH/elbtronika
+gh secret set DOPPLER_TOKEN_PRD --body "<new token>" --repo DiggAiHH/elbtronika
+gh secret set DOPPLER_TOKEN_STG --body "<new token>" --repo DiggAiHH/elbtronika
 ```
-
-Verify: https://github.com/DiggAiHH/elbtronika/settings/secrets/actions
 
 ---
 
