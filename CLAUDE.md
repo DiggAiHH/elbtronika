@@ -91,15 +91,22 @@ Phase 0 (Legal + Stripe KYC) → Phase 3 (Infra: R2 + Supabase + Sanity) → Pha
 |-------|--------|-----|
 | Phase 0 | 🔄 Läuft (legal TBD) | — |
 | Phase 1 | ✅ Done | v0.1.0 |
-| Phase 2 | ⏳ Next | — |
-| Phase 3–7 | 🔒 Blocked | — |
+| Phase 2 | ✅ Done | v0.2.0 |
+| Phase 3 | ✅ Done | v0.3.0 |
+| Phase 4 | ⏳ Next | — |
+| Phase 5–7 | 🔒 Blocked | — |
 
-## Phase 2 Entry — Nächste Schritte
-1. Supabase project anlegen (EU-Frankfurt) + RLS-Schema
-2. Cloudflare R2 bucket + `cdn.elbtronika.art` CNAME
-3. Sanity v4 studio scaffold + content schemas
-4. Doppler environment config (dev/preview/prod)
-5. `NETLIFY_SITE_ID` + `NETLIFY_AUTH_TOKEN` → GitHub repo secrets setzen
+## Phase 3 Manual Steps (Lou ausstehend)
+- R2 bucket `elbtronika-assets` anlegen → `docs/phase-3-cloudflare-r2-setup.md`
+- Sanity project init + API tokens → `docs/phase-3-doppler-setup.md` §6
+- Doppler project + secrets befüllen → `docs/phase-3-doppler-setup.md`
+- Netlify site + GitHub secrets setzen → `docs/phase-3-netlify-github-secrets.md`
+
+## Phase 4 Entry — Nächste Schritte
+1. Supabase Auth UI (magic link + OAuth)
+2. Protected routes + middleware auth guard
+3. Profile creation flow (trigger already in place)
+4. Stripe Connect KYC onboarding für Artists/DJs
 
 ## Cowork Tool Rules (gelernt in Phase 1)
 **Vollständig:** `docs/agent-preflight-protocol.md` — IMMER lesen beim Session-Start.
