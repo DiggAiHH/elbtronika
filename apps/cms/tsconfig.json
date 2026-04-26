@@ -1,0 +1,16 @@
+{
+  "extends": "@sanity/eslint-config-studio/tsconfig.json",
+  "compilerOptions": {
+    "target": "ES2017",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "esModuleInterop": true,
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {}
+  },
+  "include": ["**/*.ts", "**/*.tsx"]
+}
