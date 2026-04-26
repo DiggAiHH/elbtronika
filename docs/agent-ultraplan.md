@@ -465,20 +465,45 @@ scroll({ x, y, direction: "down", amount: 3 })
 
 ### 9.12 Chrome MCP `mcp__Claude_in_Chrome__*`
 
-**When:** Web apps without dedicated MCPs, form filling, DOM inspection.
+**When:** Web apps without dedicated MCPs, form filling, DOM inspection, secrets extraction.
 
 ```javascript
-// Load:
+// Load ALL at once:
 ToolSearch({ query: "chrome", max_results: 20 })
 
-list_connected_browsers()
-navigate({ url: "https://..." })
-find({ selector: "button.submit" })
-form_input({ selector: "#email", value: "..." })
-get_page_text()
-read_network_requests()
-javascript_tool({ code: "return document.title" })
+// Step 1 — ALWAYS get tabId first:
+tabs_context_mcp()  →  { availableTabs: [{ tabId: 817571525, url: "..." }] }
+
+// Core patterns:
+navigate({ url: "https://...", tabId })
+computer({ action: "wait", duration: 3, tabId })   // SPA hydration delay
+computer({ action: "screenshot", tabId })
+find({ query: "natural language description", tabId })  // semantic, returns ref_id
+computer({ action: "left_click", ref: "ref_491", tabId })
+computer({ action: "scroll_to", ref: "ref_XXX", tabId })
+computer({ action: "type", text: "...", tabId })
+get_page_text({ tabId })          // full text, fast
+read_page({ tabId, filter: "interactive", depth: 5 })  // accessibility tree
+javascript_tool({ action: "javascript_exec", text: "...", tabId })
+
+// Clipboard extraction (for masked secrets):
+javascript_tool({ action: "javascript_exec",
+  text: "(async () => { return await navigator.clipboard.readText(); })()", tabId })
+
+// Bulk batching (ALWAYS prefer over single calls):
+browser_batch([
+  { name: "navigate",  input: { url, tabId } },
+  { name: "computer",  input: { action: "wait", duration: 4, tabId } },
+  { name: "computer",  input: { action: "screenshot", tabId } }
+])
 ```
+
+**Key rules:**
+- `tabId` required on every call — never omit
+- SPA pages (Cloudflare, Doppler, Supabase): wait 3–4s after navigate
+- Financial sites blocked: Stripe, PayPal, banking — never attempt
+- `javascript_tool` async: wrap in `(async () => { return await ...; })()`
+- Use `find()` over pixel coordinates — more stable across resolutions
 
 ---
 
@@ -702,6 +727,13 @@ test: { exclude: ["**/node_modules/**", "**/e2e/**", "**/*.spec.ts"] }
 | Desktop Commander timeout | process state unknown | check `git log` — often completed anyway |
 | Wrong app directory | files in `src/app/` not `app/` | real routes at `apps/web/app/` (no src prefix) |
 | Turbo telemetry in CI | noisy logs | `TURBO_TELEMETRY_DISABLED=1` in CI env |
+| `gh secret set` times out | Desktop Commander 60s timeout | run manually in terminal OR split into 2 separate calls with longer timeout |
+| workspace bash unavailable | "Workspace unavailable. isolated Linux environment failed" | switch to Desktop Commander; test `echo ok` first every session |
+| Chrome MCP — Cloudflare R2 page empty | navigated too fast before React hydrated | `wait(4)` after navigate — Cloudflare dashboard SPA needs 4-5s to render |
+| Stripe dashboard blocked Chrome | "financial site restriction" | NEVER automate Stripe dashboard — get keys manually, enter in Doppler |
+| Doppler import token masked | dots shown, not readable | click copy icon → `(async () => await navigator.clipboard.readText())()` in JS tool |
+| Chrome `find` clicked but page didn't navigate | link used JS router not href | fall back to direct `navigate({ url: "..." })` with explicit URL |
+| Cloudflare "Manage API Tokens" link no-ops | opens new tab silently | navigate directly: `https://dash.cloudflare.com/<account_id>/r2/api-tokens` |
 
 ---
 
@@ -753,11 +785,16 @@ Phase 0 (Legal: Steuerberater + Fachanwalt IT-Recht)
   └── blocks Phase 5–7 entirely
   └── Stripe KYC for artists requires legal entity → Steuerberater blocks this
 
-Phase 3 manual steps (Lou still needs to do):
-  └── R2 bucket → docs/phase-3-cloudflare-r2-setup.md
-  └── Sanity project init → docs/phase-3-doppler-setup.md §6
-  └── Doppler secrets → docs/phase-3-doppler-setup.md
-  └── Netlify site + GitHub secrets → docs/phase-3-netlify-github-secrets.md
+Phase 3 manual steps remaining (2026-04-26):
+  ✅ R2 bucket elbtronika-assets created
+  ✅ Doppler project populated (14 secrets, all envs)
+  ✅ Doppler service tokens: github-actions-prd + netlify-preview-stg
+  ⏳ GitHub secrets: run 2x gh secret set commands (Desktop Commander timed out)
+  ⏳ Stripe test keys: replace 3 PLACEHOLDERs in Doppler dev config
+  ⏳ Anthropic API key: replace PLACEHOLDER in Doppler dev config
+  ⏳ Sanity project init → docs/phase-3-doppler-setup.md §6
+  ⏳ Netlify → connect Doppler sync or set DOPPLER_TOKEN env var
+  → Full guide: docs/phase-3-doppler-github-netlify-setup.md
 
 Do NOT let engineering progress mask blocked legal work.
 ```
@@ -781,6 +818,258 @@ Skill({ skill: "anthropic-skills:schedule" })
 
 ---
 
+---
+
+## 21. Chrome MCP — Advanced Patterns (learned Phase 3 session)
+
+### Core principle: always batch, never one-step
+
+```javascript
+// Load all Chrome tools at once:
+ToolSearch({ query: "chrome", max_results: 20 })
+
+// ALWAYS get tab context first:
+tabs_context_mcp()  → get tabId
+
+// ALWAYS batch sequential actions:
+browser_batch([
+  { name: "navigate",  input: { url, tabId } },
+  { name: "computer",  input: { action: "wait", duration: 3, tabId } },
+  { name: "computer",  input: { action: "screenshot", tabId } }
+])
+```
+
+### SPA pages need wait time after navigate
+
+```javascript
+// Cloudflare, Doppler, other React SPAs:
+navigate({ url }) → wait(3–4s) → screenshot → then interact
+// If content still empty after 3s → wait(4) again → usually loads
+```
+
+### Finding elements: find() > coordinate clicks
+
+```javascript
+// Prefer semantic find() → get ref_id → click by ref:
+find({ query: "Create Account API token button", tabId })
+→ computer({ action: "left_click", ref: "ref_491", tabId })
+
+// Fallback to coordinates only when find() fails
+```
+
+### Clipboard extraction — only way to get masked values
+
+```javascript
+// Click copy icon first, then:
+javascript_tool({
+  action: "javascript_exec",
+  text: "(async () => { return await navigator.clipboard.readText(); })()",
+  tabId
+})
+// Returns plain text: "dp.st.prd.xxx..." or "fa691cf..."
+// ❌ await at top level → SyntaxError — ALWAYS wrap in async IIFE
+```
+
+### Doppler bulk import pattern (fastest secrets entry)
+
+```
+1. navigate to config (dev/stg/prd)
+2. click dropdown arrow next to "Add First Secret"  →  "Import Secrets"
+3. paste KEY=VALUE format (one per line, JWTs wrap fine)
+4. click "Import Secrets" button
+5. "14 UNSAVED CHANGES" appears → click Save
+6. Dialog: check ALL environments → Save
+→ Propagates to all child configs in one shot
+```
+
+### Cloudflare R2 API Token — Full Flow
+
+```
+URL:   https://dash.cloudflare.com/<account_id>/r2/api-tokens
+Wait:  4s after navigate (SPA hydration)
+
+1. Click "Create Account API token" (recommended for prod)
+2. Token name: "elbtronika-r2-prod"
+3. Permissions: select "Object Read & Write"
+4. Specify bucket(s) → "Apply to specific buckets only"
+5. Dropdown appears → select "elbtronika-assets"
+6. TTL: Forever (default)
+7. Click "Create Account API Token"
+8. Success page shows Access Key ID + Secret Access Key
+9. Extract via clipboard copy → javascript_tool readText
+
+Account ID:    6abb3679bb27b6d7182ab01d290a3aeb
+S3 endpoint:   https://6abb3679bb27b6d7182ab01d290a3aeb.r2.cloudflarestorage.com
+Bucket:        elbtronika-assets
+```
+
+**⚠️ Keys shown only once — extract IMMEDIATELY before navigating away.**
+
+### Blocked sites in Chrome MCP
+
+```
+❌ dashboard.stripe.com    → financial site restriction
+❌ console.anthropic.com   → likely blocked (unverified)
+✅ dash.cloudflare.com     → works (confirmed Phase 3)
+✅ dashboard.doppler.com   → works (confirmed Phase 3)
+✅ app.netlify.com         → works (unconfirmed, likely fine)
+✅ supabase.com/dashboard  → works (confirmed Phase 3)
+```
+
+---
+
+## 22. Doppler — Complete Secrets Workflow
+
+### Project structure (ELBTRONIKA)
+
+```
+Workspace:  elbtronika (Developer Plan)
+Project:    elbtronika
+Configs:    dev (root) → dev_personal (branch)
+            stg (root) → (preview env)
+            prd (root) → (production)
+URL:        https://dashboard.doppler.com/workplace/cb8b25194163582aef0d/projects/elbtronika
+```
+
+### Populate secrets (bulk)
+
+```
+1. Navigate to /configs/dev
+2. Dropdown (▼ next to "Add First Secret") → "Import Secrets"
+3. Paste .env format — paste all 14+ secrets at once
+4. Click Import Secrets → 14 UNSAVED CHANGES
+5. Click Save → dialog → check ALL 3 environments
+6. → propagates dev values to stg + prd root configs
+```
+
+### Per-environment overrides
+
+```
+1. Navigate directly to /configs/prd
+2. Click secret value to reveal → click again to edit
+3. Clear → type prod value → click Save (top right)
+4. Dialog: check "Production" only → Save
+
+Key overrides for prd:
+  NEXT_PUBLIC_SITE_URL = https://elbtronika.art   (dev = http://localhost:3000)
+  STRIPE_* = live keys (when Phase 0 legal done)
+```
+
+### Service tokens (for CI/CD)
+
+```javascript
+// Create: prd config → Access tab → + button → name → Generate
+// Token format: dp.st.prd.XXXXX  (prd) | dp.st.stg.XXXXX (stg)
+// Extract: click copy icon → javascript_tool readText clipboard
+
+// Tokens created (2026-04-26):
+// prd: dp.st.prd.<REDACTED>  (github-actions-prd)   → in GitHub Secret: DOPPLER_TOKEN_PRD
+// stg: dp.st.stg.<REDACTED>  (netlify-preview-stg)  → in GitHub Secret: DOPPLER_TOKEN_STG
+```
+
+### Connect to GitHub Actions
+
+```cmd
+gh secret set DOPPLER_TOKEN_PRD --body "dp.st.prd.XXX" --repo DiggAiHH/elbtronika
+gh secret set DOPPLER_TOKEN_STG --body "dp.st.stg.XXX" --repo DiggAiHH/elbtronika
+```
+
+In `.github/workflows/ci.yml`:
+```yaml
+- uses: dopplerhq/cli-action@v3
+- name: Build
+  env:
+    DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN_PRD }}
+  run: doppler run -- pnpm build
+```
+
+### Secrets inventory (Phase 3 state)
+
+| Key | Status | Source |
+|-----|--------|--------|
+| `NEXT_PUBLIC_SUPABASE_URL` | ✅ real | Supabase dashboard |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | ✅ real | Supabase dashboard |
+| `SUPABASE_SERVICE_ROLE_KEY` | ✅ real | Supabase dashboard |
+| `CLOUDFLARE_ACCOUNT_ID` | ✅ real | `6abb3679bb27b6d7182ab01d290a3aeb` |
+| `R2_BUCKET_NAME` | ✅ real | `elbtronika-assets` |
+| `R2_ACCESS_KEY_ID` | ✅ real | Created 2026-04-26 |
+| `R2_SECRET_ACCESS_KEY` | ✅ real | Created 2026-04-26 |
+| `R2_ENDPOINT` | ✅ real | `https://6abb3679bb27b6d7182ab01d290a3aeb.r2.cloudflarestorage.com` |
+| `NEXT_PUBLIC_CDN_URL` | ✅ real | `https://cdn.elbtronika.art` |
+| `NEXT_PUBLIC_SITE_URL` | ✅ real | dev=localhost:3000, prd=elbtronika.art |
+| `STRIPE_SECRET_KEY` | ⚠️ placeholder | stripe.com/test/apikeys |
+| `STRIPE_PUBLISHABLE_KEY` | ⚠️ placeholder | stripe.com/test/apikeys |
+| `STRIPE_WEBHOOK_SECRET` | ⚠️ placeholder | stripe.com/test/webhooks |
+| `ANTHROPIC_API_KEY` | ⚠️ placeholder | console.anthropic.com |
+
+---
+
+## 23. Secrets Collection — Automation Strategy
+
+### What can be automated (Chrome MCP)
+
+```
+✅ Supabase:   dashboard.supabase.com → Project Settings → API
+               JS: document.querySelectorAll('[class*="secret"]') or clipboard
+✅ Cloudflare: R2 API token create flow → clipboard extract
+✅ Doppler:    bulk import → service token create → clipboard extract
+✅ Netlify:    env vars → project settings → read/write via MCP
+```
+
+### What CANNOT be automated (manual only)
+
+```
+❌ Stripe dashboard (financial site restriction in Chrome MCP)
+   → sk_test / pk_test / whsec → manual from dashboard.stripe.com
+❌ Anthropic console (likely blocked)
+   → sk-ant → manual from console.anthropic.com
+❌ Sanity tokens (project doesn't exist yet — must init first)
+   → sanity init → then sanity.io/manage
+```
+
+### Supabase key extraction pattern (JS)
+
+```javascript
+// Navigate to: https://supabase.com/dashboard/project/<ref>/settings/api
+// Then extract via JS:
+javascript_tool({
+  text: `
+    const cards = document.querySelectorAll('[class*="Input"], input[type="text"]');
+    [...cards].map(el => el.value).filter(v => v.length > 20).join('\\n')
+  `
+})
+// OR: find reveal buttons → click → read text → clipboard
+```
+
+---
+
+## 24. Shell Tool Availability Matrix (this machine)
+
+| Tool | Availability | Notes |
+|------|-------------|-------|
+| `mcp__workspace__bash` | ⚠️ intermittent | Test `echo ok` first every session. Unavailable ~30% of sessions. |
+| `mcp__Desktop_Commander__start_process` | ✅ usually works | `shell:"cmd"` always. gh commands time out at 60s — use 20000ms max per command. |
+| `mcp__Desktop_Commander__write_file` | ✅ reliable | Use for commit messages, temp scripts |
+| Chrome MCP | ✅ reliable | batch everything, wait 3-4s after navigate to SPA |
+| Computer Use | ✅ reliable | bulk load: `ToolSearch({ query: "computer-use", max_results: 30 })` |
+
+### Desktop Commander — gh CLI timeout workaround
+
+```cmd
+// ❌ Chains time out:
+gh secret set A ... && gh secret set B ...   → 60s timeout
+
+// ✅ Each command separately:
+start_process("gh secret set DOPPLER_TOKEN_PRD --body \"...\" --repo DiggAiHH/elbtronika", shell:"cmd", timeout_ms:20000)
+start_process("gh secret set DOPPLER_TOKEN_STG --body \"...\" --repo DiggAiHH/elbtronika", shell:"cmd", timeout_ms:20000)
+
+// If still timing out → write a .bat file and double-click it:
+write_file("D:\\setup-secrets.bat", "gh secret set ...\ngh secret set ...")
+→ tell Lou to run D:\setup-secrets.bat manually
+```
+
+---
+
 *Authors: Claude (Cowork) + Lou*  
-*Phase 1: 2026-04-24 · Phase 2: 2026-04-25 · Phase 3: 2026-04-26 · Phase 4: 2026-04-26*  
+*Phase 1: 2026-04-24 · Phase 2: 2026-04-25 · Phase 3: 2026-04-26 · Phase 4: 2026-04-26 · Ultraplan v2: 2026-04-26*  
 *Repo: DiggAiHH/elbtronika · docs/agent-ultraplan.md*
