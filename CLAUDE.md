@@ -96,11 +96,14 @@ Phase 0 (Legal + Stripe KYC) → Phase 3 (Infra: R2 + Supabase + Sanity) → Pha
 | Phase 4 | ✅ Done | v0.4.0 |
 | Phase 5–7 | 🔒 Blocked | — |
 
-## Phase 3 Manual Steps (Lou ausstehend)
-- R2 bucket `elbtronika-assets` anlegen → `docs/phase-3-cloudflare-r2-setup.md`
-- Sanity project init + API tokens → `docs/phase-3-doppler-setup.md` §6
-- Doppler project + secrets befüllen → `docs/phase-3-doppler-setup.md`
-- Netlify site + GitHub secrets setzen → `docs/phase-3-netlify-github-secrets.md`
+## Phase 3 Manual Steps (ausstehend)
+- ✅ R2 bucket `elbtronika-assets` — done
+- ✅ Sanity project `xbjul8yd` (org oX1ou8dCN) + API token `elbtronika-server` — done 2026-04-27
+- ✅ Doppler 17 secrets populated (dev/stg/prd) — done
+- ✅ GitHub Actions: DOPPLER_TOKEN_PRD + DOPPLER_TOKEN_STG — done 2026-04-27
+- ⏳ Stripe test keys: 3 PLACEHOLDERs in Doppler → `docs/phase-3-doppler-github-netlify-setup.md`
+- ⏳ Anthropic API key: PLACEHOLDER in Doppler → `console.anthropic.com/settings/keys`
+- ⏳ Netlify → Doppler sync → `docs/phase-3-doppler-github-netlify-setup.md` §3
 
 ## Phase 4 Deliverables (Done 2026-04-26)
 - `apps/web/app/[locale]/(auth)/login/page.tsx` — magic link + GitHub OAuth UI

@@ -72,8 +72,9 @@ In Doppler dashboard → elbtronika / dev (propagates to stg + prd):
 | `STRIPE_PUBLISHABLE_KEY` | Same page → Publishable key (`pk_test_...`) |
 | `STRIPE_WEBHOOK_SECRET` | https://dashboard.stripe.com/test/webhooks → Add endpoint → signing secret (`whsec_...`) |
 | `ANTHROPIC_API_KEY` | https://console.anthropic.com/settings/keys → Create key (`sk-ant-...`) |
-| `SANITY_PROJECT_ID` | After `sanity init` in `apps/cms/` |
-| `SANITY_API_TOKEN` | https://www.sanity.io/manage → project → API → Tokens |
+| `SANITY_PROJECT_ID` | ✅ `xbjul8yd` — set 2026-04-27 |
+| `SANITY_DATASET` | ✅ `production` — set 2026-04-27 |
+| `SANITY_API_TOKEN` | ✅ `elbtronika-server` (Editor) — set 2026-04-27 |
 
 After updating in Doppler `dev`, click Save → check "preview" + "Production" to propagate.
 
@@ -93,7 +94,10 @@ After updating in Doppler `dev`, click Save → check "preview" + "Production" t
 | `R2_ENDPOINT` | ✅ real value |
 | `NEXT_PUBLIC_CDN_URL` | ✅ real value |
 | `NEXT_PUBLIC_SITE_URL` | ✅ dev=localhost:3000, prd=https://elbtronika.art |
-| `STRIPE_SECRET_KEY` | ⚠️ PLACEHOLDER |
-| `STRIPE_PUBLISHABLE_KEY` | ⚠️ PLACEHOLDER |
-| `STRIPE_WEBHOOK_SECRET` | ⚠️ PLACEHOLDER |
-| `ANTHROPIC_API_KEY` | ⚠️ PLACEHOLDER |
+| `STRIPE_SECRET_KEY` | ⚠️ PLACEHOLDER — get from dashboard.stripe.com/test/apikeys |
+| `STRIPE_PUBLISHABLE_KEY` | ⚠️ PLACEHOLDER — get from dashboard.stripe.com/test/apikeys |
+| `STRIPE_WEBHOOK_SECRET` | ⚠️ PLACEHOLDER — get from dashboard.stripe.com/test/webhooks |
+| `ANTHROPIC_API_KEY` | ⚠️ PLACEHOLDER — get from console.anthropic.com/settings/keys |
+| `SANITY_PROJECT_ID` | ✅ `xbjul8yd` |
+| `SANITY_DATASET` | ✅ `production` |
+| `SANITY_API_TOKEN` | ✅ `elbtronika-server` (Editor) |
