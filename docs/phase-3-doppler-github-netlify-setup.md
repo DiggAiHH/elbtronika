@@ -97,7 +97,7 @@ After updating in Doppler `dev`, click Save → check "preview" + "Production" t
 | `STRIPE_SECRET_KEY` | ⚠️ PLACEHOLDER — get from dashboard.stripe.com/test/apikeys |
 | `STRIPE_PUBLISHABLE_KEY` | ⚠️ PLACEHOLDER — get from dashboard.stripe.com/test/apikeys |
 | `STRIPE_WEBHOOK_SECRET` | ⚠️ PLACEHOLDER — get from dashboard.stripe.com/test/webhooks |
-| `ANTHROPIC_API_KEY` | ⚠️ PLACEHOLDER — get from console.anthropic.com/settings/keys |
+| `ANTHROPIC_API_KEY` | ✅ set 2026-04-27 (dev/preview/prd) |
 | `SANITY_PROJECT_ID` | ✅ `xbjul8yd` |
 | `SANITY_DATASET` | ✅ `production` |
 | `SANITY_API_TOKEN` | ✅ `elbtronika-server` (Editor) |

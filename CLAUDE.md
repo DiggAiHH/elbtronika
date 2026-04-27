@@ -101,8 +101,8 @@ Phase 0 (Legal + Stripe KYC) → Phase 3 (Infra: R2 + Supabase + Sanity) → Pha
 - ✅ Sanity project `xbjul8yd` (org oX1ou8dCN) + API token `elbtronika-server` — done 2026-04-27
 - ✅ Doppler 17 secrets populated (dev/stg/prd) — done
 - ✅ GitHub Actions: DOPPLER_TOKEN_PRD + DOPPLER_TOKEN_STG — done 2026-04-27
-- ⏳ Stripe test keys: 3 PLACEHOLDERs in Doppler → `docs/phase-3-doppler-github-netlify-setup.md`
-- ⏳ Anthropic API key: PLACEHOLDER in Doppler → `console.anthropic.com/settings/keys`
+- ✅ Anthropic API key: set in Doppler dev/preview/prd — done 2026-04-27
+- ⏳ Stripe test keys: 3 PLACEHOLDERs → `docs/phase-3-doppler-github-netlify-setup.md` — manuell von dashboard.stripe.com/test/apikeys
 - ⏳ Netlify → Doppler sync → `docs/phase-3-doppler-github-netlify-setup.md` §3
 
 ## Phase 4 Deliverables (Done 2026-04-26)
