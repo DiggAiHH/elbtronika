@@ -53,6 +53,55 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+      // -------------------------------------------------------------------
+      // Cache strategy per asset type (Phase 12)
+      // -------------------------------------------------------------------
+      {
+        source: "/_next/static/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      {
+        source: "/images/:path*",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=86400, must-revalidate" },
+          { key: "Vary", value: "Accept" },
+        ],
+      },
+      {
+        source: "/:path*.glb",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      {
+        source: "/:path*.ktx2",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      {
+        source: "/api/health",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=10, stale-while-revalidate=30" },
+        ],
+      },
+      {
+        source: "/api/:path*",
+        headers: [
+          { key: "Cache-Control", value: "private, no-store" },
+        ],
+      },
     ];
   },
 
