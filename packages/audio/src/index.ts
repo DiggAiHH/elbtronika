@@ -3,6 +3,7 @@ export { getAudioContext, unlockAudioContext, isUnlocked, tryResumeFromSession }
 export { useAudioStore } from "./store";
 export type { AudioStore } from "./store";
 export { useProximityAudio } from "./hooks/useProximityAudio";
+export { useModeTransitionAudio } from "./hooks/useModeTransitionAudio";
 export { SpatialAudioEngine, computeGain } from "./engine/SpatialAudioEngine";
 export { HLSLoader } from "./engine/HLSLoader";
 export { RoomReverb } from "./engine/RoomReverb";

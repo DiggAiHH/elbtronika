@@ -46,6 +46,7 @@ export interface ThreeStore {
 
   // Actions
   setMode: (mode: ThreeMode) => void;
+  transitionToMode: (target: "immersive" | "classic") => void;
   setCurrentRoom: (id: string | null) => void;
   registerRoom: (room: RoomConfig) => void;
   updateProximity: (artworkId: string, distance: number) => void;
@@ -65,6 +66,13 @@ export const useThreeStore = create<ThreeStore>()(
     activeScene: null,
 
     setMode: (mode) => set({ mode }),
+    transitionToMode: (target) => {
+      if (get().mode === "transitioning") return;
+      set({ mode: "transitioning" });
+      setTimeout(() => {
+        set({ mode: target });
+      }, 1200);
+    },
     setCurrentRoom: (id) => set({ currentRoomId: id }),
     registerRoom: (room) => {
       const existing = get().rooms.find((r) => r.id === room.id);
