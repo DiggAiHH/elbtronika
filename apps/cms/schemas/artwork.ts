@@ -107,6 +107,56 @@ export const artwork = defineType({
       to: [{ type: 'dj' }],
       description: 'DJ whose music is paired with this artwork in Immersive Mode',
     }),
+    defineField({
+      name: 'associatedSet',
+      title: 'Associated Set',
+      type: 'reference',
+      to: [{ type: 'set' }],
+      description: 'DJ set that plays spatially when visitor is near this artwork',
+    }),
+    defineField({
+      name: 'room',
+      title: 'Room',
+      type: 'reference',
+      to: [{ type: 'room' }],
+      description: '3D gallery room this artwork is placed in',
+    }),
+
+    // --- 3D Asset References (R2 keys, populated by upload pipeline) ---
+    defineField({
+      name: 'textures',
+      title: 'Texture R2 Keys',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            defineField({ name: 'r2Key', title: 'R2 Key', type: 'string' }),
+            defineField({
+              name: 'textureType',
+              title: 'Texture Type',
+              type: 'string',
+              options: {
+                list: ['albedo', 'normal', 'roughness', 'metalness', 'emissive', 'ao'],
+              },
+            }),
+          ],
+          preview: {
+            select: { title: 'textureType', subtitle: 'r2Key' },
+          },
+        },
+      ],
+      description: 'KTX2-compressed textures stored in R2 — populated after upload pipeline processing',
+    }),
+
+    // --- Story (rich narrative, separate from short description) ---
+    defineField({
+      name: 'story',
+      title: 'Story',
+      type: 'array',
+      of: [{ type: 'block' }],
+      description: 'Long-form artist narrative shown in artwork detail view',
+    }),
   ],
   preview: {
     select: {

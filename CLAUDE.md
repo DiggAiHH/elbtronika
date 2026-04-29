@@ -94,7 +94,8 @@ Phase 0 (Legal + Stripe KYC) → Phase 3 (Infra: R2 + Supabase + Sanity) → Pha
 | Phase 2 | ✅ Done | v0.2.0 |
 | Phase 3 | ✅ Done | v0.3.0 |
 | Phase 4 | ✅ Done | v0.4.0 |
-| Phase 5–7 | 🔒 Blocked | — |
+| Phase 5 | ✅ Done | v0.5.0 |
+| Phase 6–7 | 🔒 Blocked | — |
 
 ## Phase 3 Manual Steps (ausstehend)
 - ✅ R2 bucket `elbtronika-assets` — done
@@ -117,11 +118,25 @@ Phase 0 (Legal + Stripe KYC) → Phase 3 (Infra: R2 + Supabase + Sanity) → Pha
 - `apps/web/src/lib/supabase/auth-actions.ts` — server actions for auth + profiles
 - `docs/adr/0004-auth-phase4.md`
 
-## Phase 5 Entry — Nächste Schritte
-Phase 5–7 blocked on Phase 0 (legal/KYC). When unblocked:
-1. Phase 5: Content ingestion (R2 upload flow, Sanity publishing)
-2. Phase 6: E-commerce (cart, checkout, Stripe Payment Intents)
-3. Phase 7: Single Canvas (WebGPU Immersive Mode)
+## Phase 5 Deliverables (Done 2026-04-29)
+- `apps/cms/schemas/room.ts` — Room-Schema (ersetzt exhibition)
+- `apps/cms/schemas/set.ts` — DJ Audio Set Schema
+- `apps/cms/schemas/artwork.ts` — +story, +textures[], +associatedSet, +room refs
+- `supabase/migrations/20260427000001_phase5_content_model.sql` — rooms table + set_id/room_id FKs + RLS
+- `apps/web/src/lib/supabase/admin.ts` — Service-Role Client (bypass RLS)
+- `apps/web/app/api/webhooks/sanity/route.ts` — HMAC-verified Sanity→Supabase sync
+- `apps/web/app/api/assets/upload/route.ts` — Presigned R2 PUT URL (image/model/audio)
+- `apps/web/app/[locale]/dashboard/artist/page.tsx` — Artist Dashboard (Server Component)
+- `apps/web/app/[locale]/dashboard/artist/new/page.tsx` — New Artwork form (RHF + Zod)
+- `apps/web/app/[locale]/dashboard/artist/new/actions.ts` — createArtworkDraft Server Action
+- `supabase/seed.sql` — Dev-Seed (deterministisch, idempotent)
+- `apps/web/__fixtures__/seed.ts` — TypeScript UUID-Fixtures
+- `docs/adr/0005-content-model.md` — ADR: dual-layer, room, R2 presigned PUT
+
+## Phase 6 Entry — Nächste Schritte
+Phase 6–7 blocked on Phase 0 (legal/KYC). When unblocked:
+1. Phase 6: E-commerce (cart, checkout, Stripe Payment Intents)
+2. Phase 7: Single Canvas (WebGPU Immersive Mode)
 
 ## Cowork Tool Rules (gelernt in Phase 1)
 **Vollständig:** `docs/agent-preflight-protocol.md` — IMMER lesen beim Session-Start.

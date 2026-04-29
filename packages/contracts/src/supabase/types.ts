@@ -131,7 +131,9 @@ export type Database = {
           medium: string | null;
           model_url: string | null;
           price_eur: number;
+          room_id: string | null;
           sanity_id: string | null;
+          set_id: string | null;
           slug: string;
           title: string;
           updated_at: string;
@@ -152,7 +154,9 @@ export type Database = {
           medium?: string | null;
           model_url?: string | null;
           price_eur?: number;
+          room_id?: string | null;
           sanity_id?: string | null;
+          set_id?: string | null;
           slug: string;
           title: string;
           updated_at?: string;
@@ -173,7 +177,9 @@ export type Database = {
           medium?: string | null;
           model_url?: string | null;
           price_eur?: number;
+          room_id?: string | null;
           sanity_id?: string | null;
+          set_id?: string | null;
           slug?: string;
           title?: string;
           updated_at?: string;
@@ -188,6 +194,45 @@ export type Database = {
             referencedColumns: ["id"];
           },
         ];
+      };
+      rooms: {
+        Row: {
+          created_at: string;
+          id: string;
+          is_published: boolean;
+          lighting_preset: string;
+          max_artworks: number;
+          sanity_id: string | null;
+          skybox: string;
+          slug: string;
+          title: string;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          is_published?: boolean;
+          lighting_preset?: string;
+          max_artworks?: number;
+          sanity_id?: string | null;
+          skybox?: string;
+          slug: string;
+          title: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          is_published?: boolean;
+          lighting_preset?: string;
+          max_artworks?: number;
+          sanity_id?: string | null;
+          skybox?: string;
+          slug?: string;
+          title?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
       };
       audit_events: {
         Row: {

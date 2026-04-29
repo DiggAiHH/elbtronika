@@ -2,7 +2,7 @@
 
 > **When to read this:** Start of every new chat session before touching code or tools.
 > Written from real pain in Phase 1–4. Each entry has a root cause.
-> *Last updated: 2026-04-26 — Phase 4 complete (Auth + Onboarding)*
+> *Last updated: 2026-04-29 — Phase 5 complete (Content Model & CMS Integration)*
 
 ---
 
@@ -492,6 +492,12 @@ experimental: { typedRoutes: true }
 | `@/*` alias misses `app/` routes | TS can't find `i18n/routing` | Use dual alias: `["./\*", "./src/\*"]` |
 | Next.js middleware false redirects | Prefetches trigger auth redirect | Guard in Server Component layout, not middleware |
 | Supabase cookies lost after locale redirect | Session gone after `/` → `/de/` | Merge Supabase cookies into i18n response (see ADR 0004) |
+| Sanity CMS `tsc --noEmit` ~100 errors | All in `node_modules` (Sanity 3.99 + Node 22 type gap) | Filter with `findstr /i "schemas\\"` — 0 errors in own code is the real check |
+| Service-Role key in browser | RLS bypassed for all users | `createAdminClient()` ONLY in Route Handlers / Server Actions — never in `"use client"` files |
+| `vi.mock()` call order in Vitest | Mock not applied if after import | Always `vi.mock()` before any subject imports in test files |
+| HMAC webhook replay attack | Old requests replayed | `Math.abs(Date.now()/1000 - ts) > 300` → 401. Always validate timestamp. |
+| R2 presigned URL expiry | URL valid only 3600s | Never cache `uploadUrl`. Always POST `/api/assets/upload` fresh per upload. |
+| `useTransition` + async in `startTransition` | Warning: not wrapped in `act()` in tests | In Vitest, use `waitFor` around assertions after transition |
 
 ---
 
@@ -521,12 +527,12 @@ Phase 1: ✅ Done (v0.1.0) — monorepo, CI, Next.js 15, tokens
 Phase 2: ✅ Done (v0.2.0) — design system, 16 components, Storybook 10, ADR 0002
 Phase 3: ✅ Done (v0.3.0) — Supabase + RLS + Sanity + R2 runbook + Doppler + ADR 0003
 Phase 4: ✅ Done (v0.4.0) — Auth + protected routes + profile flow + Stripe KYC + ADR 0004
-Phase 5–7: 🔒 Blocked    — awaits Phase 0 (legal)
+Phase 5: ✅ Done (v0.5.0) — Content model, Sanity schemas, R2 upload, webhook sync, artist dashboard + ADR 0005
+Phase 6–7: 🔒 Blocked    — awaits Phase 0 (legal)
 
-Phase 5 entry (when Phase 0 unblocked):
-  1. Phase 5: Content ingestion — R2 upload flow, Sanity publishing
-  2. Phase 6: E-commerce — cart, checkout, Stripe Payment Intents
-  3. Phase 7: Single Canvas — WebGPU Immersive Mode
+Phase 6 entry (when Phase 0 unblocked):
+  1. Phase 6: E-commerce — cart, checkout, Stripe Payment Intents
+  2. Phase 7: Single Canvas — WebGPU Immersive Mode
 ```
 
 ---
@@ -561,4 +567,4 @@ Do NOT let engineering progress mask blocked legal work.
 
 ---
 
-*Authors: Claude (Cowork) + Lou | Phase 1: 2026-04-24 | Phase 2: 2026-04-25 | Phase 3: 2026-04-26 | Phase 4: 2026-04-26*
+*Authors: Claude (Cowork) + Lou | Phase 1: 2026-04-24 | Phase 2: 2026-04-25 | Phase 3: 2026-04-26 | Phase 4: 2026-04-26 | Phase 5: 2026-04-29*
