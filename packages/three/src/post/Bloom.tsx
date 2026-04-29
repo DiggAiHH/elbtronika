@@ -10,7 +10,7 @@
  * – Threshold tuned for ELBTRONIKA neon aesthetic (cyan + magenta primaries).
  */
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
-import { BlendFunction } from "postprocessing";
+
 
 interface BloomPassProps {
   /** Bloom strength multiplier. Default 0.4 for subtle neon glow. */
@@ -27,13 +27,12 @@ export function BloomPass({
   mipmapBlur = true,
 }: BloomPassProps) {
   return (
-    <EffectComposer disableNormalPass>
+    <EffectComposer>
       <Bloom
         intensity={intensity}
         luminanceThreshold={luminanceThreshold}
         luminanceSmoothing={0.025}
         mipmapBlur={mipmapBlur}
-        blendFunction={BlendFunction.ADD}
       />
     </EffectComposer>
   );

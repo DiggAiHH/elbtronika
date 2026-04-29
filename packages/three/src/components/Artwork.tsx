@@ -41,7 +41,6 @@ const PROXIMITY_THRESHOLD = 8;
 
 export function ArtworkMesh({
   artworkId,
-  slug,
   title,
   imageUrl,
   width = 2,

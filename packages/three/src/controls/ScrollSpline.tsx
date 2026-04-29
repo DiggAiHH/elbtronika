@@ -32,7 +32,7 @@ interface ScrollSplineProps {
 
 export function ScrollSpline({
   points,
-  curveSegments = 200,
+  curveSegments: _curveSegments = 200,
   lookAheadT = 0.02,
 }: ScrollSplineProps) {
   const { camera } = useThree();

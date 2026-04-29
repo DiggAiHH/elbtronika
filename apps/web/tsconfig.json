@@ -6,9 +6,11 @@
     "paths": {
       "@/*": ["./*", "./src/*"],
       "@elbtronika/ui": ["../../packages/ui/src/index.ts"],
-      "@elbtronika/contracts": ["../../packages/contracts/src/index.ts"]
+      "@elbtronika/contracts": ["../../packages/contracts/src/index.ts"],
+      "@elbtronika/three": ["../../packages/three/src/index.ts"],
+      "@elbtronika/audio": ["../../packages/audio/src/index.ts"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "../../packages/three/src/**/*.ts", "../../packages/three/src/**/*.tsx"],
   "exclude": ["node_modules"]
 }

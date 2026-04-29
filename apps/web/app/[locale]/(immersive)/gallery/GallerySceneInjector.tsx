@@ -8,9 +8,8 @@
  */
 import { useEffect, useMemo } from "react";
 import type { ComponentType } from "react";
-import { useThreeStore } from "@elbtronika/three";
-import { Room1Scene } from "@elbtronika/three/src/scenes/Room1";
-import type { ArtworkMeshProps } from "@elbtronika/three/src/components/Artwork";
+import { useThreeStore, Room1Scene } from "@elbtronika/three";
+import type { ArtworkMeshProps } from "@elbtronika/three";
 
 interface SanityArtwork {
   _id: string;
@@ -46,7 +45,6 @@ export default function GallerySceneInjector({ artworks }: Props) {
     );
 
   // Create a stable wrapper component that captures artwork data in closure.
-  // We re-create it only when artworks change.
   const SceneWrapper = useMemo<ComponentType<unknown>>(() => {
     return function SceneWrapperComponent() {
       return <Room1Scene artworks={meshArtworks} />;

@@ -4,6 +4,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import "@/app/globals.css";
+import "@react-three/fiber";
 import { CanvasRoot } from "@elbtronika/three";
 import { GalleryHUD } from "@elbtronika/three";
 
