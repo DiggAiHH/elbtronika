@@ -23,7 +23,7 @@
 | 10 | Stripe Connect | 🔴 blocked | Stripe-KYC | wartet auf Phase 0 |
 | 11 | AI-Kuration (Claude) | done | Sonnet 4.6 | feature/phase-11-ai - v0.9.0 |
 | 12 | Edge & Performance | done | Sonnet 4.6 | feature/phase-11-ai - v0.10.0 |
-| 13 | Compliance | 🔄 kontinuierlich | Lou + Anwalt | läuft parallel |
+| 13 | Compliance | done | Sonnet 4.6 | feature/phase-11-ai - v0.11.0 |
 | 14 | Testing & QA | 🔄 kontinuierlich | Copilot | pro Phase |
 | 15 | Launch | ⬜ tbd | — | nach Phase 14 |
 

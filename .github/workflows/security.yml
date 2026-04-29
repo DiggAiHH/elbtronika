@@ -1,0 +1,107 @@
+name: Security
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    # Run weekly (Mondays at 09:00 UTC)
+    - cron: "0 9 * * 1"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: "22"
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # 1. Dependency audit
+  # ---------------------------------------------------------------------------
+  audit:
+    name: pnpm audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm audit --audit-level=moderate
+        continue-on-error: true
+      - name: Upload audit report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: audit-report
+          path: apps/web/package.json
+          retention-days: 30
+
+  # ---------------------------------------------------------------------------
+  # 2. Secret scanning (truffleHog)
+  # ---------------------------------------------------------------------------
+  secrets:
+    name: Secret Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: TruffleHog OSS
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: ./
+          base: ${{ github.event.repository.default_branch }}
+          head: HEAD
+          extra_args: --debug --only-verified
+
+  # ---------------------------------------------------------------------------
+  # 3. CodeQL Analysis (JavaScript/TypeScript)
+  # ---------------------------------------------------------------------------
+  codeql:
+    name: CodeQL
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript-typescript
+          queries: security-extended,security-and-quality
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+
+  # ---------------------------------------------------------------------------
+  # 4. OWASP Dependency-Check
+  # ---------------------------------------------------------------------------
+  dependency-check:
+    name: OWASP Dependency-Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run OWASP Dependency-Check
+        uses: dependency-check/Dependency-Check_Action@main
+        with:
+          project: "elbtronika"
+          path: "."
+          format: "JSON"
+          args: >
+            --enableRetired
+      - name: Upload OWASP report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: owasp-report
+          path: reports/
+          retention-days: 30

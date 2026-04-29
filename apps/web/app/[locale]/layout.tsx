@@ -7,6 +7,7 @@ import "@/app/globals.css";
 import "@react-three/fiber";
 import { CanvasRoot } from "@elbtronika/three";
 import { GalleryHUD } from "@elbtronika/three";
+import { ConsentBanner } from "./components/ConsentBanner";
 
 // TODO Phase 2: Import actual font files from /public/fonts
 // For MVP we rely on system fonts + Google Fonts CDN (replaced in Phase 13 with self-hosted)
@@ -65,6 +66,7 @@ export default async function LocaleLayout({ children, params }: Props) {
           {/* Phase 7: DOM HUD overlay – minimap + room indicator */}
           <GalleryHUD />
           {children}
+          <ConsentBanner locale={locale as "de" | "en"} />
         </NextIntlClientProvider>
       </body>
     </html>
