@@ -2,6 +2,7 @@
 // Eselbrücke: "studio wall" — artist sees all their work in one place
 // Server Component: auth-guard via parent layout.tsx
 
+import type { Route } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/src/lib/supabase/server";
@@ -131,7 +132,7 @@ export default async function ArtistDashboardPage({ params }: Props) {
                     >
                       <td className="px-5 py-4 font-medium">
                         <Link
-                          href={`/${locale}/artwork/${artwork.slug}`}
+                          href={`/${locale}/artwork/${artwork.slug}` as Route}
                           className="hover:text-cyan-400 transition-colors"
                         >
                           {artwork.title}
