@@ -5,7 +5,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { createClient } from "./server.js";
+import { createClient } from "./server";
 
 // ── Magic link (passwordless email) ─────────────────────────────────────────
 export async function signInWithMagicLink(
