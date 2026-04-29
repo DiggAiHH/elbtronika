@@ -26,8 +26,8 @@ function makeFluentChain(resolution: FluentResolution = { error: null }) {
     order: vi.fn(() => chain),
     limit: vi.fn(() => Promise.resolve(resolution)),
     // Thenable: `await chain` resolves without needing .limit()
-    then: (onFulfilled, onRejected) =>
-      Promise.resolve(resolution).then(onFulfilled, onRejected),
+    // biome-ignore lint/suspicious/noThenProperty: intentional thenable for awaitable mock chain
+    then: (onFulfilled, onRejected) => Promise.resolve(resolution).then(onFulfilled, onRejected),
   };
   return chain;
 }
@@ -70,9 +70,7 @@ const TEST_SECRET = "test-webhook-secret-32chars-long!";
 function buildRequest(body: object, secret = TEST_SECRET): Request {
   const rawBody = JSON.stringify(body);
   const timestamp = Math.floor(Date.now() / 1000).toString();
-  const sig = createHmac("sha256", secret)
-    .update(`${timestamp}.${rawBody}`)
-    .digest("hex");
+  const sig = createHmac("sha256", secret).update(`${timestamp}.${rawBody}`).digest("hex");
 
   return new Request("http://localhost/api/webhooks/sanity", {
     method: "POST",
@@ -157,9 +155,9 @@ describe("POST /api/webhooks/sanity", () => {
 
     // update() is called for both artworks AND webhook_events mark-processed.
     // Filter to only artworks calls (they carry sanity_id in the update data).
-    const artworkUpdateCalls = mockUpdate.mock.calls.filter(([data]) =>
-      (data as { sanity_id?: string }).sanity_id === "sanity-artwork-42",
-    );
+    const artworkUpdateCalls = (
+      mockUpdate.mock.calls as unknown as Array<[{ sanity_id?: string }, ...unknown[]]>
+    ).filter(([data]) => data.sanity_id === "sanity-artwork-42");
     expect(artworkUpdateCalls.length).toBe(2);
   });
 

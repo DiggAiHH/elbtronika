@@ -7,12 +7,12 @@
 // HLS encoding / Draco+KTX2 compression: TODO Phase 7/8
 // These are triggered post-upload via a Netlify Background Function (placeholder below).
 
-import { createClient } from "@/src/lib/supabase/server";
+import { randomUUID } from "node:crypto";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { randomUUID } from "node:crypto";
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { createClient } from "@/src/lib/supabase/server";
 
 // ---------------------------------------------------------------------------
 // Config
@@ -28,9 +28,9 @@ const MIME_WHITELIST: Record<AssetType, string[]> = {
 
 // Max file sizes in bytes
 const MAX_SIZE: Record<AssetType, number> = {
-  image: 20 * 1024 * 1024,   // 20 MB
-  model: 100 * 1024 * 1024,  // 100 MB (Draco-compressed GLBs can still be large)
-  audio: 500 * 1024 * 1024,  // 500 MB (uncompressed source before HLS encoding)
+  image: 20 * 1024 * 1024, // 20 MB
+  model: 100 * 1024 * 1024, // 100 MB (Draco-compressed GLBs can still be large)
+  audio: 500 * 1024 * 1024, // 500 MB (uncompressed source before HLS encoding)
 };
 
 // R2 path prefixes

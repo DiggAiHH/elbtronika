@@ -2,9 +2,9 @@
 // Eselbrücke: "studio wall" — artist sees all their work in one place
 // Server Component: auth-guard via parent layout.tsx
 
-import { createClient } from "@/src/lib/supabase/server";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { createClient } from "@/src/lib/supabase/server";
 
 type Props = { params: Promise<{ locale: string }> };
 
@@ -138,9 +138,7 @@ export default async function ArtistDashboardPage({ params }: Props) {
                         </Link>
                       </td>
                       <td className="px-5 py-4 text-right text-zinc-300">
-                        {artwork.price_eur != null
-                          ? `€ ${artwork.price_eur.toFixed(2)}`
-                          : "—"}
+                        {artwork.price_eur != null ? `€ ${artwork.price_eur.toFixed(2)}` : "—"}
                       </td>
                       <td className="px-5 py-4 text-center">
                         <span

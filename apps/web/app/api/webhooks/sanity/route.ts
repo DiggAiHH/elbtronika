@@ -5,10 +5,10 @@
 // Idempotency: upsert via sanity_id (ON CONFLICT DO UPDATE)
 // Node runtime required: needs raw body + crypto
 
-import { createAdminClient } from "@/src/lib/supabase/admin";
-import type { Json } from "@elbtronika/contracts";
 import { createHmac, timingSafeEqual } from "node:crypto";
+import type { Json } from "@elbtronika/contracts";
 import { type NextRequest, NextResponse } from "next/server";
+import { createAdminClient } from "@/src/lib/supabase/admin";
 
 // ---------------------------------------------------------------------------
 // Types matching Sanity schema shapes (partial — only fields we mirror)
@@ -76,23 +76,14 @@ interface SanityRoom {
   status?: string;
 }
 
-type SanityDocument =
-  | SanityArtwork
-  | SanityArtist
-  | SanityDj
-  | SanitySet
-  | SanityRoom;
+type SanityDocument = SanityArtwork | SanityArtist | SanityDj | SanitySet | SanityRoom;
 
 // ---------------------------------------------------------------------------
 // Signature verification
 // Format: t=<unix_timestamp>,v1=<hex_hmac>
 // Signed message: "<timestamp>.<raw_body>"
 // ---------------------------------------------------------------------------
-function verifySignature(
-  rawBody: string,
-  signatureHeader: string | null,
-  secret: string,
-): boolean {
+function verifySignature(rawBody: string, signatureHeader: string | null, secret: string): boolean {
   if (!signatureHeader) return false;
 
   const parts = Object.fromEntries(
@@ -107,9 +98,7 @@ function verifySignature(
   const tsDelta = Math.abs(Date.now() / 1000 - Number(timestamp));
   if (tsDelta > 300) return false;
 
-  const expected = createHmac("sha256", secret)
-    .update(`${timestamp}.${rawBody}`)
-    .digest("hex");
+  const expected = createHmac("sha256", secret).update(`${timestamp}.${rawBody}`).digest("hex");
 
   try {
     return timingSafeEqual(Buffer.from(signature, "hex"), Buffer.from(expected, "hex"));

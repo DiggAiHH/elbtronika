@@ -77,7 +77,12 @@ describe("POST /api/assets/upload", () => {
     mockGetUser.mockResolvedValue({ data: { user: null }, error: new Error("no session") });
 
     const res = await POST(
-      makeRequest({ filename: "art.jpg", contentType: "image/jpeg", sizeBytes: 1024, assetType: "image" }) as never,
+      makeRequest({
+        filename: "art.jpg",
+        contentType: "image/jpeg",
+        sizeBytes: 1024,
+        assetType: "image",
+      }) as never,
     );
     expect(res.status).toBe(401);
   });
@@ -87,7 +92,12 @@ describe("POST /api/assets/upload", () => {
     mockProfileSelect.mockResolvedValue({ data: { role: "collector" }, error: null });
 
     const res = await POST(
-      makeRequest({ filename: "art.jpg", contentType: "image/jpeg", sizeBytes: 1024, assetType: "image" }) as never,
+      makeRequest({
+        filename: "art.jpg",
+        contentType: "image/jpeg",
+        sizeBytes: 1024,
+        assetType: "image",
+      }) as never,
     );
     expect(res.status).toBe(403);
   });
@@ -106,7 +116,7 @@ describe("POST /api/assets/upload", () => {
       }) as never,
     );
     expect(res.status).toBe(422);
-    const body = await res.json() as { error: string };
+    const body = (await res.json()) as { error: string };
     expect(body.error).toMatch(/not allowed/i);
   });
 
@@ -138,7 +148,7 @@ describe("POST /api/assets/upload", () => {
       }) as never,
     );
     expect(res.status).toBe(422);
-    const body = await res.json() as { error: string };
+    const body = (await res.json()) as { error: string };
     expect(body.error).toMatch(/20MB/);
   });
 
@@ -171,7 +181,7 @@ describe("POST /api/assets/upload", () => {
     );
 
     expect(res.status).toBe(200);
-    const body = await res.json() as { uploadUrl: string; cdnUrl: string; key: string };
+    const body = (await res.json()) as { uploadUrl: string; cdnUrl: string; key: string };
     expect(body.uploadUrl).toMatch(/presigned-url/);
     expect(body.cdnUrl).toMatch(/cdn\.elbtronika\.art/);
     expect(body.key).toMatch(/^artworks\//);
@@ -190,7 +200,7 @@ describe("POST /api/assets/upload", () => {
     );
 
     expect(res.status).toBe(200);
-    const body = await res.json() as { key: string };
+    const body = (await res.json()) as { key: string };
     expect(body.key).toMatch(/^models\//);
   });
 

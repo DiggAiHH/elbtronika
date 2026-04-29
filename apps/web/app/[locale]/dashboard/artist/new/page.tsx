@@ -11,11 +11,11 @@
 //
 // Mini-3D preview: TODO Phase 7 — placeholder image preview for now
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import Link from "next/link";
 import { createArtworkDraft } from "./actions";
 
 // ---------------------------------------------------------------------------
@@ -40,9 +40,7 @@ export default function NewArtworkPage() {
   // Unwrap params — locale is available synchronously via use() in React 19
   // but for simplicity we read it from the URL client-side
   const locale =
-    typeof window !== "undefined"
-      ? window.location.pathname.split("/")[1] ?? "de"
-      : "de";
+    typeof window !== "undefined" ? (window.location.pathname.split("/")[1] ?? "de") : "de";
 
   const [isPending, startTransition] = useTransition();
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -119,7 +117,10 @@ export default function NewArtworkPage() {
         }
 
         const tags = values.genreTags
-          ? values.genreTags.split(",").map((t) => t.trim()).filter(Boolean)
+          ? values.genreTags
+              .split(",")
+              .map((t) => t.trim())
+              .filter(Boolean)
           : [];
 
         const result = await createArtworkDraft({
@@ -211,8 +212,11 @@ export default function NewArtworkPage() {
 
           {/* Image upload + preview */}
           <div>
-            <label className="block text-sm text-zinc-400 mb-1">{t.image}</label>
+            <label htmlFor="image-upload" className="block text-sm text-zinc-400 mb-1">
+              {t.image}
+            </label>
             <input
+              id="image-upload"
               type="file"
               accept="image/jpeg,image/png,image/webp"
               onChange={handleFileChange}
@@ -222,19 +226,13 @@ export default function NewArtworkPage() {
             {imagePreview && (
               <div className="mt-3 relative aspect-video w-full max-w-xs overflow-hidden rounded-md border border-zinc-700">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={imagePreview}
-                  alt="Preview"
-                  className="object-cover w-full h-full"
-                />
+                <img src={imagePreview} alt="Preview" className="object-cover w-full h-full" />
                 <p className="absolute bottom-1 right-1 text-[10px] text-zinc-500 bg-black/60 px-1 rounded">
                   Preview (3D in Phase 7)
                 </p>
               </div>
             )}
-            {uploadProgress && (
-              <p className="mt-2 text-xs text-cyan-400">{uploadProgress}</p>
-            )}
+            {uploadProgress && <p className="mt-2 text-xs text-cyan-400">{uploadProgress}</p>}
           </div>
 
           {/* Medium + Dimensions */}
@@ -250,42 +248,24 @@ export default function NewArtworkPage() {
           {/* Year + Price + Edition */}
           <div className="grid grid-cols-3 gap-4">
             <Field label={t.year} error={errors.year?.message}>
-              <Input
-                {...register("year")}
-                type="number"
-                placeholder="2026"
-              />
+              <Input {...register("year")} type="number" placeholder="2026" />
             </Field>
             <Field label={t.price} error={errors.priceEur?.message}>
-              <Input
-                {...register("priceEur")}
-                type="number"
-                step="0.01"
-                placeholder="500.00"
-              />
+              <Input {...register("priceEur")} type="number" step="0.01" placeholder="500.00" />
             </Field>
             <Field label={t.edition} error={errors.editionSize?.message}>
-              <Input
-                {...register("editionSize")}
-                type="number"
-                placeholder="1"
-              />
+              <Input {...register("editionSize")} type="number" placeholder="1" />
             </Field>
           </div>
 
           {/* Tags */}
           <Field label={t.tags} error={errors.genreTags?.message}>
-            <Input
-              {...register("genreTags")}
-              placeholder="abstract, neon, digital"
-            />
+            <Input {...register("genreTags")} placeholder="abstract, neon, digital" />
           </Field>
 
           {/* Error */}
           {serverError && (
-            <p className="text-sm text-red-400 rounded bg-red-900/20 px-3 py-2">
-              {serverError}
-            </p>
+            <p className="text-sm text-red-400 rounded bg-red-900/20 px-3 py-2">{serverError}</p>
           )}
 
           {/* Submit */}
@@ -316,6 +296,7 @@ function Field({
 }) {
   return (
     <div>
+      {/* biome-ignore lint/a11y/noLabelWithoutControl: input is passed as children */}
       <label className="block text-sm text-zinc-400 mb-1">{label}</label>
       {children}
       {error && <p className="mt-1 text-xs text-red-400">{error}</p>}
@@ -323,18 +304,17 @@ function Field({
   );
 }
 
-const Input = React.forwardRef<
-  HTMLInputElement,
-  React.InputHTMLAttributes<HTMLInputElement>
->(function Input(props, ref) {
-  return (
-    <input
-      ref={ref}
-      {...props}
-      className="w-full rounded-md bg-zinc-800 border border-zinc-700 text-white placeholder-zinc-600 px-3 py-2 text-sm focus:outline-none focus:border-cyan-500 transition-colors"
-    />
-  );
-});
+const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(
+  function Input(props, ref) {
+    return (
+      <input
+        ref={ref}
+        {...props}
+        className="w-full rounded-md bg-zinc-800 border border-zinc-700 text-white placeholder-zinc-600 px-3 py-2 text-sm focus:outline-none focus:border-cyan-500 transition-colors"
+      />
+    );
+  },
+);
 
 // React import for forwardRef
 import React from "react";
