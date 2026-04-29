@@ -4,6 +4,8 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import "@/app/globals.css";
+import { CanvasRoot } from "@elbtronika/three";
+import { GalleryHUD } from "@elbtronika/three";
 
 // TODO Phase 2: Import actual font files from /public/fonts
 // For MVP we rely on system fonts + Google Fonts CDN (replaced in Phase 13 with self-hosted)
@@ -57,11 +59,10 @@ export default async function LocaleLayout({ children, params }: Props) {
     <html lang={locale} className="dark">
       <body>
         <NextIntlClientProvider messages={messages}>
-          {/*
-            Phase 7: <CanvasRoot /> will be mounted here as a fixed overlay.
-            It lives outside the route tree so it never unmounts between navigations.
-            For now this is a placeholder comment – DO NOT add canvas here yet.
-          */}
+          {/* Phase 7: 3D Canvas overlay – lives outside route tree, never unmounts */}
+          <CanvasRoot />
+          {/* Phase 7: DOM HUD overlay – minimap + room indicator */}
+          <GalleryHUD />
           {children}
         </NextIntlClientProvider>
       </body>

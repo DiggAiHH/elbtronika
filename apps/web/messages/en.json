@@ -26,6 +26,9 @@
   },
   "shop": {
     "title": "Shop",
+    "description": "Contemporary art from ELBTRONIKA artists.",
+    "heading": "Artworks",
+    "subheading": "Discover unique pieces.",
     "filterByArtist": "Filter by Artist",
     "filterByDj": "Filter by DJ",
     "filterByPrice": "Filter by Price",
@@ -34,13 +37,23 @@
     "sold": "Sold"
   },
   "artwork": {
+    "backToShop": "Back to Shop",
     "byArtist": "By {artist}",
     "setBy": "Set by {dj}",
     "story": "Story",
     "dimensions": "Dimensions",
     "medium": "Medium",
+    "year": "Year",
+    "room": "Room",
     "acquire": "Acquire",
+    "acquireNote": "Certificate included",
+    "acquireDisabled": "Acquisition available in Phase 10",
+    "comingSoon": "Coming Soon",
     "exclusive": "Exclusive Edition"
+  },
+  "gallery": {
+    "title": "3D Gallery",
+    "description": "Experience ELBTRONIKA art in an immersive 3D space."
   },
   "legal": {
     "imprint": "Imprint",

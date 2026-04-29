@@ -1,0 +1,16 @@
+{
+  "name": "@elbtronika/sanity-studio",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "sanity": "^3.88.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  }
+}

@@ -26,6 +26,9 @@
   },
   "shop": {
     "title": "Shop",
+    "description": "Zeitgenössische Kunst von ELBTRONIKA-Künstlern.",
+    "heading": "Kunstwerke",
+    "subheading": "Entdecke einzigartige Werke.",
     "filterByArtist": "Nach Künstler filtern",
     "filterByDj": "Nach DJ filtern",
     "filterByPrice": "Nach Preis filtern",
@@ -34,13 +37,23 @@
     "sold": "Verkauft"
   },
   "artwork": {
+    "backToShop": "Zurück zum Shop",
     "byArtist": "Von {artist}",
     "setBy": "Set von {dj}",
     "story": "Geschichte",
     "dimensions": "Dimensionen",
     "medium": "Medium",
+    "year": "Jahr",
+    "room": "Raum",
     "acquire": "Erwerben",
+    "acquireNote": "Zertifikat inklusive",
+    "acquireDisabled": "Erwerb folgt in Phase 10",
+    "comingSoon": "Demnächst",
     "exclusive": "Exklusive Edition"
+  },
+  "gallery": {
+    "title": "3D-Galerie",
+    "description": "Erlebe ELBTRONIKA-Kunst in einem immersiven 3D-Raum."
   },
   "legal": {
     "imprint": "Impressum",

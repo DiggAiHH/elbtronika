@@ -132,7 +132,7 @@ export default async function ArtistDashboardPage({ params }: Props) {
                     >
                       <td className="px-5 py-4 font-medium">
                         <Link
-                          href={`/${locale}/artwork/${artwork.slug}` as Route}
+                          href={`/${locale}/shop/artwork/${artwork.slug}` as Route}
                           className="hover:text-cyan-400 transition-colors"
                         >
                           {artwork.title}

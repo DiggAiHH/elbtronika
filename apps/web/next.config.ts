@@ -57,7 +57,7 @@ const nextConfig: NextConfig = {
   },
 
   // Transpile workspace packages
-  transpilePackages: ["@elbtronika/ui", "@elbtronika/contracts"],
+  transpilePackages: ["@elbtronika/ui", "@elbtronika/contracts", "@elbtronika/three"],
 };
 
 export default withNextIntl(nextConfig);
