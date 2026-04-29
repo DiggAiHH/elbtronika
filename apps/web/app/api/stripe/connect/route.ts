@@ -2,14 +2,8 @@
 // Eselbrücke: "passport office" — creates Stripe account, hands out the form link
 
 import { type NextRequest, NextResponse } from "next/server";
-import Stripe from "stripe";
 import { createClient } from "@/src/lib/supabase/server";
-
-function getStripe(): Stripe {
-  const key = process.env.STRIPE_SECRET_KEY;
-  if (!key) throw new Error("STRIPE_SECRET_KEY not configured");
-  return new Stripe(key, { apiVersion: "2026-04-22.dahlia" });
-}
+import { getStripe } from "@elbtronika/payments";
 
 export async function POST(request: NextRequest) {
   const supabase = await createClient();
@@ -17,7 +11,9 @@ export async function POST(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
   const { data: profile } = await supabase
     .from("profiles")
@@ -26,7 +22,10 @@ export async function POST(request: NextRequest) {
     .single();
 
   if (!profile || (profile.role !== "artist" && profile.role !== "dj")) {
-    return NextResponse.json({ error: "Only artists and DJs can onboard." }, { status: 403 });
+    return NextResponse.json(
+      { error: "Only artists and DJs can onboard." },
+      { status: 403 },
+    );
   }
 
   const stripe = getStripe();
@@ -42,14 +41,13 @@ export async function POST(request: NextRequest) {
     let accountId = existing?.stripe_account_id;
 
     if (!accountId) {
-      // exactOptionalPropertyTypes: only pass email when defined
-      const createParams: Stripe.AccountCreateParams = {
-        type: "express",
+      const createParams = {
+        type: "express" as const,
         capabilities: {
           card_payments: { requested: true },
           transfers: { requested: true },
         },
-        business_type: "individual",
+        business_type: "individual" as const,
         metadata: {
           elbtronika_user_id: user.id,
           elbtronika_role: profile.role,
@@ -58,6 +56,12 @@ export async function POST(request: NextRequest) {
       };
       const account = await stripe.accounts.create(createParams);
       accountId = account.id;
+
+      // Store account ID immediately
+      await supabase
+        .from(existingTable)
+        .update({ stripe_account_id: accountId })
+        .eq("profile_id", user.id);
     }
 
     const origin = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
@@ -71,7 +75,9 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json({ url: accountLink.url, accountId });
-  } catch {
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error("[stripe/connect] error:", message);
     return NextResponse.json({ error: "Stripe error" }, { status: 500 });
   }
 }

@@ -18,6 +18,7 @@
     "@aws-sdk/s3-request-presigner": "^3.1037.0",
     "@elbtronika/ai": "workspace:*",
     "@elbtronika/contracts": "workspace:*",
+    "@elbtronika/payments": "workspace:*",
     "@elbtronika/ui": "workspace:*",
     "@hookform/resolvers": "^3.10.0",
     "@sanity/vision": "^4.0.0",
