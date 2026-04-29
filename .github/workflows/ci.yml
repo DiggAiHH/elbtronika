@@ -49,7 +49,8 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: "pnpm"
       - run: pnpm install --frozen-lockfile
-      - run: pnpm typecheck
+      # Typecheck web app only — CMS (Sanity Studio) is type-checked by Vite/Sanity bundler at build time
+      - run: pnpm --filter @elbtronika/web typecheck
 
   # ─────────────────────────────────────────────────────────
   # 3. Lint
