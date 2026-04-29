@@ -18,7 +18,7 @@
 | 5 | Content Model & CMS | ✅ done | Copilot | v0.5.0 |
 | 6 | Classic Mode (Shop) | ✅ done | Sonnet 4.6 | v0.6.0 — Shop/Artist/DJ/Cart implementiert |
 | 7 | Immersive Mode (3D) | ✅ done | Sonnet 4.6 | v0.7.0 — packages/three + CanvasRoot + Gallery Route |
-| 8 | Spatial Audio | ⬜ tbd | Copilot | Phase 7 Interface definiert, Phase 8 kann beginnen |
+| 8 | Spatial Audio | ⚙️ branch-done | Sonnet 4.6 | feature/phase-8-audio @ e8d0892 — v0.8.0 |
 | 9 | Mode Transitions | ⬜ tbd | Copilot | — |
 | 10 | Stripe Connect | 🔴 blocked | Stripe-KYC | wartet auf Phase 0 |
 | 11 | AI-Kuration (Claude) | ⬜ tbd | Copilot | — |
