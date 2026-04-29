@@ -15,9 +15,9 @@
  * and HUD can read their IDs without prop-drilling.
  */
 import { useEffect } from "react";
-import { ArtworkMesh, type ArtworkMeshProps } from "./Artwork.js";
-import { useThreeStore, type RoomConfig } from "../store.js";
-import { BloomPass } from "../post/Bloom.js";
+import { ArtworkMesh, type ArtworkMeshProps } from "./Artwork";
+import { useThreeStore, type RoomConfig } from "../store";
+import { BloomPass } from "../post/Bloom";
 
 interface RoomSlot {
   /** Artwork data from Sanity for this slot */

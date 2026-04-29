@@ -8,6 +8,7 @@
  *   to prevent React re-render cascades at 60 FPS.
  * – Mode transitions are co-ordinated here; the DOM layer subscribes with shallow selectors.
  */
+import type { ComponentType } from "react";
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
 
@@ -40,6 +41,8 @@ export interface ThreeStore {
   cameraPosition: [number, number, number];
   /** Whether asset preload is complete */
   preloaded: boolean;
+  /** Active scene component injected by route – null = show LobbyScene */
+  activeScene: ComponentType<unknown> | null;
 
   // Actions
   setMode: (mode: ThreeMode) => void;
@@ -48,6 +51,7 @@ export interface ThreeStore {
   updateProximity: (artworkId: string, distance: number) => void;
   setCameraPosition: (pos: [number, number, number]) => void;
   setPreloaded: (val: boolean) => void;
+  setActiveScene: (scene: ComponentType<unknown> | null) => void;
 }
 
 export const useThreeStore = create<ThreeStore>()(
@@ -58,6 +62,7 @@ export const useThreeStore = create<ThreeStore>()(
     proximity: new Map(),
     cameraPosition: [0, 0, 0],
     preloaded: false,
+    activeScene: null,
 
     setMode: (mode) => set({ mode }),
     setCurrentRoom: (id) => set({ currentRoomId: id }),
@@ -74,5 +79,6 @@ export const useThreeStore = create<ThreeStore>()(
     },
     setCameraPosition: (pos) => set({ cameraPosition: pos }),
     setPreloaded: (val) => set({ preloaded: val }),
+    setActiveScene: (scene) => set({ activeScene: scene }),
   })),
 );

@@ -13,7 +13,7 @@ import { useRef, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useTexture, Html } from "@react-three/drei";
 import type { Mesh, Camera } from "three";
-import { useThreeStore } from "../store.js";
+import { useThreeStore } from "../store";
 
 export interface ArtworkMeshProps {
   /** Artwork Sanity document ID */

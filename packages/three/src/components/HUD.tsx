@@ -8,7 +8,7 @@
  * It subscribes to the ThreeStore for camera position and current room.
  * Renders only when mode === "immersive".
  */
-import { useThreeStore } from "../store.js";
+import { useThreeStore } from "../store";
 
 export function GalleryHUD() {
   const mode = useThreeStore((s) => s.mode);

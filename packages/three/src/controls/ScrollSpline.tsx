@@ -13,7 +13,7 @@
 import { useEffect, useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { CatmullRomCurve3, Vector3 } from "three";
-import { useThreeStore } from "../store.js";
+import { useThreeStore } from "../store";
 
 interface SplinePoint {
   x: number;

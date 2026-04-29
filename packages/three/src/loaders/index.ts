@@ -4,8 +4,8 @@
  * Usage: call initDracoLoader(gl) once in CanvasRoot onCreated.
  * drei's useGLTF will pick up the configured DRACOLoader automatically.
  */
-import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
-import { KTX2Loader } from "three/addons/loaders/KTX2Loader.js";
+import { DRACOLoader } from "three/addons/loaders/DRACOLoader";
+import { KTX2Loader } from "three/addons/loaders/KTX2Loader";
 import type { WebGLRenderer } from "three";
 
 // Draco decoder WASM is served from the CDN path below.
@@ -38,8 +38,8 @@ export function getKTX2Loader(renderer: WebGLRenderer): KTX2Loader {
 }
 
 /** Call from R3F <Canvas onCreated> to wire loaders into drei's useGLTF cache. */
-export function initLoaders(renderer: WebGLRenderer): void {
-  const { useGLTF } = require("@react-three/drei") as typeof import("@react-three/drei");
+export async function initLoaders(renderer: WebGLRenderer): Promise<void> {
+  const { useGLTF } = await import("@react-three/drei");
   useGLTF.setDecoderPath(DRACO_CDN);
   getKTX2Loader(renderer);
 }

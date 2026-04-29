@@ -10,8 +10,8 @@
  * – The gallery page calls `useThreeStore.setCurrentRoom("room-1")` on mount.
  * – ScrollSpline reads currentRoomId to know which spline path to activate.
  */
-import { GalleryRoom } from "../components/Room.js";
-import type { ArtworkMeshProps } from "../components/Artwork.js";
+import { GalleryRoom } from "../components/Room";
+import type { ArtworkMeshProps } from "../components/Artwork";
 
 interface Room1Props {
   artworks?: Array<Omit<ArtworkMeshProps, "position" | "rotationY"> | null>;
@@ -22,7 +22,7 @@ const PLACEHOLDER: Omit<ArtworkMeshProps, "position" | "rotationY"> = {
   artworkId: "placeholder",
   slug: "",
   title: "– Coming Soon –",
-  imageUrl: "/images/placeholder-artwork.jpg",
+  imageUrl: "/images/placeholder-artwork.svg",
   width: 1.8,
   height: 2.5,
 };

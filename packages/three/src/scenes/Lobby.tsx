@@ -8,7 +8,7 @@
  */
 import { useEffect } from "react";
 import { Html } from "@react-three/drei";
-import { useThreeStore } from "../store.js";
+import { useThreeStore } from "../store";
 
 export function LobbyScene() {
   const currentRoomId = useThreeStore((s) => s.currentRoomId);
