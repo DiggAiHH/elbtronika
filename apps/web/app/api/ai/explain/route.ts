@@ -1,11 +1,11 @@
 // AI Explanation (XAI — "Warum?")
 // Eselbrücke: "Der Künstler erklärt sein Werk" — Nutzer fragt nach Begründung einer KI-Empfehlung
 
+import { createExplainPrompt, generateJson } from "@elbtronika/ai";
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { auditLog, checkUserRateLimit, hashText } from "@/src/lib/ai/server";
 import { createClient } from "@/src/lib/supabase/server";
-import { generateJson, createExplainPrompt } from "@elbtronika/ai";
-import { checkUserRateLimit, auditLog, hashText } from "@/src/lib/ai/server";
 
 const ExplainRequestSchema = z.object({
   decisionId: z.string().uuid(),
@@ -46,10 +46,7 @@ export async function POST(request: NextRequest) {
   // Rate limit
   const rate = await checkUserRateLimit(user.id, role);
   if (!rate.allowed) {
-    return NextResponse.json(
-      { error: "Rate limit exceeded", limit: rate.limit },
-      { status: 429 },
-    );
+    return NextResponse.json({ error: "Rate limit exceeded", limit: rate.limit }, { status: 429 });
   }
 
   // Fetch the original decision
@@ -60,10 +57,7 @@ export async function POST(request: NextRequest) {
     .single();
 
   if (!decision) {
-    return NextResponse.json(
-      { error: "Decision not found" },
-      { status: 404 },
-    );
+    return NextResponse.json({ error: "Decision not found" }, { status: 404 });
   }
 
   try {
@@ -77,10 +71,7 @@ export async function POST(request: NextRequest) {
       explanation: z.string(),
     });
 
-    const { response, data } = await generateJson(
-      prompt,
-      ExplainResultSchema,
-    );
+    const { response, data } = await generateJson(prompt, ExplainResultSchema);
 
     // Audit log
     const promptText = `${prompt.system}\n${prompt.messages.map((m) => m.content).join("\n")}`;
@@ -111,9 +102,6 @@ export async function POST(request: NextRequest) {
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     console.error("[ai/explain] generation error:", message);
-    return NextResponse.json(
-      { error: "AI generation failed" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: "AI generation failed" }, { status: 500 });
   }
 }

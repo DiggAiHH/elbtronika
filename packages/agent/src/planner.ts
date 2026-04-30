@@ -45,7 +45,7 @@ export class Planner {
   async planWithLLM(
     task: AgentTask,
     availableTools: string[],
-    _memoryContext: string
+    _memoryContext: string,
   ): Promise<PlanResult> {
     // This would call @elbtronika/ai generate() with a planning prompt
     // For now, return a structured placeholder that the agent loop uses

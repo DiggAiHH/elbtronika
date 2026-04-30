@@ -3,8 +3,8 @@ import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { getClient } from "@/lib/sanity/client";
 import { allArtworksQuery } from "@/lib/sanity/queries";
-import { ShopGrid } from "./ShopGrid";
 import { ShopFilters } from "./ShopFilters";
+import { ShopGrid } from "./ShopGrid";
 
 type Props = {
   params: Promise<{ locale: string }>;

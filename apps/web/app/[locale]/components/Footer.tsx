@@ -31,22 +31,26 @@ export default function Footer() {
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#00f5d4] to-[#7b2fff] flex items-center justify-center">
                 <span className="text-[#050508] font-bold text-sm">E</span>
               </div>
-              <span className="text-lg font-bold tracking-[0.15em] text-white">
-                ELBTRONIKA
-              </span>
+              <span className="text-lg font-bold tracking-[0.15em] text-white">ELBTRONIKA</span>
             </div>
             <p className="text-sm text-white/40 leading-relaxed">
-              Where techno meets art. A curated platform connecting visionary artists with electronic music culture.
+              Where techno meets art. A curated platform connecting visionary artists with
+              electronic music culture.
             </p>
           </div>
 
           {/* Links */}
           <div>
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-white/30 mb-4">Platform</h4>
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-white/30 mb-4">
+              Platform
+            </h4>
             <ul className="space-y-2">
               {footerLinks.platform.map((link) => (
                 <li key={link.label}>
-                  <Link href={link.href} className="text-sm text-white/50 hover:text-[#00f5d4] transition-colors duration-300">
+                  <Link
+                    href={link.href}
+                    className="text-sm text-white/50 hover:text-[#00f5d4] transition-colors duration-300"
+                  >
                     {link.label}
                   </Link>
                 </li>
@@ -55,11 +59,16 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-white/30 mb-4">Legal</h4>
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-white/30 mb-4">
+              Legal
+            </h4>
             <ul className="space-y-2">
               {footerLinks.legal.map((link) => (
                 <li key={link.label}>
-                  <Link href={link.href} className="text-sm text-white/50 hover:text-[#00f5d4] transition-colors duration-300">
+                  <Link
+                    href={link.href}
+                    className="text-sm text-white/50 hover:text-[#00f5d4] transition-colors duration-300"
+                  >
                     {link.label}
                   </Link>
                 </li>
@@ -68,11 +77,16 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-white/30 mb-4">Connect</h4>
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-white/30 mb-4">
+              Connect
+            </h4>
             <ul className="space-y-2">
               {footerLinks.connect.map((link) => (
                 <li key={link.label}>
-                  <Link href={link.href} className="text-sm text-white/50 hover:text-[#00f5d4] transition-colors duration-300">
+                  <Link
+                    href={link.href}
+                    className="text-sm text-white/50 hover:text-[#00f5d4] transition-colors duration-300"
+                  >
                     {link.label}
                   </Link>
                 </li>

@@ -33,7 +33,7 @@ function setCookie(value: WebGPUCookie): string {
   return `${COOKIE_NAME}=${encoded}; Path=/; Max-Age=${COOKIE_MAX_AGE}; HttpOnly; Secure; SameSite=Strict`;
 }
 
-export default async function handler(request: Request, context: Context) {
+export default async function handler(request: Request, _context: Context) {
   const url = new URL(request.url);
   const cookieHeader = request.headers.get("cookie");
   const existing = parseCookie(cookieHeader);
@@ -50,24 +50,17 @@ export default async function handler(request: Request, context: Context) {
   // OR we default to classic mode for safety.
   const clientHint = request.headers.get("sec-ch-ua-platform");
   const isDesktop =
-    clientHint === '"Windows"' ||
-    clientHint === '"macOS"' ||
-    clientHint === '"Linux"';
+    clientHint === '"Windows"' || clientHint === '"macOS"' || clientHint === '"Linux"';
 
   // Conservative default: assume WebGPU only on desktop Chrome/Edge
   const userAgent = request.headers.get("user-agent") ?? "";
-  const isChrome =
-    /Chrome\/(\d+)/.test(userAgent) && !/Edg\//.test(userAgent);
+  const isChrome = /Chrome\/(\d+)/.test(userAgent) && !/Edg\//.test(userAgent);
   const isEdge = /Edg\/(\d+)/.test(userAgent);
-  const chromeVersion =
-    parseInt(userAgent.match(/Chrome\/(\d+)/)?.[1] ?? "0", 10);
-  const edgeVersion =
-    parseInt(userAgent.match(/Edg\/(\d+)/)?.[1] ?? "0", 10);
+  const chromeVersion = parseInt(userAgent.match(/Chrome\/(\d+)/)?.[1] ?? "0", 10);
+  const edgeVersion = parseInt(userAgent.match(/Edg\/(\d+)/)?.[1] ?? "0", 10);
 
   const supportsWebGPU =
-    isDesktop &&
-    (isChrome && chromeVersion >= 113) ||
-    (isEdge && edgeVersion >= 113);
+    (isDesktop && isChrome && chromeVersion >= 113) || (isEdge && edgeVersion >= 113);
 
   const cookieValue: WebGPUCookie = {
     supported: supportsWebGPU,

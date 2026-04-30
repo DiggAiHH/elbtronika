@@ -115,7 +115,11 @@ export default async function ArtworkDetailPage({ params }: Props) {
   const supabase = await createSupabaseClient();
 
   const [artwork, relatedArtworks, commerce] = await Promise.all([
-    sanityClient.fetch<ArtworkPageData | null>(artworkBySlugQuery, { slug }, { next: { revalidate: 300 } }),
+    sanityClient.fetch<ArtworkPageData | null>(
+      artworkBySlugQuery,
+      { slug },
+      { next: { revalidate: 300 } },
+    ),
     sanityClient.fetch<RelatedArtwork[]>(allArtworksQuery, {}, { next: { revalidate: 120 } }),
     supabase
       .from("artworks")
@@ -148,11 +152,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
           .maybeSingle()
           .then(async ({ data }) => {
             if (!data?.dj_id) return { data: null };
-            return supabase
-              .from("djs")
-              .select("name, slug")
-              .eq("id", data.dj_id)
-              .maybeSingle();
+            return supabase.from("djs").select("name, slug").eq("id", data.dj_id).maybeSingle();
           }),
       ])
     : [{ data: null }, { data: null }];
@@ -248,7 +248,9 @@ export default async function ArtworkDetailPage({ params }: Props) {
                 <h2 className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-text-secondary)]">
                   {locale === "de" ? "Story" : "Story"}
                 </h2>
-                <p className="text-sm leading-7 text-[var(--color-text-secondary)]">{description}</p>
+                <p className="text-sm leading-7 text-[var(--color-text-secondary)]">
+                  {description}
+                </p>
               </div>
             )}
 
@@ -271,7 +273,8 @@ export default async function ArtworkDetailPage({ params }: Props) {
                   {locale === "de" ? "DJ-Set" : "DJ Set"}
                 </p>
                 <p className="mt-2 text-sm text-[var(--color-text-secondary)]">
-                  {commerceSet?.title ?? (locale === "de" ? "Noch kein Set verknuepft" : "No set linked yet")}
+                  {commerceSet?.title ??
+                    (locale === "de" ? "Noch kein Set verknuepft" : "No set linked yet")}
                 </p>
                 {commerceDj && (
                   <Link
@@ -367,7 +370,9 @@ export default async function ArtworkDetailPage({ params }: Props) {
 function InfoBlock({ label, value }: { label: string; value: string }) {
   return (
     <div className="space-y-1 rounded-2xl border border-[var(--color-border)] bg-black/10 p-4">
-      <dt className="text-xs uppercase tracking-[0.18em] text-[var(--color-text-muted)]">{label}</dt>
+      <dt className="text-xs uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
+        {label}
+      </dt>
       <dd className="text-sm text-[var(--color-text-primary)]">{value}</dd>
     </div>
   );

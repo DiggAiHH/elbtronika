@@ -1,6 +1,6 @@
-import { Suspense } from "react";
-import { getTranslations } from "next-intl/server";
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
+import { Suspense } from "react";
 import { getClient } from "@/src/lib/sanity/client";
 import { allArtworksQuery } from "@/src/lib/sanity/queries";
 import GallerySceneInjector from "./GallerySceneInjector";
@@ -25,11 +25,7 @@ export default async function GalleryPage({ params }: GalleryPageProps) {
   const t = await getTranslations({ locale, namespace: "gallery" });
 
   // Fetch first 3 artworks for Room1 initial state
-  const artworks = await getClient().fetch(
-    allArtworksQuery,
-    {},
-    { next: { revalidate: 60 } },
-  );
+  const artworks = await getClient().fetch(allArtworksQuery, {}, { next: { revalidate: 60 } });
   const roomArtworks = (artworks ?? []).slice(0, 3);
 
   return (
@@ -53,11 +49,8 @@ export default async function GalleryPage({ params }: GalleryPageProps) {
 
       {/* Accessible fallback */}
       <noscript>
-        <p style={{ padding: "2rem", color: "rgba(255,255,255,0.7)" }}>
-          {t("noScript")}
-        </p>
+        <p style={{ padding: "2rem", color: "rgba(255,255,255,0.7)" }}>{t("noScript")}</p>
       </noscript>
     </>
   );
 }
-

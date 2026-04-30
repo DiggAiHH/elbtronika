@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { getClient } from "@/lib/sanity/client";
-import { artistBySlugQuery, allArtworksQuery } from "@/lib/sanity/queries";
+import { allArtworksQuery, artistBySlugQuery } from "@/lib/sanity/queries";
 
 type Props = {
   params: Promise<{ locale: string; slug: string }>;
@@ -34,9 +34,15 @@ export default async function ArtistProfilePage({ params }: Props) {
 
   if (!artist) notFound();
 
-  const artistWorks = (allArtworks as Array<{ artist?: { slug?: { current: string } }; _id: string; slug: { current: string }; title: string; image?: { asset?: { url: string; metadata?: { lqip?: string } }; alt?: string } }>).filter(
-    (a) => a.artist?.slug?.current === slug,
-  );
+  const artistWorks = (
+    allArtworks as Array<{
+      artist?: { slug?: { current: string } };
+      _id: string;
+      slug: { current: string };
+      title: string;
+      image?: { asset?: { url: string; metadata?: { lqip?: string } }; alt?: string };
+    }>
+  ).filter((a) => a.artist?.slug?.current === slug);
 
   const avatarUrl = artist.avatar?.asset?.url;
   const lqip = artist.avatar?.asset?.metadata?.lqip;
@@ -64,14 +70,19 @@ export default async function ArtistProfilePage({ params }: Props) {
             {artist.genreTags && artist.genreTags.length > 0 && (
               <div className="mt-2 flex flex-wrap gap-2">
                 {(artist.genreTags as string[]).map((tag) => (
-                  <span key={tag} className="rounded-full border border-[var(--color-border)] px-3 py-1 text-xs text-[var(--color-text-muted)]">
+                  <span
+                    key={tag}
+                    className="rounded-full border border-[var(--color-border)] px-3 py-1 text-xs text-[var(--color-text-muted)]"
+                  >
                     {tag}
                   </span>
                 ))}
               </div>
             )}
             {artist.bio && (
-              <p className="mt-4 max-w-xl text-sm text-[var(--color-text-secondary)]">{artist.bio}</p>
+              <p className="mt-4 max-w-xl text-sm text-[var(--color-text-secondary)]">
+                {artist.bio}
+              </p>
             )}
           </div>
         </div>

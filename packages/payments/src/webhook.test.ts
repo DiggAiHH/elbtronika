@@ -1,11 +1,11 @@
-import { describe, it, expect, vi } from "vitest";
-import {
-  handleCheckoutSessionCompleted,
-  handlePaymentIntentSucceeded,
-  handlePaymentIntentFailed,
-  handleAccountUpdated,
-} from "./webhook";
+import { describe, expect, it, vi } from "vitest";
 import type { WebhookContext } from "./webhook";
+import {
+  handleAccountUpdated,
+  handleCheckoutSessionCompleted,
+  handlePaymentIntentFailed,
+  handlePaymentIntentSucceeded,
+} from "./webhook";
 
 vi.mock("./transfers", () => ({
   computeRevenueSplit: vi.fn().mockReturnValue({ artistCents: 8000, djCents: 1000 }),

@@ -14,8 +14,11 @@
  * Outputs structured JSON for ingestion into monitoring dashboards.
  */
 
-const TARGET = process.argv.find((a) => a.startsWith("--url="))?.split("=")[1] ?? "https://elbtronika.art";
-const INTERVAL_SEC = Number(process.argv.find((a) => a.startsWith("--interval="))?.split("=")[1] ?? 3600);
+const TARGET =
+  process.argv.find((a) => a.startsWith("--url="))?.split("=")[1] ?? "https://elbtronika.art";
+const _INTERVAL_SEC = Number(
+  process.argv.find((a) => a.startsWith("--interval="))?.split("=")[1] ?? 3600,
+);
 
 const CHECKS = [
   { name: "health", path: "/api/health", expectStatus: 200, expectJson: (j) => j.status === "ok" },
@@ -139,7 +142,7 @@ async function check() {
 
 async function checkSSLExpiry(url) {
   const { hostname } = new URL(url);
-  const { connect } = await import("tls");
+  const { connect } = await import("node:tls");
 
   return new Promise((resolve, reject) => {
     const socket = connect(443, hostname, { servername: hostname }, () => {

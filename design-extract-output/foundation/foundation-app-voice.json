@@ -39,10 +39,7 @@
       "count": 1
     }
   ],
-  "sampleHeadings": [
-    "Company",
-    "Connect"
-  ],
+  "sampleHeadings": ["Company", "Connect"],
   "stats": {
     "buttons": 5,
     "headings": 2

@@ -13,7 +13,7 @@
     "dev": "turbo run dev --parallel",
     "lint": "turbo run lint",
     "test": "turbo run test",
-    "typecheck": "turbo run typecheck",
+    "typecheck": "turbo run typecheck --concurrency=2",
     "format": "biome format --write .",
     "check": "biome check --write .",
     "clean": "turbo run clean && rm -rf node_modules"

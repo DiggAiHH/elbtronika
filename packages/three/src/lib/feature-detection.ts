@@ -16,7 +16,9 @@ export async function detectWebGPU(): Promise<boolean> {
   if (typeof window === "undefined") return false;
   if (!("gpu" in navigator)) return false;
   try {
-    const adapter = await (navigator as unknown as { gpu: { requestAdapter: () => Promise<unknown> } }).gpu.requestAdapter();
+    const adapter = await (
+      navigator as unknown as { gpu: { requestAdapter: () => Promise<unknown> } }
+    ).gpu.requestAdapter();
     return adapter !== null;
   } catch {
     return false;

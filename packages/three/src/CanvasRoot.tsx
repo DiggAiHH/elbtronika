@@ -17,23 +17,15 @@
  * - prefers-reduced-motion disables the opacity transition for accessibility.
  */
 
-import {
-  Suspense,
-  lazy,
-  useCallback,
-  useMemo,
-  memo,
-} from "react";
+import { AdaptiveDpr, PerformanceMonitor, Preload } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
-import { Preload, AdaptiveDpr, PerformanceMonitor } from "@react-three/drei";
-import { useThreeStore } from "./store";
-import { useWebGPUDetection } from "./hooks/useWebGPUDetection";
+import { lazy, memo, Suspense, useCallback, useMemo } from "react";
 import { CanvasErrorBoundary } from "./components/CanvasErrorBoundary";
+import { useWebGPUDetection } from "./hooks/useWebGPUDetection";
+import { useThreeStore } from "./store";
 
 /** Lazy-loaded dev-only FPS stats – tree-shaken in production */
-const DevStats = lazy(() =>
-  import("@react-three/drei").then((mod) => ({ default: mod.Stats })),
-);
+const DevStats = lazy(() => import("@react-three/drei").then((mod) => ({ default: mod.Stats })));
 
 /** Lazy-loaded LobbyScene – only rendered when activeScene is null */
 const LobbyScene = lazy(() =>

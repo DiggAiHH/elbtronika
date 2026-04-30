@@ -1,9 +1,9 @@
 // Stripe Connect — create Express account + return onboarding URL
 // Eselbrücke: "passport office" — creates Stripe account, hands out the form link
 
+import { getStripe } from "@elbtronika/payments";
 import { type NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/src/lib/supabase/server";
-import { getStripe } from "@elbtronika/payments";
 
 export async function POST(request: NextRequest) {
   const supabase = await createClient();
@@ -22,10 +22,7 @@ export async function POST(request: NextRequest) {
     .single();
 
   if (!profile || (profile.role !== "artist" && profile.role !== "dj")) {
-    return NextResponse.json(
-      { error: "Only artists and DJs can onboard." },
-      { status: 403 },
-    );
+    return NextResponse.json({ error: "Only artists and DJs can onboard." }, { status: 403 });
   }
 
   const stripe = getStripe();

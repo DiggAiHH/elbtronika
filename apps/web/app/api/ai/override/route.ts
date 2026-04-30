@@ -40,10 +40,7 @@ export async function POST(request: NextRequest) {
     .single();
 
   if (!decision) {
-    return NextResponse.json(
-      { error: "Decision not found" },
-      { status: 404 },
-    );
+    return NextResponse.json({ error: "Decision not found" }, { status: 404 });
   }
 
   const { data: profile } = await supabase
@@ -64,10 +61,7 @@ export async function POST(request: NextRequest) {
 
   if (error) {
     console.error("[ai/override] update error:", error.message);
-    return NextResponse.json(
-      { error: "Failed to record override" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: "Failed to record override" }, { status: 500 });
   }
 
   return NextResponse.json({ success: true }, { status: 200 });

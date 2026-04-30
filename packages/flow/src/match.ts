@@ -3,8 +3,8 @@
  * Embeds audio and art features into a shared vector space for similarity search.
  */
 
-import type { AudioFeatures } from "./audio";
 import type { ArtFeatures } from "./art";
+import type { AudioFeatures } from "./audio";
 
 export interface MatchResult {
   artworkId: string;
@@ -47,7 +47,9 @@ export function audioToEmbedding(audio: AudioFeatures): number[] {
 
   // Key encoding (one-hot-ish for 12 tones + major/minor)
   const keyBase = audio.key.split(" ")[0] ?? "C";
-  const keyIndex = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"].indexOf(keyBase);
+  const keyIndex = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"].indexOf(
+    keyBase,
+  );
   const isMinor = audio.key.includes("minor");
   const keyEmbedding = Array(12).fill(0);
   if (keyIndex >= 0) keyEmbedding[keyIndex] = 1;
@@ -138,15 +140,15 @@ export function cosineSimilarity(a: number[], b: number[]): number {
 /**
  * Calculate weighted similarity with feature breakdown.
  */
-export function calculateSimilarity(audio: AudioFeatures, art: ArtFeatures): MatchResult["featureBreakdown"] & { total: number } {
+export function calculateSimilarity(
+  audio: AudioFeatures,
+  art: ArtFeatures,
+): MatchResult["featureBreakdown"] & { total: number } {
   const audioEmbed = audioToEmbedding(audio);
   const artEmbed = artToEmbedding(art);
 
   // Weighted components
-  const moodScore = cosineSimilarity(
-    audioEmbed.slice(9, 15),
-    artEmbed.slice(9, 15)
-  );
+  const moodScore = cosineSimilarity(audioEmbed.slice(9, 15), artEmbed.slice(9, 15));
 
   const energyScore = (audioEmbed[2]! + audioEmbed[4]!) / 2; // arousal + rms
   const artEnergy = (artEmbed[1]! + artEmbed[3]!) / 2; // saturation + composition
@@ -175,7 +177,11 @@ export function calculateSimilarity(audio: AudioFeatures, art: ArtFeatures): Mat
 /**
  * Generate human-readable match reason.
  */
-export function generateMatchReason(audio: AudioFeatures, art: ArtFeatures, breakdown: MatchResult["featureBreakdown"]): string {
+export function generateMatchReason(
+  audio: AudioFeatures,
+  art: ArtFeatures,
+  breakdown: MatchResult["featureBreakdown"],
+): string {
   const reasons: string[] = [];
 
   if (breakdown.mood > 0.7) {
@@ -188,18 +194,24 @@ export function generateMatchReason(audio: AudioFeatures, art: ArtFeatures, brea
   }
 
   if (breakdown.energy > 0.7) {
-    reasons.push(`Energy match: ${audio.bpm} BPM ${audio.estimatedGenre} aligns with ${art.styleTags[0] ?? "visual"} intensity`);
+    reasons.push(
+      `Energy match: ${audio.bpm} BPM ${audio.estimatedGenre} aligns with ${art.styleTags[0] ?? "visual"} intensity`,
+    );
   }
 
   if (breakdown.color > 0.7) {
     const dominant = art.dominantColors[0];
     if (dominant) {
-      reasons.push(`Color resonance: RGB(${dominant.r},${dominant.g},${dominant.b}) harmonizes with ${audio.dominantFrequencyRange} frequencies`);
+      reasons.push(
+        `Color resonance: RGB(${dominant.r},${dominant.g},${dominant.b}) harmonizes with ${audio.dominantFrequencyRange} frequencies`,
+      );
     }
   }
 
   if (breakdown.composition > 0.7) {
-    reasons.push(`Structural alignment: ${art.colorHarmony} composition mirrors the track's ${audio.camelot} key structure`);
+    reasons.push(
+      `Structural alignment: ${art.colorHarmony} composition mirrors the track's ${audio.camelot} key structure`,
+    );
   }
 
   if (reasons.length === 0) {
@@ -215,7 +227,7 @@ export function generateMatchReason(audio: AudioFeatures, art: ArtFeatures, brea
 export function matchArtworks(
   audio: AudioFeatures,
   artworks: Array<{ id: string; title: string; artist: string; features: ArtFeatures }>,
-  opts: MatchOptions = {}
+  opts: MatchOptions = {},
 ): MatchResult[] {
   const options = { ...DEFAULT_MATCH_OPTS, ...opts };
 

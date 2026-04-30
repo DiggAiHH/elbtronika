@@ -13,7 +13,10 @@ const AnalyzeRequestSchema = z.object({
 
 export async function POST(request: NextRequest) {
   const supabase = await createClient();
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
 
   if (authError || !user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -48,25 +51,28 @@ export async function POST(request: NextRequest) {
       arousal: Math.round((0.4 + Math.random() * 0.5) * 100) / 100,
       spectral_centroid: 2000 + Math.floor(Math.random() * 4000),
       mood_tags: ["energetic", "driving", "dark"],
-      embedding: Array(128).fill(0).map(() => Math.random()),
+      embedding: Array(128)
+        .fill(0)
+        .map(() => Math.random()),
       source: "simulated" as const,
     };
 
     try {
-      await (supabase as any)
-        .from("audio_features")
-        .upsert(analysis, { onConflict: "set_id" });
+      await (supabase as any).from("audio_features").upsert(analysis, { onConflict: "set_id" });
     } catch (err) {
       console.error("[flow/analyze] upsert error:", err);
     }
 
-    return NextResponse.json({
-      setId: body.setId,
-      analysis,
-      // Wave 5: explicit label so callers can distinguish simulated from measured scores
-      source: "simulated",
-      message: "Audio analysis completed (simulated — not measured from real audio)",
-    }, { status: 200 });
+    return NextResponse.json(
+      {
+        setId: body.setId,
+        analysis,
+        // Wave 5: explicit label so callers can distinguish simulated from measured scores
+        source: "simulated",
+        message: "Audio analysis completed (simulated — not measured from real audio)",
+      },
+      { status: 200 },
+    );
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     console.error("[flow/analyze] error:", message);

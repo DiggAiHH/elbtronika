@@ -3,7 +3,7 @@
  * Working (ephemeral) → Episodic (Supabase) → Skills (filesystem/registry)
  */
 
-import type { WorkingMemory, EpisodicMemory, Skill, AgentTask } from "./types";
+import type { AgentTask, EpisodicMemory, Skill, WorkingMemory } from "./types";
 
 export class MemoryManager {
   private working = new Map<string, WorkingMemory>();
@@ -61,7 +61,8 @@ export class MemoryManager {
       id: `ep-${Date.now()}`,
       taskId: task.id,
       goal: task.goal,
-      outcome: task.status === "completed" ? "success" : task.status === "failed" ? "failure" : "partial",
+      outcome:
+        task.status === "completed" ? "success" : task.status === "failed" ? "failure" : "partial",
       keyObservations: working?.observations.slice(-10) ?? [],
       lessons: working?.reflections ?? [],
       createdAt: new Date().toISOString(),
@@ -75,9 +76,7 @@ export class MemoryManager {
   /** Search episodic memory for similar goals */
   searchEpisodic(query: string, limit = 5): EpisodicMemory[] {
     const lowerQuery = query.toLowerCase();
-    return this.episodic
-      .filter((ep) => ep.goal.toLowerCase().includes(lowerQuery))
-      .slice(0, limit);
+    return this.episodic.filter((ep) => ep.goal.toLowerCase().includes(lowerQuery)).slice(0, limit);
   }
 
   /** Register or update a skill */
@@ -93,7 +92,7 @@ export class MemoryManager {
   findSkills(goal: string): Skill[] {
     const lowerGoal = goal.toLowerCase();
     return Array.from(this.skills.values()).filter((s) =>
-      s.triggerPatterns.some((p) => lowerGoal.includes(p.toLowerCase()))
+      s.triggerPatterns.some((p) => lowerGoal.includes(p.toLowerCase())),
     );
   }
 

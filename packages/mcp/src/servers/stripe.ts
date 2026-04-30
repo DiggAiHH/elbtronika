@@ -11,7 +11,11 @@ function getStripeSecretKey(): string {
   return key;
 }
 
-async function stripeApi(path: string, method: string, body?: Record<string, unknown>): Promise<unknown> {
+async function stripeApi(
+  path: string,
+  method: string,
+  body?: Record<string, unknown>,
+): Promise<unknown> {
   const url = `https://api.stripe.com/v1/${path}`;
   const headers: Record<string, string> = {
     Authorization: `Bearer ${getStripeSecretKey()}`,

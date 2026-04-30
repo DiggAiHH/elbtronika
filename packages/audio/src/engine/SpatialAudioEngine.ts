@@ -35,15 +35,11 @@ const DEFAULT_OPTIONS: Required<SpatialAudioOptions> = {
 };
 
 /** Inverse-square-law gain helper. */
-export function computeGain(
-  distance: number,
-  opts: SpatialAudioOptions = {},
-): number {
+export function computeGain(distance: number, opts: SpatialAudioOptions = {}): number {
   const { refDistance, rolloffFactor, maxDistance } = { ...DEFAULT_OPTIONS, ...opts };
   if (distance <= refDistance) return 1;
   if (distance >= maxDistance) return 0;
-  const gain =
-    refDistance / (refDistance + rolloffFactor * (distance - refDistance));
+  const gain = refDistance / (refDistance + rolloffFactor * (distance - refDistance));
   return Math.max(0, Math.min(1, gain));
 }
 
@@ -95,7 +91,7 @@ export class SpatialAudioEngine {
     config?: SourceConfig,
   ): MediaElementAudioSourceNode {
     if (this.pannerPool.has(trackId)) {
-      return this.pannerPool.get(trackId)!.source;
+      return this.pannerPool.get(trackId)?.source;
     }
 
     const source = this.ctx.createMediaElementSource(audioEl);
@@ -151,7 +147,9 @@ export class SpatialAudioEngine {
       listener.positionZ.setTargetAtTime(z, now, timeConstant);
     } else {
       // Fallback for older browsers
-      (listener as unknown as { setPosition: (x: number, y: number, z: number) => void }).setPosition(x, y, z);
+      (
+        listener as unknown as { setPosition: (x: number, y: number, z: number) => void }
+      ).setPosition(x, y, z);
     }
   }
 
@@ -178,8 +176,18 @@ export class SpatialAudioEngine {
       listener.upZ.setTargetAtTime(upZ, now, timeConstant);
     } else {
       // Fallback for older browsers
-      (listener as unknown as { setOrientation: (fx: number, fy: number, fz: number, ux: number, uy: number, uz: number) => void })
-        .setOrientation(forwardX, forwardY, forwardZ, upX, upY, upZ);
+      (
+        listener as unknown as {
+          setOrientation: (
+            fx: number,
+            fy: number,
+            fz: number,
+            ux: number,
+            uy: number,
+            uz: number,
+          ) => void;
+        }
+      ).setOrientation(forwardX, forwardY, forwardZ, upX, upY, upZ);
     }
   }
 

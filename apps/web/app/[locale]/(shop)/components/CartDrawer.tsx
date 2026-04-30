@@ -1,7 +1,7 @@
 "use client";
 
-import { useCartStore } from "@/src/lib/cart/store";
 import Image from "next/image";
+import { useCartStore } from "@/src/lib/cart/store";
 
 export function CartDrawer({ locale = "en" }: { locale?: string }) {
   const { item, isOpen, closeCart, removeItem } = useCartStore();
@@ -36,7 +36,12 @@ export function CartDrawer({ locale = "en" }: { locale?: string }) {
             aria-label={locale === "de" ? "Schließen" : "Close"}
           >
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-              <path d="M12 4L4 12M4 4l8 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              <path
+                d="M12 4L4 12M4 4l8 8"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+              />
             </svg>
           </button>
         </div>
@@ -51,11 +56,19 @@ export function CartDrawer({ locale = "en" }: { locale?: string }) {
             <div className="flex gap-4">
               {item.imageUrl && (
                 <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-md bg-[var(--color-surface)]">
-                  <Image src={item.imageUrl} alt={item.title} fill sizes="80px" className="object-cover" />
+                  <Image
+                    src={item.imageUrl}
+                    alt={item.title}
+                    fill
+                    sizes="80px"
+                    className="object-cover"
+                  />
                 </div>
               )}
               <div className="flex flex-1 flex-col gap-1">
-                <p className="font-medium text-[var(--color-text-primary)] line-clamp-2">{item.title}</p>
+                <p className="font-medium text-[var(--color-text-primary)] line-clamp-2">
+                  {item.title}
+                </p>
                 <p className="text-sm text-[var(--color-text-secondary)]">
                   {(item.priceCents / 100).toLocaleString(locale === "de" ? "de-DE" : "en-US", {
                     style: "currency",

@@ -1,13 +1,11 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import { getTranslations } from "next-intl/server";
 import Image from "next/image";
 import Link from "next/link";
+import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { getClient } from "@/lib/sanity/client";
-import { artworkBySlugQuery } from "@/lib/sanity/queries";
+import { allArtworkSlugsQuery, artworkBySlugQuery } from "@/lib/sanity/queries";
 import { ArtworkAudioPlayer } from "./ArtworkAudioPlayer";
-
-import { allArtworkSlugsQuery } from "@/lib/sanity/queries";
 
 type Props = {
   params: Promise<{ locale: string; slug: string }>;
@@ -18,7 +16,11 @@ export const dynamicParams = true;
 export async function generateStaticParams() {
   try {
     const client = getClient();
-    const slugs = await client.fetch<string[]>(allArtworkSlugsQuery, {}, { next: { revalidate: 3600 } });
+    const slugs = await client.fetch<string[]>(
+      allArtworkSlugsQuery,
+      {},
+      { next: { revalidate: 3600 } },
+    );
     return slugs.map((slug) => ({ slug }));
   } catch {
     // Fallback: no static params at build time
@@ -33,7 +35,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (!artwork) return {};
 
-  const title = locale === "de" ? artwork.title?.de ?? artwork.title : artwork.title?.en ?? artwork.title?.de ?? artwork.title;
+  const title =
+    locale === "de"
+      ? (artwork.title?.de ?? artwork.title)
+      : (artwork.title?.en ?? artwork.title?.de ?? artwork.title);
   const imageUrl = artwork.image?.asset?.url;
 
   return {
@@ -60,9 +65,10 @@ export default async function ArtworkDetailPage({ params }: Props) {
 
   if (!artwork) notFound();
 
-  const title = locale === "de"
-    ? (artwork.title?.de ?? artwork.title)
-    : (artwork.title?.en ?? artwork.title?.de ?? artwork.title);
+  const title =
+    locale === "de"
+      ? (artwork.title?.de ?? artwork.title)
+      : (artwork.title?.en ?? artwork.title?.de ?? artwork.title);
 
   const imageUrl = artwork.image?.asset?.url;
   const lqip = artwork.image?.asset?.metadata?.lqip;
@@ -73,8 +79,14 @@ export default async function ArtworkDetailPage({ params }: Props) {
     <main className="min-h-screen bg-[var(--color-background)]">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Breadcrumb */}
-        <nav aria-label="breadcrumb" className="mb-8 flex items-center gap-2 text-sm text-[var(--color-text-muted)]">
-          <Link href={`/${locale}/shop`} className="hover:text-[var(--color-text-primary)] transition-colors">
+        <nav
+          aria-label="breadcrumb"
+          className="mb-8 flex items-center gap-2 text-sm text-[var(--color-text-muted)]"
+        >
+          <Link
+            href={`/${locale}/shop`}
+            className="hover:text-[var(--color-text-primary)] transition-colors"
+          >
             {t("backToShop")}
           </Link>
           <span>/</span>
@@ -105,7 +117,9 @@ export default async function ArtworkDetailPage({ params }: Props) {
           {/* Details */}
           <div className="flex flex-col gap-6">
             <div>
-              <h1 className="text-3xl font-bold text-[var(--color-text-primary)] sm:text-4xl">{title}</h1>
+              <h1 className="text-3xl font-bold text-[var(--color-text-primary)] sm:text-4xl">
+                {title}
+              </h1>
               {artistName && artistSlug && (
                 <Link
                   href={`/${locale}/artist/${artistSlug}`}
@@ -120,26 +134,38 @@ export default async function ArtworkDetailPage({ params }: Props) {
             <dl className="flex flex-col gap-3">
               {artwork.medium && (
                 <div className="flex items-baseline gap-2">
-                  <dt className="text-xs uppercase tracking-widest text-[var(--color-text-muted)]">{t("medium")}</dt>
+                  <dt className="text-xs uppercase tracking-widest text-[var(--color-text-muted)]">
+                    {t("medium")}
+                  </dt>
                   <dd className="text-sm text-[var(--color-text-secondary)]">{artwork.medium}</dd>
                 </div>
               )}
               {artwork.year && (
                 <div className="flex items-baseline gap-2">
-                  <dt className="text-xs uppercase tracking-widest text-[var(--color-text-muted)]">{t("year")}</dt>
+                  <dt className="text-xs uppercase tracking-widest text-[var(--color-text-muted)]">
+                    {t("year")}
+                  </dt>
                   <dd className="text-sm text-[var(--color-text-secondary)]">{artwork.year}</dd>
                 </div>
               )}
               {artwork.dimensions && (
                 <div className="flex items-baseline gap-2">
-                  <dt className="text-xs uppercase tracking-widest text-[var(--color-text-muted)]">{t("dimensions")}</dt>
-                  <dd className="text-sm text-[var(--color-text-secondary)]">{artwork.dimensions}</dd>
+                  <dt className="text-xs uppercase tracking-widest text-[var(--color-text-muted)]">
+                    {t("dimensions")}
+                  </dt>
+                  <dd className="text-sm text-[var(--color-text-secondary)]">
+                    {artwork.dimensions}
+                  </dd>
                 </div>
               )}
               {artwork.featuredInRoom && (
                 <div className="flex items-baseline gap-2">
-                  <dt className="text-xs uppercase tracking-widest text-[var(--color-text-muted)]">{t("room")}</dt>
-                  <dd className="text-sm text-[var(--color-text-secondary)]">{artwork.featuredInRoom.title}</dd>
+                  <dt className="text-xs uppercase tracking-widest text-[var(--color-text-muted)]">
+                    {t("room")}
+                  </dt>
+                  <dd className="text-sm text-[var(--color-text-secondary)]">
+                    {artwork.featuredInRoom.title}
+                  </dd>
                 </div>
               )}
             </dl>
@@ -149,9 +175,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
 
             {/* CTA – Checkout stub (Phase 10) */}
             <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-6">
-              <p className="mb-4 text-sm text-[var(--color-text-secondary)]">
-                {t("acquireNote")}
-              </p>
+              <p className="mb-4 text-sm text-[var(--color-text-secondary)]">{t("acquireNote")}</p>
               <button
                 type="button"
                 disabled

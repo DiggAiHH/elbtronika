@@ -2,16 +2,16 @@
  * Benchmark Runner — Executes tasks, collects metrics, generates reports.
  */
 
-import { HermesAgent } from "./agent";
-import { MCPClient } from "./mcp-client";
 import {
-  createSupabaseMCPServer,
+  createAudioMCPServer,
   createSanityMCPServer,
   createStripeMCPServer,
-  createAudioMCPServer,
+  createSupabaseMCPServer,
 } from "@elbtronika/mcp";
-import { benchmarkTasks } from "./tasks";
+import { HermesAgent } from "./agent";
+import { MCPClient } from "./mcp-client";
 import type { BenchmarkTask } from "./tasks";
+import { benchmarkTasks } from "./tasks";
 
 export interface RunMetrics {
   taskId: string;
@@ -40,7 +40,13 @@ export interface BenchmarkReport {
     averageExecutionTimeMs: number;
     skillsLearnedTotal: number;
     improvementByRun: Array<{ run: number; avgSuccessRate: number; avgTimeMs: number }>;
-    improvementByTask: Array<{ taskId: string; run1: number; run2: number; run3: number; trend: "improving" | "stable" | "degrading" }>;
+    improvementByTask: Array<{
+      taskId: string;
+      run1: number;
+      run2: number;
+      run3: number;
+      trend: "improving" | "stable" | "degrading";
+    }>;
   };
 }
 
@@ -61,7 +67,9 @@ export class BenchmarkRunner {
   }
 
   async runBenchmark(iterations = 3): Promise<BenchmarkReport> {
-    console.log(`🚀 Starting benchmark: ${benchmarkTasks.length} tasks × ${iterations} iterations = ${benchmarkTasks.length * iterations} total runs\n`);
+    console.log(
+      `🚀 Starting benchmark: ${benchmarkTasks.length} tasks × ${iterations} iterations = ${benchmarkTasks.length * iterations} total runs\n`,
+    );
 
     for (let i = 1; i <= iterations; i++) {
       console.log(`\n📊 Iteration ${i}/${iterations}`);
@@ -97,7 +105,7 @@ export class BenchmarkRunner {
       const toolsCalled = workingMem?.toolCalls.map((tc) => tc.tool) ?? [];
 
       // Calculate replan count (difference between initial plan and final plan)
-      const replanCount = Math.max(0, (result.plan.length - task.expectedTools.length));
+      const replanCount = Math.max(0, result.plan.length - task.expectedTools.length);
 
       // Calculate success rate
       let successRate = 0;
@@ -113,7 +121,12 @@ export class BenchmarkRunner {
         goal: task.goal,
         difficulty: task.difficulty,
         runNumber,
-        status: result.status === "completed" ? "completed" : result.status === "failed" ? "failed" : "partial",
+        status:
+          result.status === "completed"
+            ? "completed"
+            : result.status === "failed"
+              ? "failed"
+              : "partial",
         stepsExecuted: result.currentStep,
         totalSteps: result.plan.length,
         executionTimeMs: executionTime,
@@ -148,8 +161,11 @@ export class BenchmarkRunner {
   private printRunResult(metrics: RunMetrics): void {
     const icon = metrics.status === "completed" ? "✅" : metrics.status === "partial" ? "⚠️" : "❌";
     const time = `${(metrics.executionTimeMs / 1000).toFixed(1)}s`;
-    const skills = metrics.skillsLearned.length > 0 ? ` (+${metrics.skillsLearned.length} skills)` : "";
-    console.log(`  ${icon} ${metrics.taskId} [Run ${metrics.runNumber}] — ${time} — ${Math.round(metrics.successRate * 100)}%${skills}`);
+    const skills =
+      metrics.skillsLearned.length > 0 ? ` (+${metrics.skillsLearned.length} skills)` : "";
+    console.log(
+      `  ${icon} ${metrics.taskId} [Run ${metrics.runNumber}] — ${time} — ${Math.round(metrics.successRate * 100)}%${skills}`,
+    );
     if (metrics.errorMessage) {
       console.log(`     ⚠️ ${metrics.errorMessage.slice(0, 80)}`);
     }
@@ -175,11 +191,14 @@ export class BenchmarkRunner {
     // Improvement by task (compare run 1, 2, 3)
     const improvementByTask = [];
     for (const task of benchmarkTasks) {
-      const taskRuns = this.runs.filter((r) => r.taskId === task.id).sort((a, b) => a.runNumber - b.runNumber);
+      const taskRuns = this.runs
+        .filter((r) => r.taskId === task.id)
+        .sort((a, b) => a.runNumber - b.runNumber);
       const run1 = taskRuns[0]?.successRate ?? 0;
       const run2 = taskRuns[1]?.successRate ?? 0;
       const run3 = taskRuns[2]?.successRate ?? 0;
-      const trend: "improving" | "stable" | "degrading" = run3 > run1 ? "improving" : run3 < run1 ? "degrading" : "stable";
+      const trend: "improving" | "stable" | "degrading" =
+        run3 > run1 ? "improving" : run3 < run1 ? "degrading" : "stable";
       improvementByTask.push({ taskId: task.id, run1, run2, run3, trend });
     }
 

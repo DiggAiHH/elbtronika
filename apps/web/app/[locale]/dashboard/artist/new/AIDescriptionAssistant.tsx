@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import { Button, Input } from "@elbtronika/ui";
+import { useState } from "react";
 
 interface Props {
   locale?: "de" | "en";
@@ -67,11 +67,7 @@ export function AIDescriptionAssistant({ locale = "de", onSelect }: Props) {
             <Input
               value={b}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateBullet(i, e.target.value)}
-              placeholder={
-                locale === "de"
-                  ? `Stichpunkt ${i + 1}`
-                  : `Bullet point ${i + 1}`
-              }
+              placeholder={locale === "de" ? `Stichpunkt ${i + 1}` : `Bullet point ${i + 1}`}
               className="flex-1"
             />
             {bullets.length > 1 && (
@@ -100,15 +96,9 @@ export function AIDescriptionAssistant({ locale = "de", onSelect }: Props) {
           onChange={(e) => setTone(e.target.value as typeof tone)}
           className="h-8 rounded-[var(--radius-md)] border border-[var(--color-border)] bg-transparent px-2 text-xs text-[var(--color-text-primary)]"
         >
-          <option value="gallery">
-            {locale === "de" ? "Galerie" : "Gallery"}
-          </option>
-          <option value="poetic">
-            {locale === "de" ? "Poetisch" : "Poetic"}
-          </option>
-          <option value="factual">
-            {locale === "de" ? "Sachlich" : "Factual"}
-          </option>
+          <option value="gallery">{locale === "de" ? "Galerie" : "Gallery"}</option>
+          <option value="poetic">{locale === "de" ? "Poetisch" : "Poetic"}</option>
+          <option value="factual">{locale === "de" ? "Sachlich" : "Factual"}</option>
         </select>
       </div>
 
@@ -126,9 +116,7 @@ export function AIDescriptionAssistant({ locale = "de", onSelect }: Props) {
             : "Generate 3 variants"}
       </Button>
 
-      {error && (
-        <p className="text-xs text-[var(--color-error)]">{error}</p>
-      )}
+      {error && <p className="text-xs text-[var(--color-error)]">{error}</p>}
 
       {remaining !== null && (
         <p className="text-xs text-[var(--color-text-tertiary)]">

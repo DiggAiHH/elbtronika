@@ -28,10 +28,13 @@ function log(level: LogLevel, message: string, context?: Record<string, unknown>
     console.log(JSON.stringify(entry));
   } else {
     const color =
-      level === "error" ? "\x1b[31m" :
-      level === "warn" ? "\x1b[33m" :
-      level === "info" ? "\x1b[36m" :
-      "\x1b[90m";
+      level === "error"
+        ? "\x1b[31m"
+        : level === "warn"
+          ? "\x1b[33m"
+          : level === "info"
+            ? "\x1b[36m"
+            : "\x1b[90m";
     console.log(`${color}[${entry.level.toUpperCase()}]\x1b[0m ${entry.message}`, context ?? "");
   }
 }

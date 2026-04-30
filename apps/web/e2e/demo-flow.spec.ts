@@ -28,9 +28,9 @@ test.describe("Demo Mode — Complete Investor Flow", () => {
     await expect(page.locator("h1")).toContainText(/Techno|Art/i);
 
     // Demo banner visible in demo mode
-    const demoBanner = page.locator('[data-testid="demo-banner"]').or(
-      page.getByText(/Demo Environment/i)
-    );
+    const demoBanner = page
+      .locator('[data-testid="demo-banner"]')
+      .or(page.getByText(/Demo Environment/i));
     await expect(demoBanner).toBeVisible();
   });
 
@@ -81,9 +81,9 @@ test.describe("Demo Mode — Complete Investor Flow", () => {
       await expect(page).toHaveURL(/artwork\//);
 
       // Story/Description visible
-      const story = page.locator("article, [data-testid='artwork-story']").or(
-        page.locator("p").first()
-      );
+      const story = page
+        .locator("article, [data-testid='artwork-story']")
+        .or(page.locator("p").first());
       await expect(story).toBeVisible();
     }
   });
@@ -94,9 +94,7 @@ test.describe("Demo Mode — Complete Investor Flow", () => {
     await page.waitForLoadState("networkidle");
 
     // Test card hint visible in demo mode
-    const testCardHint = page.locator('[data-testid="test-card-hint"]').or(
-      page.getByText(/4242/)
-    );
+    const testCardHint = page.locator('[data-testid="test-card-hint"]').or(page.getByText(/4242/));
 
     // If checkout is fully implemented, this should be visible
     // If stubbed, we at least verify no crash
@@ -134,9 +132,9 @@ test.describe("Demo Mode — Complete Investor Flow", () => {
     // Wait for potential tour start delay (2s after unlock)
     await newPage.waitForTimeout(3000);
 
-    const tour = newPage.locator('[data-testid="walkthrough-tour"]').or(
-      newPage.getByText(/Welcome to ELBTRONIKA/i)
-    );
+    const tour = newPage
+      .locator('[data-testid="walkthrough-tour"]')
+      .or(newPage.getByText(/Welcome to ELBTRONIKA/i));
 
     const hasTour = await tour.isVisible().catch(() => false);
     if (!hasTour) {
@@ -171,9 +169,9 @@ test.describe("Demo Mode — Complete Investor Flow", () => {
 
     if (!isGated) {
       // If page loads, check for investor-only content
-      const dashboard = page.locator('[data-testid="pitch-dashboard"]').or(
-        page.getByText(/investor|dashboard/i)
-      );
+      const dashboard = page
+        .locator('[data-testid="pitch-dashboard"]')
+        .or(page.getByText(/investor|dashboard/i));
       const hasDashboard = await dashboard.isVisible().catch(() => false);
       if (!hasDashboard) {
         test.info().annotations.push({
@@ -190,7 +188,7 @@ test.describe("Lite Mode Fallback", () => {
     await page.goto("/de/gallery?lite=1");
     await page.waitForLoadState("networkidle");
 
-    const canvas = page.locator("canvas").or(page.locator("[data-testid='gallery-canvas']"));
+    const _canvas = page.locator("canvas").or(page.locator("[data-testid='gallery-canvas']"));
     // In lite mode canvas may or may not render; we just verify no error page
     const errorHeading = page.locator("text=/404|error|fehler/i");
     expect(await errorHeading.isVisible().catch(() => false)).toBe(false);
@@ -222,15 +220,15 @@ test.describe("Spatial Audio — HLS Mock", () => {
     await page.waitForLoadState("networkidle");
 
     // Verify no audio-related error boundary shown
-    const audioError = page.locator('[data-testid="audio-error"]').or(
-      page.getByText(/audio.*failed|audio.*fehler/i)
-    );
+    const audioError = page
+      .locator('[data-testid="audio-error"]')
+      .or(page.getByText(/audio.*failed|audio.*fehler/i));
     expect(await audioError.isVisible().catch(() => false)).toBe(false);
 
     // If AudioContext unlock button exists, click it
-    const audioUnlock = page.locator('[data-testid="audio-unlock"]').or(
-      page.getByRole("button", { name: /enable audio|audio aktivieren/i })
-    );
+    const audioUnlock = page
+      .locator('[data-testid="audio-unlock"]')
+      .or(page.getByRole("button", { name: /enable audio|audio aktivieren/i }));
     if (await audioUnlock.isVisible().catch(() => false)) {
       await audioUnlock.click();
       // AudioContext should resume — no crash
@@ -261,9 +259,7 @@ test.describe("Stripe Checkout — Demo Test-Card Flow", () => {
     await page.waitForLoadState("networkidle");
 
     // Test-Card hint (4242 4242 4242 4242) visible in demo mode
-    const testCardHint = page.locator('[data-testid="test-card-hint"]').or(
-      page.getByText(/4242/)
-    );
+    const testCardHint = page.locator('[data-testid="test-card-hint"]').or(page.getByText(/4242/));
     const hasHint = await testCardHint.isVisible().catch(() => false);
     if (!hasHint) {
       test.info().annotations.push({

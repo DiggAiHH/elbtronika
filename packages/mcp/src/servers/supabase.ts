@@ -4,13 +4,13 @@
  */
 
 import { MCPServer } from "../server";
-import type { ToolDefinition } from "../types";
 import {
-  QueryParamsSchema,
-  InsertParamsSchema,
-  UpdateParamsSchema,
   DeleteParamsSchema,
+  InsertParamsSchema,
+  QueryParamsSchema,
+  UpdateParamsSchema,
 } from "../tools";
+import type { ToolDefinition } from "../types";
 
 function getSupabaseUrl(): string {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL ?? process.env.SUPABASE_URL;
@@ -52,7 +52,10 @@ const tools: ToolDefinition[] = [
         table: { type: "string", description: "Table name" },
         select: { type: "string", description: "Columns to select (default: *)" },
         eq: { type: "object", description: "Filter: { column: value }" },
-        order: { type: "object", properties: { column: { type: "string" }, ascending: { type: "boolean" } } },
+        order: {
+          type: "object",
+          properties: { column: { type: "string" }, ascending: { type: "boolean" } },
+        },
         limit: { type: "number", description: "Max rows (1-100)" },
       },
       required: ["table"],
@@ -105,7 +108,9 @@ const tools: ToolDefinition[] = [
     handler: async (params) => {
       const p = UpdateParamsSchema.parse(params);
       let query = `${p.table}?`;
-      const filters = Object.entries(p.eq).map(([col, val]) => `${col}=eq.${encodeURIComponent(String(val))}`);
+      const filters = Object.entries(p.eq).map(
+        ([col, val]) => `${col}=eq.${encodeURIComponent(String(val))}`,
+      );
       query += filters.join("&");
       return supabaseRequest(query, "PATCH", p.data);
     },
@@ -124,7 +129,9 @@ const tools: ToolDefinition[] = [
     handler: async (params) => {
       const p = DeleteParamsSchema.parse(params);
       let query = `${p.table}?`;
-      const filters = Object.entries(p.eq).map(([col, val]) => `${col}=eq.${encodeURIComponent(String(val))}`);
+      const filters = Object.entries(p.eq).map(
+        ([col, val]) => `${col}=eq.${encodeURIComponent(String(val))}`,
+      );
       query += filters.join("&");
       return supabaseRequest(query, "DELETE");
     },
@@ -135,7 +142,10 @@ const tools: ToolDefinition[] = [
     schema: {
       type: "object",
       properties: {
-        role: { type: "string", enum: ["visitor", "collector", "artist", "dj", "curator", "admin"] },
+        role: {
+          type: "string",
+          enum: ["visitor", "collector", "artist", "dj", "curator", "admin"],
+        },
         limit: { type: "number" },
       },
     },

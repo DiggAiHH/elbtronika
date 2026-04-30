@@ -6,17 +6,23 @@ import { routing } from "@/i18n/routing";
 import "@/app/globals.css";
 import dynamic from "next/dynamic";
 import { ConsentBanner } from "./components/ConsentBanner";
-import { WebVitals } from "./components/WebVitals";
-import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import Navbar from "./components/Navbar";
+import { WebVitals } from "./components/WebVitals";
 
-const CanvasRoot = dynamic(() => import("@elbtronika/three").then((m) => ({ default: m.CanvasRoot })), {
-  loading: () => null,
-});
+const CanvasRoot = dynamic(
+  () => import("@elbtronika/three").then((m) => ({ default: m.CanvasRoot })),
+  {
+    loading: () => null,
+  },
+);
 
-const GalleryHUD = dynamic(() => import("@elbtronika/three").then((m) => ({ default: m.GalleryHUD })), {
-  loading: () => null,
-});
+const GalleryHUD = dynamic(
+  () => import("@elbtronika/three").then((m) => ({ default: m.GalleryHUD })),
+  {
+    loading: () => null,
+  },
+);
 
 type Props = {
   children: React.ReactNode;
@@ -69,9 +75,7 @@ export default async function LocaleLayout({ children, params }: Props) {
           <CanvasRoot />
           <GalleryHUD />
           <Navbar />
-          <main className="flex-1">
-            {children}
-          </main>
+          <main className="flex-1">{children}</main>
           <Footer />
           <ConsentBanner locale={locale as "de" | "en"} />
           <WebVitals />

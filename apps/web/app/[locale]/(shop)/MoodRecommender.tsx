@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { useTranslations } from "next-intl";
 import { Button, Input } from "@elbtronika/ui";
+import { useTranslations } from "next-intl";
+import { useState, useTransition } from "react";
 
 interface Suggestion {
   artworkId: string;
@@ -54,13 +54,9 @@ export function MoodRecommender({ locale = "de" }: Props) {
 
   return (
     <div className="flex flex-col gap-4 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
-      <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">
-        {t("title")}
-      </h3>
+      <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">{t("title")}</h3>
 
-      <p className="text-xs text-[var(--color-text-secondary)]">
-        {t("description")}
-      </p>
+      <p className="text-xs text-[var(--color-text-secondary)]">{t("description")}</p>
 
       <div className="flex gap-2">
         <Input
@@ -72,18 +68,12 @@ export function MoodRecommender({ locale = "de" }: Props) {
           placeholder={t("placeholder")}
           className="flex-1"
         />
-        <Button
-          variant="primary"
-          onClick={handleSubmit}
-          disabled={isPending || !mood.trim()}
-        >
+        <Button variant="primary" onClick={handleSubmit} disabled={isPending || !mood.trim()}>
           {isPending ? t("buttonLoading") : t("buttonIdle")}
         </Button>
       </div>
 
-      {error && (
-        <p className="text-xs text-[var(--color-error)]">{error}</p>
-      )}
+      {error && <p className="text-xs text-[var(--color-error)]">{error}</p>}
 
       {remaining !== null && (
         <p className="text-xs text-[var(--color-text-tertiary)]">
@@ -99,15 +89,9 @@ export function MoodRecommender({ locale = "de" }: Props) {
               href={`/artwork/${s.artworkId}`}
               className="rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-bg)] p-3 transition hover:border-[var(--color-primary)]"
             >
-              <div className="text-sm font-medium text-[var(--color-text-primary)]">
-                {s.title}
-              </div>
-              <div className="text-xs text-[var(--color-text-secondary)]">
-                {s.artist}
-              </div>
-              <div className="mt-1 text-xs text-[var(--color-text-tertiary)]">
-                {s.reason}
-              </div>
+              <div className="text-sm font-medium text-[var(--color-text-primary)]">{s.title}</div>
+              <div className="text-xs text-[var(--color-text-secondary)]">{s.artist}</div>
+              <div className="mt-1 text-xs text-[var(--color-text-tertiary)]">{s.reason}</div>
             </a>
           ))}
         </div>

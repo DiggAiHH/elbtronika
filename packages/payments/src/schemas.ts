@@ -35,13 +35,10 @@ export const RevenueSplitSchema = z
     platformCents: z.number().int().nonnegative(),
     totalCents: z.number().int().positive(),
   })
-  .refine(
-    (data) => data.artistCents + data.djCents + data.platformCents === data.totalCents,
-    {
-      message: "Split sums must equal total",
-      path: ["totalCents"],
-    },
-  );
+  .refine((data) => data.artistCents + data.djCents + data.platformCents === data.totalCents, {
+    message: "Split sums must equal total",
+    path: ["totalCents"],
+  });
 
 export type RevenueSplit = z.infer<typeof RevenueSplitSchema>;
 

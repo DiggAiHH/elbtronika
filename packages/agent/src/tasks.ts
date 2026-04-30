@@ -22,7 +22,11 @@ export const benchmarkTasks: BenchmarkTask[] = [
     goal: "Curate 5 artworks for Room 1 ('Der Keller') that match a 130 BPM dark techno set by DJ Nika",
     context: { roomSlug: "der-keller", djName: "Nika", bpm: 130, genre: "techno", mood: "dark" },
     expectedSkills: ["curate_room"],
-    expectedTools: ["audio_analyze_track", "supabase_query_artworks", "audio_match_artwork_to_track"],
+    expectedTools: [
+      "audio_analyze_track",
+      "supabase_query_artworks",
+      "audio_match_artwork_to_track",
+    ],
     difficulty: "medium",
   },
   {
@@ -47,7 +51,10 @@ export const benchmarkTasks: BenchmarkTask[] = [
     id: "task-004-generate-descriptions",
     type: "custom",
     goal: "Generate 3 gallery-quality descriptions for an artwork with bullets: neon, Berlin club, kinetic sculpture, LED strips",
-    context: { bullets: ["neon", "Berlin club culture", "kinetic sculpture", "LED strips"], language: "de" },
+    context: {
+      bullets: ["neon", "Berlin club culture", "kinetic sculpture", "LED strips"],
+      language: "de",
+    },
     expectedSkills: ["generate_artwork_description"],
     expectedTools: [],
     difficulty: "easy",
@@ -94,7 +101,11 @@ export const benchmarkTasks: BenchmarkTask[] = [
     goal: "Curate 3 ambient/chill artworks for the Lobby room that match a 100 BPM ambient set",
     context: { roomSlug: "lobby", bpm: 100, genre: "ambient", mood: "chill", limit: 3 },
     expectedSkills: ["curate_room"],
-    expectedTools: ["audio_analyze_track", "supabase_query_artworks", "audio_match_artwork_to_track"],
+    expectedTools: [
+      "audio_analyze_track",
+      "supabase_query_artworks",
+      "audio_match_artwork_to_track",
+    ],
     difficulty: "easy",
   },
   {

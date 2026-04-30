@@ -23,9 +23,33 @@ interface ConsentPolicy {
 }
 
 const EU_COUNTRIES = new Set([
-  "AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR",
-  "DE", "GR", "HU", "IE", "IT", "LV", "LT", "LU", "MT", "NL",
-  "PL", "PT", "RO", "SK", "SI", "ES", "SE",
+  "AT",
+  "BE",
+  "BG",
+  "HR",
+  "CY",
+  "CZ",
+  "DK",
+  "EE",
+  "FI",
+  "FR",
+  "DE",
+  "GR",
+  "HU",
+  "IE",
+  "IT",
+  "LV",
+  "LT",
+  "LU",
+  "MT",
+  "NL",
+  "PL",
+  "PT",
+  "RO",
+  "SK",
+  "SI",
+  "ES",
+  "SE",
 ]);
 
 function detectPolicy(geo: GeoData): ConsentPolicy {
@@ -63,7 +87,7 @@ function detectPolicy(geo: GeoData): ConsentPolicy {
   };
 }
 
-export default async function handler(request: Request, context: Context) {
+export default async function handler(_request: Request, context: Context) {
   const geo: GeoData = {
     country: context.geo?.country?.code ?? "UN",
     subdivision: context.geo?.subdivision?.code ?? null,

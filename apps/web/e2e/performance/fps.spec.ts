@@ -6,7 +6,7 @@
  * Target: 60 FPS Desktop, 45 FPS Mobile Mid-Range
  */
 
-import { test, expect } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
 const FPS_TARGET_DESKTOP = 60;
 const SAMPLE_DURATION_MS = 5000;
@@ -20,25 +20,22 @@ test.describe("FPS Budget", () => {
     await page.waitForTimeout(2000); // Let scene settle
 
     // Collect frame timestamps via requestAnimationFrame
-    const timestamps: number[] = await page.evaluate(
-      async (duration: number) => {
-        const times: number[] = [];
-        const start = performance.now();
+    const timestamps: number[] = await page.evaluate(async (duration: number) => {
+      const times: number[] = [];
+      const start = performance.now();
 
-        return new Promise<number[]>((resolve) => {
-          function frame() {
-            times.push(performance.now());
-            if (performance.now() - start < duration) {
-              requestAnimationFrame(frame);
-            } else {
-              resolve(times);
-            }
+      return new Promise<number[]>((resolve) => {
+        function frame() {
+          times.push(performance.now());
+          if (performance.now() - start < duration) {
+            requestAnimationFrame(frame);
+          } else {
+            resolve(times);
           }
-          requestAnimationFrame(frame);
-        });
-      },
-      SAMPLE_DURATION_MS,
-    );
+        }
+        requestAnimationFrame(frame);
+      });
+    }, SAMPLE_DURATION_MS);
 
     // Calculate average FPS
     const frames = timestamps.length;

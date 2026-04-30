@@ -4,12 +4,12 @@
  */
 
 import { v4 as uuidv4 } from "uuid";
-import type { AgentTask, AgentConfig, AgentTaskType } from "./types";
-import { DEFAULT_AGENT_CONFIG } from "./types";
-import { MemoryManager } from "./memory";
-import { SkillRegistry } from "./skills";
-import { Planner } from "./planner";
 import { MCPClient } from "./mcp-client";
+import { MemoryManager } from "./memory";
+import { Planner } from "./planner";
+import { SkillRegistry } from "./skills";
+import type { AgentConfig, AgentTask, AgentTaskType } from "./types";
+import { DEFAULT_AGENT_CONFIG } from "./types";
 
 export interface AgentOptions {
   config?: Partial<AgentConfig>;
@@ -35,11 +35,7 @@ export class HermesAgent {
   }
 
   /** Create a new task and optionally start it */
-  createTask(
-    type: AgentTaskType,
-    goal: string,
-    context: Record<string, unknown> = {}
-  ): AgentTask {
+  createTask(type: AgentTaskType, goal: string, context: Record<string, unknown> = {}): AgentTask {
     const id = uuidv4();
     const task: AgentTask = {
       id,
@@ -93,7 +89,10 @@ export class HermesAgent {
 
         try {
           const result = await this.executeStep(task, step, plan.requiredTools);
-          this.memory.addObservation(taskId, `Step ${i + 1} completed: ${JSON.stringify(result).slice(0, 200)}`);
+          this.memory.addObservation(
+            taskId,
+            `Step ${i + 1} completed: ${JSON.stringify(result).slice(0, 200)}`,
+          );
         } catch (stepErr) {
           const error = stepErr instanceof Error ? stepErr.message : String(stepErr);
           this.memory.addObservation(taskId, `Step ${i + 1} failed: ${error}`);
@@ -111,7 +110,10 @@ export class HermesAgent {
       }
 
       // Reflect and learn
-      this.memory.addReflection(taskId, `Task completed successfully. Plan: ${task.plan.join(" → ")}`);
+      this.memory.addReflection(
+        taskId,
+        `Task completed successfully. Plan: ${task.plan.join(" → ")}`,
+      );
       if (this.config.skillAutoSave && relevantSkills.length === 0) {
         // Auto-generate skill from successful novel task
         const mem = this.memory.getWorkingMemory(taskId);
@@ -121,7 +123,7 @@ export class HermesAgent {
             `Auto-learned skill for ${task.type}`,
             task.goal,
             task.plan,
-            plan.requiredTools
+            plan.requiredTools,
           );
         }
       }
@@ -147,7 +149,7 @@ export class HermesAgent {
   private async executeStep(
     task: AgentTask,
     step: string,
-    requiredTools: string[]
+    requiredTools: string[],
   ): Promise<unknown> {
     // Simulate execution latency for realistic benchmarking
     const baseDelay = this.config.simulatedLatencyMs ?? 0;

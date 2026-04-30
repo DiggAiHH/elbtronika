@@ -1,5 +1,5 @@
-import { describe, it, vi, beforeEach, afterEach } from "vitest";
 import { renderHook } from "@testing-library/react";
+import { afterEach, beforeEach, describe, it, vi } from "vitest";
 import { useProximityAudio } from "./useProximityAudio";
 
 describe("useProximityAudio", () => {
