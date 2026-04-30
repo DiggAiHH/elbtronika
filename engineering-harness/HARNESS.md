@@ -195,6 +195,16 @@ npx designlang https://bandcamp.com --full --out ./design-extract-output/bandcam
 
 ---
 
+## Pre-Flight Protocol (Agent Operations)
+
+Before every session, every agent reads:
+
+- `engineering-harness/PRE_FLIGHT_PROTOCOL.md` — Tool-Matrix, Skills, Windows-Gotchas, Workflows, Memory-Disziplin
+
+Contains the operating manual for all tools, when to use `ReadFile` vs `Agent(subagent_type="explore")`,
+Windows PowerShell-specific fatal errors (UTF-16, `.cmd` suffix, Biome v2 traps), and the
+Green-State Protocol: tests → lint → typecheck → commit → push → run-log.
+
 ## Trust-Boundary Harness
 
 Hermes/MCP, checkout, consent, account deletion, and project-memory corrections

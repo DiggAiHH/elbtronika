@@ -24,3 +24,14 @@
 [[OPUS_48_HANDOFF]]
 [[OPUS_47_TO_48_HANDOFF]]
 [[OPUS_47_OPSIDIAN_DRAFT]]
+
+## Pre-Flight Protocol (2026-04-30)
+
+- [[PRE_FLIGHT_PROTOCOL]] — Agent-Operations-Manual: Tool-Matrix, Windows-Gotchas, Workflow-Protokolle, Memory-Disziplin
+- [[Run-01]] — 5-Zeilen-Run-Log dieser Session: `memory/runs/2026-04-30_Kimi_Run-01.md`
+
+**Neue Protokolle etabliert:**
+1. `engineering-harness/PRE_FLIGHT_PROTOCOL.md` — komplettes Agent-Operations-Manual
+2. `memory/runs/<datum>_<Agent>_<Model>_Run-<nr>.md` — 5-Zeilen-Run-Log pro Session
+3. Green-State-Regel: immer commiten nach tests+lint+typecheck green
+4. Memory-Disziplin: OPSIDIAN_MEMORY.md ist zentrale Index-Datei für alle Handoffs + Run-Logs
