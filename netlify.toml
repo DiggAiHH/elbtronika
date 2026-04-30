@@ -23,6 +23,18 @@
   path = "/api/proxy/*"
   function = "proxy"
 
+[[edge_functions]]
+  path = "/edge/ab-test"
+  function = "ab-test"
+
+[[edge_functions]]
+  path = "/edge/geo-locale"
+  function = "geo-locale"
+
+[[edge_functions]]
+  path = "/*"
+  function = "geo-locale"
+
 # Security headers
 [[headers]]
   for = "/*"

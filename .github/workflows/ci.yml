@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, staging]
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -15,28 +15,18 @@ env:
   NODE_VERSION: "22"
 
 jobs:
-  # ─────────────────────────────────────────────────────────
-  # 1. Install & cache
-  # ─────────────────────────────────────────────────────────
   install:
     name: Install Dependencies
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: pnpm/action-setup@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: "pnpm"
+      - run: pnpm install --frozen-lockfile
 
-      - name: Install
-        run: pnpm install --frozen-lockfile
-
-  # ─────────────────────────────────────────────────────────
-  # 2. Type check
-  # ─────────────────────────────────────────────────────────
   typecheck:
     name: TypeScript
     runs-on: ubuntu-latest
@@ -49,12 +39,8 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: "pnpm"
       - run: pnpm install --frozen-lockfile
-      # Typecheck web app only — CMS (Sanity Studio) is type-checked by Vite/Sanity bundler at build time
       - run: pnpm --filter @elbtronika/web typecheck
 
-  # ─────────────────────────────────────────────────────────
-  # 3. Lint
-  # ─────────────────────────────────────────────────────────
   lint:
     name: Biome Lint
     runs-on: ubuntu-latest
@@ -69,9 +55,6 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
 
-  # ─────────────────────────────────────────────────────────
-  # 4. Unit tests
-  # ─────────────────────────────────────────────────────────
   test:
     name: Unit Tests (Vitest)
     runs-on: ubuntu-latest
@@ -93,9 +76,6 @@ jobs:
           path: apps/web/coverage/
           retention-days: 7
 
-  # ─────────────────────────────────────────────────────────
-  # 5. Build
-  # ─────────────────────────────────────────────────────────
   build:
     name: Next.js Build
     runs-on: ubuntu-latest
@@ -108,12 +88,15 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: "pnpm"
       - run: pnpm install --frozen-lockfile
-      - name: Build
-        run: pnpm build
+
+      - name: Install Doppler CLI
+        uses: dopplerhq/cli-action@v3
+
+      - name: Build with Doppler secrets
         env:
-          # Dummy vars for build – real values injected by Doppler at runtime
-          NEXT_PUBLIC_SUPABASE_URL: "https://placeholder.supabase.co"
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: "placeholder"
+          DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN_PRD }}
+        run: doppler run -- pnpm build
+
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
@@ -123,42 +106,17 @@ jobs:
           if-no-files-found: error
           include-hidden-files: true
 
-  # ─────────────────────────────────────────────────────────
-  # 6. Deploy to Netlify
-  # ─────────────────────────────────────────────────────────
-  deploy:
-    name: Deploy to Netlify
+  security:
+    name: Security Audit
     runs-on: ubuntu-latest
-    needs: build
-    if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
+    needs: install
     steps:
       - uses: actions/checkout@v4
-
       - uses: pnpm/action-setup@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: "pnpm"
-
       - run: pnpm install --frozen-lockfile
-
-      - name: Build
-        run: pnpm build
-        env:
-          NEXT_PUBLIC_SUPABASE_URL: "https://placeholder.supabase.co"
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: "placeholder"
-
-      - name: Install Netlify CLI
-        run: npm install -g netlify-cli
-
-      - name: Deploy (Preview for PRs, Production for main)
+      - run: pnpm audit --audit-level high
         continue-on-error: true
-        run: |
-          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
-            netlify deploy --prod --dir=apps/web/.next --site=${{ secrets.NETLIFY_SITE_ID }}
-          else
-            netlify deploy --dir=apps/web/.next --site=${{ secrets.NETLIFY_SITE_ID }} --alias=pr-${{ github.event.number }}
-          fi
-        env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}

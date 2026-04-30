@@ -2,13 +2,43 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "plugins": [{ "name": "next" }],
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
     "paths": {
-      "@/*": ["./*", "./src/*"],
-      "@elbtronika/ui": ["../../packages/ui/src/index.ts"],
-      "@elbtronika/contracts": ["../../packages/contracts/src/index.ts"]
-    }
+      "@/*": [
+        "./*",
+        "./src/*"
+      ],
+      "@elbtronika/ui": [
+        "../../packages/ui/src/index.ts"
+      ],
+      "@elbtronika/contracts": [
+        "../../packages/contracts/src/index.ts"
+      ],
+      "@elbtronika/three": [
+        "../../packages/three/src/index.ts"
+      ],
+      "@elbtronika/audio": [
+        "../../packages/audio/src/index.ts"
+      ]
+    },
+    "allowJs": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    // Phase-6 WIP files (GPT 5.4 scope — DO NOT MODIFY)
+    "__tests__/shop/cart.test.tsx",
+    "app/[locale]/(shop)/components/AddToCartButton.tsx",
+    "app/[locale]/(shop)/layout.tsx",
+    "app/[locale]/(shop)/shop/artwork/[slug]/opengraph-image.tsx"
+  ]
 }

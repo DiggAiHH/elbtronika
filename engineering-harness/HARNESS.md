@@ -192,3 +192,16 @@ npx designlang https://bandcamp.com --full --out ./design-extract-output/bandcam
 - [ ] MCP-Config für designlang in Claude Desktop Config eintragen
 - [ ] Erste Referenz-URL extrahieren (Superrare / Foundation)
 - [ ] `npx skills add Manavarya09/design-extract` für `/extract-design` Befehl
+
+---
+
+## Trust-Boundary Harness
+
+Hermes/MCP, checkout, consent, account deletion, and project-memory corrections
+use a stricter harness than general token/design work:
+
+- `engineering-harness/HERMES_TRUST_HARNESS.md`
+- `PROMPTS_HERMES_TRUST_2026-04-30.md`
+
+Use it before exposing any agent tool, Stripe action, Supabase write/delete, or
+public "live/ready" claim.

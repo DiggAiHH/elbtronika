@@ -28,8 +28,8 @@ vi.mock("@aws-sdk/s3-request-presigner", () => ({
 }));
 
 vi.mock("@aws-sdk/client-s3", () => ({
-  S3Client: vi.fn().mockImplementation(() => ({})),
-  PutObjectCommand: vi.fn().mockImplementation((input) => input),
+  S3Client: vi.fn(function () { return {}; }),
+  PutObjectCommand: vi.fn(function (input: unknown) { return input; }),
 }));
 
 // ---------------------------------------------------------------------------

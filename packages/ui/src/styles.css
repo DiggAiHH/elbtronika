@@ -13,11 +13,11 @@
   --color-border: rgba(255, 255, 255, 0.08);
 
   /* Brand colors */
-  --color-primary: #00f5d4;
+  --color-primary: #00f5d4; /* Neon Cyan */
   --color-primary-hover: #00d4b8;
-  --color-secondary: #f720b8;
+  --color-secondary: #f720b8; /* Neon Magenta */
   --color-secondary-hover: #d4169e;
-  --color-accent: #7b2fff;
+  --color-accent: #7b2fff; /* Violet */
 
   /* Text */
   --color-text-primary: rgba(255, 255, 255, 0.92);
@@ -84,6 +84,7 @@
 
 html {
   color-scheme: dark;
+  scroll-behavior: smooth;
 }
 
 body {
@@ -92,20 +93,37 @@ body {
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  min-height: 100dvh;
+  /* Prevent layout shift from scrollbar */
+  overflow-x: hidden;
 }
 
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Focus visible – accessible keyboard navigation */
 :focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
   border-radius: var(--radius-sm);
 }
 
+/* Selection */
 ::selection {
   background-color: var(--color-primary);
   color: var(--color-text-inverse);
 }
 
-/* Skeleton shimmer */
+/* Skeleton shimmer animation */
 @keyframes shimmer {
   0% {
     background-position: 200% 0;

@@ -1,0 +1,92 @@
+/**
+ * Global Zustand store for the 3D canvas layer.
+ *
+ * ARCHITECTURE NOTE (ADR 0007):
+ * – useFrame callbacks MUST NOT call React setState.
+ *   Use mutable refs for per-frame data; only commit to store for UI-relevant changes.
+ * – Proximity map uses a mutable ref pattern (distanceRef), not reactive state,
+ *   to prevent React re-render cascades at 60 FPS.
+ * – Mode transitions are co-ordinated here; the DOM layer subscribes with shallow selectors.
+ */
+import type { ComponentType } from "react";
+import { create } from "zustand";
+import { subscribeWithSelector } from "zustand/middleware";
+
+export type ThreeMode = "immersive" | "classic" | "transitioning";
+
+export interface RoomConfig {
+  id: string;
+  slug: string;
+  name: string;
+  artworkIds: string[];
+  sceneConfig?: Record<string, unknown>;
+}
+
+export interface ProximityEntry {
+  /** distance in Three.js world units from camera to artwork */
+  distance: number;
+  artworkId: string;
+}
+
+export interface ThreeStore {
+  /** Current active mode – drives Canvas opacity and pointer-events */
+  mode: ThreeMode;
+  /** ID of the currently visible room */
+  currentRoomId: string | null;
+  /** Rooms pushed by route components */
+  rooms: RoomConfig[];
+  /** Proximity data – written from useFrame, read by audio layer */
+  proximity: Map<string, number>;
+  /** Camera world position – set each frame, read by HUD */
+  cameraPosition: [number, number, number];
+  /** Whether asset preload is complete */
+  preloaded: boolean;
+  /** Active scene component injected by route – null = show LobbyScene */
+  activeScene: ComponentType<unknown> | null;
+
+  // Actions
+  setMode: (mode: ThreeMode) => void;
+  transitionToMode: (target: "immersive" | "classic") => void;
+  setCurrentRoom: (id: string | null) => void;
+  registerRoom: (room: RoomConfig) => void;
+  updateProximity: (artworkId: string, distance: number) => void;
+  setCameraPosition: (pos: [number, number, number]) => void;
+  setPreloaded: (val: boolean) => void;
+  setActiveScene: (scene: ComponentType<unknown> | null) => void;
+}
+
+export const useThreeStore = create<ThreeStore>()(
+  subscribeWithSelector((set, get) => ({
+    mode: "immersive",
+    currentRoomId: null,
+    rooms: [],
+    proximity: new Map(),
+    cameraPosition: [0, 0, 0],
+    preloaded: false,
+    activeScene: null,
+
+    setMode: (mode) => set({ mode }),
+    transitionToMode: (target) => {
+      if (get().mode === "transitioning") return;
+      set({ mode: "transitioning" });
+      setTimeout(() => {
+        set({ mode: target });
+      }, 1200);
+    },
+    setCurrentRoom: (id) => set({ currentRoomId: id }),
+    registerRoom: (room) => {
+      const existing = get().rooms.find((r) => r.id === room.id);
+      if (!existing) {
+        set((s) => ({ rooms: [...s.rooms, room] }));
+      }
+    },
+    updateProximity: (artworkId, distance) => {
+      // Mutate map in-place to avoid object allocation per frame.
+      // Subscribers using shallow equality won't re-render from this.
+      get().proximity.set(artworkId, distance);
+    },
+    setCameraPosition: (pos) => set({ cameraPosition: pos }),
+    setPreloaded: (val) => set({ preloaded: val }),
+    setActiveScene: (scene) => set({ activeScene: scene }),
+  })),
+);

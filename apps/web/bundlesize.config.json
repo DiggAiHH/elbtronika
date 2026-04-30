@@ -1,0 +1,28 @@
+{
+  "$schema": "https://schemas.bundlemon.dev/",
+  "baseDir": ".next/static",
+  "files": [
+    {
+      "path": "chunks/main-*.js",
+      "maxSize": "200kb",
+      "maxPercentIncrease": 10
+    },
+    {
+      "path": "chunks/pages/_app-*.js",
+      "maxSize": "150kb",
+      "maxPercentIncrease": 10
+    },
+    {
+      "path": "chunks/framework-*.js",
+      "maxSize": "50kb",
+      "maxPercentIncrease": 5
+    }
+  ],
+  "groups": [
+    {
+      "path": "chunks/*three*",
+      "maxSize": "500kb"
+    }
+  ],
+  "reportOutput": ["github"]
+}

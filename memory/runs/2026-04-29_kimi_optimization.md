@@ -1,0 +1,6 @@
+- Fixed ArtworkMesh dx bug (operator precedence), webhook orderId bug, CartDrawer import, S3Client mock
+- Updated 29 dependencies: next 15.3→15.5.15, next-intl 3→4.9.1, vite→8.0.10, sanity→4.0, etc.
+- Added CanvasErrorBoundary, AdaptiveDpr, PerformanceMonitor; synced design tokens; refactored i18n to useTranslations
+- Extracted shared AI route utilities (checkUserRateLimit, auditLog, hashText) fixing per-route memory store bug
+- Extracted shared webhook context factory; hardened SpatialAudioEngine dispose + error handling
+- All 77 tests pass; pnpm audit down from 32 vulns (1 critical) to 3 moderate (transitive Sanity uuid)

@@ -60,6 +60,10 @@ export const allArtworksQuery = groq`
   }
 `;
 
+export const allArtworkSlugsQuery = groq`
+  *[_type == "artwork" && defined(slug.current)].slug.current
+`;
+
 export const artworkBySlugQuery = groq`
   *[_type == "artwork" && slug.current == $slug][0] {
     _id,

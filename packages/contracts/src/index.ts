@@ -1,5 +1,8 @@
 // Barrel export – single import point for all contracts
 
+export * from "./schemas.js";
+export * from "./transformers.js";
+
 export * from "./schemas/artist.js";
 export * from "./schemas/artwork.js";
 export * from "./schemas/dj.js";

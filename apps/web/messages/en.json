@@ -26,6 +26,9 @@
   },
   "shop": {
     "title": "Shop",
+    "description": "Contemporary art from ELBTRONIKA artists.",
+    "heading": "Artworks",
+    "subheading": "Discover unique pieces.",
     "filterByArtist": "Filter by Artist",
     "filterByDj": "Filter by DJ",
     "filterByPrice": "Filter by Price",
@@ -33,14 +36,38 @@
     "priceFrom": "From {price}",
     "sold": "Sold"
   },
+  "cart": {
+    "openButtonLabel": "Open cart",
+    "openButtonText": "Cart"
+  },
+  "recommender": {
+    "title": "Mood-based Recommendation",
+    "description": "Describe your desired mood — our AI suggests matching artworks.",
+    "placeholder": "e.g. dark and hypnotic",
+    "buttonLoading": "Thinking…",
+    "buttonIdle": "Recommend",
+    "errorNetwork": "Network error",
+    "remaining": "{count} requests remaining today"
+  },
   "artwork": {
+    "backToShop": "Back to Shop",
     "byArtist": "By {artist}",
     "setBy": "Set by {dj}",
     "story": "Story",
     "dimensions": "Dimensions",
     "medium": "Medium",
+    "year": "Year",
+    "room": "Room",
     "acquire": "Acquire",
+    "acquireNote": "Certificate included",
+    "acquireDisabled": "Acquisition available in Phase 10",
+    "comingSoon": "Coming Soon",
     "exclusive": "Exclusive Edition"
+  },
+  "gallery": {
+    "title": "3D Gallery",
+    "description": "Experience ELBTRONIKA art in an immersive 3D space.",
+    "noScript": "The 3D gallery requires JavaScript. Please enable JavaScript in your browser."
   },
   "legal": {
     "imprint": "Imprint",

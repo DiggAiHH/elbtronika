@@ -1,0 +1,153 @@
+name: Production Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: "Type DEPLOY to confirm production deployment"
+        required: true
+        default: ""
+
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
+env:
+  NODE_VERSION: "22"
+
+jobs:
+  confirm:
+    name: Confirm Deployment
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.confirm != 'DEPLOY'
+    steps:
+      - name: Require confirmation
+        run: |
+          echo "ERROR: You must type DEPLOY to confirm production deployment"
+          exit 1
+
+  checks:
+    name: Pre-Deploy Checks
+    runs-on: ubuntu-latest
+    needs: [confirm]
+    if: always() && (needs.confirm.result == 'success' || needs.confirm.result == 'skipped')
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @elbtronika/web typecheck
+      - run: pnpm lint
+      - run: pnpm test
+      - run: pnpm audit --audit-level high
+        continue-on-error: true
+
+  build:
+    name: Build Production
+    runs-on: ubuntu-latest
+    needs: checks
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
+      - run: pnpm install --frozen-lockfile
+
+      - name: Install Doppler CLI
+        uses: dopplerhq/cli-action@v3
+
+      - name: Build with Doppler secrets
+        env:
+          DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN_PRD }}
+        run: doppler run -- pnpm build
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-build
+          path: apps/web/.next/
+          retention-days: 7
+          if-no-files-found: error
+          include-hidden-files: true
+
+  deploy:
+    name: Deploy to Netlify
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: production
+      url: https://elbtronika.art
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Install Doppler CLI
+        uses: dopplerhq/cli-action@v3
+
+      - name: Build with Doppler secrets
+        env:
+          DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN_PRD }}
+        run: doppler run -- pnpm build
+
+      - name: Install Netlify CLI
+        run: npm install -g netlify-cli
+
+      - name: Deploy to Production
+        id: deploy
+        env:
+          DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN_PRD }}
+        run: |
+          DEPLOY_OUTPUT=$(doppler run -- netlify deploy \
+            --prod \
+            --dir=apps/web/.next \
+            --site=${{ secrets.NETLIFY_SITE_ID }} \
+            --message="Production deploy: ${{ github.sha }}" \
+            --json)
+          echo "$DEPLOY_OUTPUT"
+          echo "deploy_url=$(echo "$DEPLOY_OUTPUT" | jq -r '.deploy_url')" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        if: github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: "v${{ github.run_number }}"
+          name: "Production Release v${{ github.run_number }}"
+          body: |
+            Automated production deployment.
+            - Commit: ${{ github.sha }}
+            - URL: https://elbtronika.art
+          generate_release_notes: true
+
+  validate:
+    name: Post-Deploy Validation
+    runs-on: ubuntu-latest
+    needs: deploy
+    steps:
+      - uses: actions/checkout@v4
+      - name: Wait for deploy propagation
+        run: sleep 45
+      - name: Validate — Health endpoint
+        run: curl -sf https://elbtronika.art/api/health || exit 1
+      - name: Validate — Key pages
+        run: |
+          curl -sf https://elbtronika.art/ || exit 1
+          curl -sf https://elbtronika.art/shop || exit 1
+          curl -sf https://elbtronika.art/gallery || exit 1
+      - name: Validate — Security headers
+        run: |
+          curl -sI https://elbtronika.art/ | grep -i "X-Frame-Options: DENY" || exit 1
+          curl -sI https://elbtronika.art/ | grep -i "X-Content-Type-Options: nosniff" || exit 1
