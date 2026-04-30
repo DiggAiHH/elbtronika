@@ -31,6 +31,7 @@ export {
 export { Select, type SelectProps } from "./components/select";
 export { Skeleton, type SkeletonProps } from "./components/skeleton";
 export { Slider, type SliderProps } from "./components/slider";
+export { DemoBanner } from "./components/DemoBanner";
 export {
   Toast,
   ToastDescription,
