@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useMemo, type ReactNode } from "react";
 
-type ElbMode = "demo" | "staging" | "live";
+export type ElbMode = "demo" | "staging" | "live";
 
 interface EnvContextValue {
   mode: ElbMode;
