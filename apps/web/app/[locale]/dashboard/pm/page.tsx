@@ -11,18 +11,26 @@ export const metadata: Metadata = {
   description: "AI-driven project management and curation hub",
 };
 
-export default function PMHubPage() {
+type Props = {
+  params: Promise<{ locale: string }>;
+};
+
+export default async function PMHubPage({ params }: Props) {
+  const { locale } = await params;
+
   return (
     <div className="min-h-screen bg-[#0a0a0b] text-white p-8">
       <header className="mb-10">
         <h1 className="text-3xl font-bold tracking-tight mb-2">Project Management</h1>
-        <p className="text-neutral-400">Hermes Agent — KI-gesteuertes Projektmanagement & Kuratierung</p>
+        <p className="text-neutral-400">
+          Hermes Agent — KI-gesteuertes Projektmanagement & Kuratierung
+        </p>
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl">
         {/* Tasks Card */}
         <Link
-          href="/dashboard/pm/tasks"
+          href={`/${locale}/dashboard/pm/tasks`}
           className="group block rounded-xl border border-neutral-800 bg-neutral-900/50 p-6 hover:border-neutral-600 transition-colors"
         >
           <div className="flex items-center gap-3 mb-3">
@@ -39,7 +47,7 @@ export default function PMHubPage() {
 
         {/* Curation Card */}
         <Link
-          href="/dashboard/pm/curation"
+          href={`/${locale}/dashboard/pm/curation`}
           className="group block rounded-xl border border-neutral-800 bg-neutral-900/50 p-6 hover:border-neutral-600 transition-colors"
         >
           <div className="flex items-center gap-3 mb-3">
@@ -69,6 +77,7 @@ export default function PMHubPage() {
             href="/api/mcp/tools"
             target="_blank"
             className="text-sm text-green-400 hover:underline"
+            rel="noopener"
           >
             Tools anzeigen →
           </a>

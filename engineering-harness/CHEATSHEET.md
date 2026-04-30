@@ -87,3 +87,21 @@ npx designlang brands superrare.com foundation.app bandcamp.com
 ```powershell
 .\engineering-harness\install.ps1
 ```
+
+---
+
+## Hermes Trust Harness
+
+Use this before agent/MCP/checkout/privacy/status work:
+
+```powershell
+notepad .\engineering-harness\HERMES_TRUST_HARNESS.md
+notepad .\PROMPTS_HERMES_TRUST_2026-04-30.md
+```
+
+First safe prompt:
+
+```text
+Use PROMPTS_HERMES_TRUST_2026-04-30.md section 12.
+Start Wave 0 only: lock /api/mcp/invoke and /api/mcp/tools.
+```
