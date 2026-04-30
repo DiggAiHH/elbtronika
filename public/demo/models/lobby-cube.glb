@@ -1,0 +1,4 @@
+# GLB Stub — Lobby Room Placeholder
+# This is a placeholder file. Replace with actual GLB model.
+# Current: Low-poly cube representing the Lobby room.
+# To generate: Use three.js BoxGeometry exported to GLB via GLTFExporter.

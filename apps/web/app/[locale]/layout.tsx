@@ -9,6 +9,9 @@ import { ConsentBanner } from "./components/ConsentBanner";
 import { WebVitals } from "./components/WebVitals";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import { EnvProvider } from "@/src/components/providers/EnvProvider";
+import { getEnv } from "@/src/lib/env";
+import { DemoBanner } from "@elbtronika/ui";
 
 const CanvasRoot = dynamic(() => import("@elbtronika/three").then((m) => ({ default: m.CanvasRoot })), {
   loading: () => null,
@@ -17,6 +20,11 @@ const CanvasRoot = dynamic(() => import("@elbtronika/three").then((m) => ({ defa
 const GalleryHUD = dynamic(() => import("@elbtronika/three").then((m) => ({ default: m.GalleryHUD })), {
   loading: () => null,
 });
+
+const WalkthroughTour = dynamic(
+  () => import("@elbtronika/ui").then((m) => ({ default: m.WalkthroughTour })),
+  { ssr: false }
+);
 
 type Props = {
   children: React.ReactNode;
@@ -61,20 +69,25 @@ export default async function LocaleLayout({ children, params }: Props) {
   }
 
   const messages = await getMessages();
+  const { ELT_MODE } = getEnv();
 
   return (
     <html lang={locale} className="dark">
       <body className="min-h-dvh flex flex-col">
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <CanvasRoot />
-          <GalleryHUD />
-          <Navbar />
-          <main className="flex-1">
-            {children}
-          </main>
-          <Footer />
-          <ConsentBanner locale={locale as "de" | "en"} />
-          <WebVitals />
+          <EnvProvider mode={ELT_MODE}>
+            <CanvasRoot />
+            <GalleryHUD />
+            <Navbar />
+            <main className="flex-1">
+              {children}
+            </main>
+            <Footer />
+            <ConsentBanner locale={locale as "de" | "en"} />
+            <WebVitals />
+            <DemoBanner mode={ELT_MODE} />
+            <WalkthroughTour locale={locale} />
+          </EnvProvider>
         </NextIntlClientProvider>
       </body>
     </html>

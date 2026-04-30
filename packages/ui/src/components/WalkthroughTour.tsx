@@ -8,7 +8,7 @@ export interface TourStep {
 }
 
 interface WalkthroughTourProps {
-  steps: TourStep[];
+  steps?: TourStep[];
   locale?: string;
   delayMs?: number;
   storageKey?: string;
@@ -31,7 +31,7 @@ const defaultStepsEn: TourStep[] = [
 ];
 
 export function WalkthroughTour({
-  steps,
+  steps = [],
   locale = "de",
   delayMs = 2000,
   storageKey = "elt-tour-dismissed",

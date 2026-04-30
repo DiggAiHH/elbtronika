@@ -1,0 +1,9 @@
+#EXTM3U
+#EXT-X-VERSION:3
+#EXT-X-TARGETDURATION:10
+#EXT-X-MEDIA-SEQUENCE:0
+# Stub HLS manifest for Velvetrace — House / Downtempo
+# Replace with actual segmented audio files.
+#EXTINF:10.0,
+stub-segment-0.ts
+#EXT-X-ENDLIST

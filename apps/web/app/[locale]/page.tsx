@@ -2,8 +2,7 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-
-// import { useEffect, useRef, useState } from "react";
+import { useState, useCallback } from "react";
 
 function localeHref(locale: string, href: string) {
   return `/${locale}${href}`;
@@ -67,6 +66,8 @@ function HeroSection({ locale }: { locale: string }) {
             View Catalog
           </Link>
         </div>
+
+        <SoundToggle />
 
         {/* Scroll indicator */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-fade-in delay-700">
@@ -310,6 +311,39 @@ function MarqueeSection() {
         }
       `}</style>
     </section>
+  );
+}
+
+/* ─────────── SOUND TOGGLE ─────────── */
+function SoundToggle() {
+  const [audioEnabled, setAudioEnabled] = useState(false);
+
+  const toggleAudio = useCallback(() => {
+    setAudioEnabled((prev) => !prev);
+    // In a real implementation, this would unlock/resume the AudioContext
+    // and start ambient background audio.
+  }, []);
+
+  return (
+    <button
+      onClick={toggleAudio}
+      className="mt-8 flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 text-xs text-white/50 hover:text-white/80 hover:border-white/20 transition-all"
+      aria-label={audioEnabled ? "Disable sound" : "Enable sound"}
+    >
+      {audioEnabled ? (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+          <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
+        </svg>
+      ) : (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+          <line x1="23" y1="9" x2="17" y2="15" />
+          <line x1="17" y1="9" x2="23" y2="15" />
+        </svg>
+      )}
+      <span>{audioEnabled ? "Sound on" : "Sound off"}</span>
+    </button>
   );
 }
 
