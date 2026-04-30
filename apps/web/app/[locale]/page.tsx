@@ -35,6 +35,10 @@ function HeroSection({ locale }: { locale: string }) {
           <span className="text-xs font-medium text-white/60">Now Live — Berlin & Digital</span>
         </div>
 
+        <p className="text-sm md:text-base text-[#00f5d4]/70 font-medium tracking-[0.2em] uppercase mb-4 animate-fade-in-up">
+          Where art meets frequency
+        </p>
+
         <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-6 animate-fade-in-up delay-100">
           <span className="text-white">Where</span> <span className="gradient-text">Techno</span>
           <br />
@@ -51,7 +55,7 @@ function HeroSection({ locale }: { locale: string }) {
             href={localeHref(locale, "/gallery")}
             className="group px-8 py-4 text-sm font-semibold text-[#050508] bg-gradient-to-r from-[#00f5d4] to-[#00d4b8] rounded-full hover:shadow-[0_0_40px_rgba(0,245,212,0.3)] transition-all duration-500 hover:scale-105"
           >
-            Enter Gallery
+            Enter Experience
             <span className="inline-block ml-2 transition-transform duration-300 group-hover:translate-x-1">
               →
             </span>
@@ -60,7 +64,7 @@ function HeroSection({ locale }: { locale: string }) {
             href={localeHref(locale, "/shop")}
             className="px-8 py-4 text-sm font-semibold text-white border border-white/15 rounded-full hover:bg-white/[0.05] hover:border-white/30 transition-all duration-300"
           >
-            Browse Collection
+            View Catalog
           </Link>
         </div>
 
