@@ -81,8 +81,8 @@ export async function POST(request: NextRequest) {
       actor_id: user.id,
       type: body.type,
       goal: body.goal,
-      context: body.context,
-      plan: memTask.plan,
+      context: body.context as unknown as import("@elbtronika/contracts").Json,
+      plan: memTask.plan as unknown as import("@elbtronika/contracts").Json,
       status: "pending",
     })
     .select()
@@ -112,7 +112,7 @@ export async function POST(request: NextRequest) {
           const result = agent.getTask(memTask.id)?.result ?? null;
           await supabase
             .from("agent_tasks")
-            .update({ status: "completed", result, completed_at: new Date().toISOString() })
+            .update({ status: "completed", result: result as unknown as import("@elbtronika/contracts").Json, completed_at: new Date().toISOString() })
             .eq("id", taskId);
         } catch (err) {
           const errorMsg = err instanceof Error ? err.message : String(err);

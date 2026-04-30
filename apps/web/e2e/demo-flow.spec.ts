@@ -38,11 +38,11 @@ test.describe("Demo Mode — Complete Investor Flow", () => {
 
     // FPS budget: after 5s, page should be responsive (no long tasks blocking)
     await page.waitForTimeout(5000);
-    const performance = await page.evaluate(() => {
-      const nav = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming;
+    const perf = await page.evaluate(() => {
+      const nav = window.performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming;
       return nav ? { domInteractive: nav.domInteractive } : null;
     });
-    expect(performance).toBeTruthy();
+    expect(perf).toBeTruthy();
   });
 
   test("Step 3: Shop filters demo artworks in demo mode", async ({ page }) => {
@@ -111,7 +111,7 @@ test.describe("Demo Mode — Complete Investor Flow", () => {
     }
   });
 
-  test("Step 7: Walkthrough tour auto-starts on first visit", async ({ page, context }) => {
+  test("Step 7: Walkthrough tour auto-starts on first visit", async ({ context }) => {
     // Fresh browser context = no localStorage
     const newPage = await context.newPage();
     await newPage.goto("/de");
@@ -180,7 +180,6 @@ test.describe("Lite Mode Fallback", () => {
     await page.goto("/de/gallery?lite=1");
     await page.waitForLoadState("networkidle");
 
-    const canvas = page.locator("canvas").or(page.locator("[data-testid='gallery-canvas']"));
     // In lite mode canvas may or may not render; we just verify no error page
     const errorHeading = page.locator("text=/404|error|fehler/i");
     expect(await errorHeading.isVisible().catch(() => false)).toBe(false);

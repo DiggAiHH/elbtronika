@@ -56,6 +56,112 @@ export type Database = {
           },
         ];
       };
+      agent_tasks: {
+        Row: {
+          id: string;
+          created_at: string;
+          updated_at: string;
+          type: string;
+          goal: string;
+          context: Json;
+          plan: Json;
+          status: string;
+          result: Json | null;
+          error: string | null;
+          run_id: string | null;
+          started_at: string | null;
+          completed_at: string | null;
+          actor_id: string | null;
+        };
+        Insert: {
+          id?: string;
+          created_at?: string;
+          updated_at?: string;
+          type: string;
+          goal: string;
+          context?: Json;
+          plan?: Json;
+          status?: string;
+          result?: Json | null;
+          error?: string | null;
+          run_id?: string | null;
+          started_at?: string | null;
+          completed_at?: string | null;
+          actor_id?: string | null;
+        };
+        Update: {
+          id?: string;
+          created_at?: string;
+          updated_at?: string;
+          type?: string;
+          goal?: string;
+          context?: Json;
+          plan?: Json;
+          status?: string;
+          result?: Json | null;
+          error?: string | null;
+          run_id?: string | null;
+          started_at?: string | null;
+          completed_at?: string | null;
+          actor_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "agent_tasks_actor_id_fkey";
+            columns: ["actor_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      mcp_audit_log: {
+        Row: {
+          id: string;
+          created_at: string;
+          actor_id: string | null;
+          role: string;
+          server: string;
+          tool: string;
+          status: string;
+          duration_ms: number | null;
+          error_class: string | null;
+          request_hash: string | null;
+        };
+        Insert: {
+          id?: string;
+          created_at?: string;
+          actor_id?: string | null;
+          role: string;
+          server: string;
+          tool: string;
+          status: string;
+          duration_ms?: number | null;
+          error_class?: string | null;
+          request_hash?: string | null;
+        };
+        Update: {
+          id?: string;
+          created_at?: string;
+          actor_id?: string | null;
+          role?: string;
+          server?: string;
+          tool?: string;
+          status?: string;
+          duration_ms?: number | null;
+          error_class?: string | null;
+          request_hash?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "mcp_audit_log_actor_id_fkey";
+            columns: ["actor_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       artists: {
         Row: {
           bio: string | null;
@@ -127,6 +233,7 @@ export type Database = {
           genre_tags: string[];
           id: string;
           image_url: string | null;
+          is_demo: boolean;
           is_published: boolean;
           medium: string | null;
           model_url: string | null;
@@ -150,6 +257,7 @@ export type Database = {
           genre_tags?: string[];
           id?: string;
           image_url?: string | null;
+          is_demo?: boolean;
           is_published?: boolean;
           medium?: string | null;
           model_url?: string | null;
@@ -173,6 +281,7 @@ export type Database = {
           genre_tags?: string[];
           id?: string;
           image_url?: string | null;
+          is_demo?: boolean;
           is_published?: boolean;
           medium?: string | null;
           model_url?: string | null;
@@ -383,6 +492,7 @@ export type Database = {
           status: string;
           stripe_charge_id: string | null;
           stripe_payment_intent_id: string | null;
+          stripe_session_id: string | null;
           updated_at: string;
         };
         Insert: {
@@ -397,6 +507,7 @@ export type Database = {
           status?: string;
           stripe_charge_id?: string | null;
           stripe_payment_intent_id?: string | null;
+          stripe_session_id?: string | null;
           updated_at?: string;
         };
         Update: {
@@ -411,6 +522,7 @@ export type Database = {
           status?: string;
           stripe_charge_id?: string | null;
           stripe_payment_intent_id?: string | null;
+          stripe_session_id?: string | null;
           updated_at?: string;
         };
         Relationships: [

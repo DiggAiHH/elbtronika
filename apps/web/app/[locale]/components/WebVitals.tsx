@@ -30,22 +30,12 @@ export function WebVitals() {
       if (!analyticsConsented) return;
 
       // Queue to analytics endpoint with consent signal (non-blocking)
-      if (navigator.sendBeacon) {
-        // sendBeacon does not support custom headers; fall through to fetch
-        fetch("/api/analytics/vitals", {
-          method: "POST",
-          headers: { "Content-Type": "application/json", "x-consent-analytics": "true" },
-          body,
-          keepalive: true,
-        }).catch(() => {});
-      } else {
-        fetch("/api/analytics/vitals", {
-          method: "POST",
-          headers: { "Content-Type": "application/json", "x-consent-analytics": "true" },
-          body,
-          keepalive: true,
-        }).catch(() => {});
-      }
+      fetch("/api/analytics/vitals", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-consent-analytics": "true" },
+        body,
+        keepalive: true,
+      }).catch(() => {});
     }
   });
 
