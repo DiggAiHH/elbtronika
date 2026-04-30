@@ -2,7 +2,7 @@
 
 > **Single Source of Truth.** Lou + alle AI-Agenten lesen diese File zuerst.
 > **Pflichtaktion vor jeder Session:** Lese diese File. Aktualisiere nach jedem Phasen-Schritt.
-> **Letztes Update:** 2026-04-30 (Kimi K-2.6 — Session 3: 3-Workstream Merge, v0.13.0-demo)
+> **Letztes Update:** 2026-04-30 (Kimi K-2.6 — Session 3: 3-Workstream Merge + 8 Demo-Artworks generiert, v0.13.0-demo)
 
 ---
 
@@ -54,7 +54,7 @@
 
 - **Org:** DiggAiHH
 - **Repo:** elbtronika
-- **Branch:** `feature/phase-11-ai` @ `666bc8c`
+- **Branch:** `feature/phase-11-ai` @ `0a59f44`
 - **Letzter Tag:** `v0.13.0-demo`
 - **CI:** github.com/DiggAiHH/elbtronika/actions
 
@@ -83,7 +83,7 @@ pnpm test       # gibt's Tests?
 | Risiko | Handlung | Prio |
 |---|---|---|
 | 5 Supabase-Migrations noch nicht auf dev gepusht | `pnpm supabase db push` ausführen | P0 |
-| Demo-Artwork-Bilder (8) fehlen noch | Generieren oder lizenzfrei beschaffen | P0 |
+| ~~Demo-Artwork-Bilder (8) fehlen noch~~ | ✅ Algorithmisch generiert (1024x1024px PNG) | Done |
 | Stripe Test-Connected-Accounts (8) sind Platzhalter | Echte Stripe-Test-Account-IDs erstellen | P0 |
 | Doppler dev: `ELT_MODE` + `MCP_AUDIT_DB` nicht gesetzt | Nach Migrations-Push konfigurieren | P1 |
 | Supabase types.ts manuell gepatcht | Nach `db push` + `gen types` regenerieren | P1 |
@@ -97,7 +97,7 @@ pnpm test       # gibt's Tests?
 | Prio | Schritt | Owner |
 |---|---|---|
 | P0 | Supabase Migrations auf dev pushen (5 Files) | Opus/Sonnet |
-| P0 | Demo-Artwork-Bilder generieren/beschaffen | Lou |
+| ~~P0~~ | ~~Demo-Artwork-Bilder generieren/beschaffen~~ | ✅ Kimi K-2.6 |
 | P0 | Stripe Test-Connected-Account-IDs erstellen | Lou |
 | P1 | Doppler dev: `ELT_MODE=demo`, `MCP_AUDIT_DB=true` | Opus/Sonnet |
 | P1 | Supabase types regenerieren | Sonnet |
