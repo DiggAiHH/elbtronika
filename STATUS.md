@@ -2,7 +2,7 @@
 
 > **Single Source of Truth.** Lou + alle AI-Agenten lesen diese File zuerst.
 > **Pflichtaktion vor jeder Session:** Lese diese File. Aktualisiere nach jedem Phasen-Schritt.
-> **Letztes Update:** 2026-04-30 (Copilot — Session 4: Phase 18+19 typecheck clean, both branches pushed to origin)
+> **Letztes Update:** 2026-04-30 (Kimi K-2.6 — Session 3: 3-Workstream Merge, v0.13.0-demo)
 
 ---
 
@@ -18,38 +18,35 @@
 | 5 | Content Model & CMS | ✅ done | Copilot | v0.5.0 |
 | 6 | Classic Mode (Shop) | ✅ done | Sonnet 4.6 | v0.6.0 — Shop/Artist/DJ/Cart implementiert |
 | 7 | Immersive Mode (3D) | ✅ done | Sonnet 4.6 | v0.7.0 — packages/three + CanvasRoot + Gallery Route |
-| 8 | Spatial Audio | done | Sonnet 4.6 | feature/phase-8-audio @ e8d0892 - v0.8.0 |
-| 9 | Mode Transitions | done | Sonnet 4.6 | feature/phase-8-audio @ 4ac7525 |
-| 10 | Stripe Connect | done | Sonnet 4.6 | feature/phase-11-ai - v0.12.0 |
-| 11 | AI-Kuration (Claude) | done | Sonnet 4.6 | feature/phase-11-ai - v0.9.0 |
-| 12 | Edge & Performance | done | Sonnet 4.6 | feature/phase-11-ai - v0.10.0 |
-| 13 | Compliance | done | Sonnet 4.6 | feature/phase-11-ai - v0.11.0 |
-| 14 | Optimization (Recherche 29.04.2026) | ✅ done | Kimi K-NN | 10 Phasen abgeschlossen, Build 53 Pages, 102kB FLJS |
+| 8 | Spatial Audio | ✅ done | Sonnet 4.6 | v0.8.0 |
+| 9 | Mode Transitions | ✅ done | Sonnet 4.6 | v0.9.0 |
+| 10 | Stripe Connect | ✅ done | Sonnet 4.6 | v0.12.0 |
+| 11 | AI-Kuration (Claude) | ✅ done | Sonnet 4.6 | v0.9.0 |
+| 12 | Edge & Performance | ✅ done | Sonnet 4.6 | v0.10.0 |
+| 13 | Compliance | ✅ done | Sonnet 4.6 | v0.11.0 |
+| 14 | Optimization (Recherche 29.04.2026) | ✅ done | Kimi K-NN | Build 53 Pages, 102kB FLJS |
 | 15 | Testing & QA | ✅ done | Kimi K-NN | 104 Tests passing, Lighthouse, ZAP, Deploy-Workflows |
 | 16 | Launch | 🟡 bereit | Kimi K-NN | Lighthouse CI, ZAP, Staging/Prod Deploy, 48h Monitoring |
-
-| **18** | **Demo-Readiness** | ✅ done | **Kimi K-2.6** | **ELT_MODE, Demo-Personas, Stripe-Demo-Layer, DemoBanner** |
-| **19** | **Pitch-Polish** | ✅ done | **Kimi K-2.6** | **WalkthroughTour, Press-Kit, Pitch-Dashboard, Test-Card-Hint** |
+| 17 | Hermes Trust (Waves 0–8) | ✅ done | Kimi K-2.6 | Dual-Mode Audit, DB-Persistenz, 5 Migrations |
+| 18 | Demo-Readiness | ✅ done | Kimi K-2.6 | ELT_MODE, Demo-Personas, Stripe-Demo-Layer, DemoBanner |
+| 19 | Pitch-Polish | ✅ done | Kimi K-2.6 | WalkthroughTour, Press-Kit, Pitch-Dashboard, Test-Card-Hint |
 
 **Legende:** ✅ done | 🟢 grün | 🟡 läuft | 🔴 blocked | 🔄 kontinuierlich | ⬜ tbd
 
 ---
 
-## 🔄 Heutige Aktion (29.04.2026)
+## 🔄 Letzte Aktion (Session 3 — 2026-04-30)
 
-**Constraint:** GitHub Copilot Kontingent nur heute, morgen weg → maximal nutzen.
+**Agent:** Kimi K-2.6 (3 parallele Workstreams)
 
-**Setup:** 3 parallele Copilot Chat Sessions in VS Code:
-- **Session A:** Sonnet 4.6 — Architektur-lastige Aufgaben
-- **Session B:** GPT 5.4 — UI/Business-Logic
-- **Session C:** Codex 5.3 — Code-Scaffolding/Tests
+**Was:**
+1. **Codex** (`feature/phase-18-19-tests-and-prd-docs`): E2E demo-flow.spec.ts (8 Steps), Doppler-prd runbook, live-switch script, pitch-rehearsal script, README, ADR 0020
+2. **Sonnet** (`feature/phase-18-demo-readiness`): ELT_MODE layer, EnvProvider + useElbMode, Stripe demo layer (8 mock accounts), DemoBanner, shop filtering by mode, mcp_audit_log table + dual-mode logger, demo persona seed, Sanity `isDemo`, ADR 0014 + 0018, unit tests
+3. **GPT** (`feature/phase-19-pitch-polish`): Landing refinement (USP, CTA, sound toggle), WalkthroughTour (5 steps), PressKit page, Pitch dashboard (investor-gated), Stripe test card hint, i18n DE/EN, investor role migration, demo video script, ADR 0019
 
-**Workflow heute:**
-1. ALLE drei Sessions starten zuerst mit Bootstrap-Prompt aus `COPILOT_PROMPTS.md` § 1.
-2. Jede Session reportet zurück: was im Repo schon existiert, was fehlt.
-3. Lou aktualisiert diese STATUS.md basierend auf den Reports.
-4. Lou weist pro Session eine konkrete Phase zu (Prompts in `COPILOT_PROMPTS.md` § 2–4).
-5. Sessions arbeiten parallel, committen häufig, pushen einzeln.
+**Merge:** Codex → Sonnet → GPT nach `feature/phase-11-ai` (no-ff). Konflikte in `invoke/route.ts`, `layout.tsx`, `STATUS.md`, `packages/ui/src/index.ts` manuell gelöst.
+
+**Ergebnis:** Typecheck grün, 41 Unit-Tests passing, E2E-Suite erweitert. Tag `v0.13.0-demo` annotiert + gepusht.
 
 ---
 
@@ -57,13 +54,13 @@
 
 - **Org:** DiggAiHH
 - **Repo:** elbtronika
-- **Branch:** main
-- **Letzter Tag:** TBD (Lou bitte aktualisieren)
+- **Branch:** `feature/phase-11-ai` @ `666bc8c`
+- **Letzter Tag:** `v0.13.0-demo`
 - **CI:** github.com/DiggAiHH/elbtronika/actions
 
 ---
 
-## 📋 Was Lou heute manuell verifizieren muss (5 Min)
+## 📋 Was Lou heute manuell verifizieren kann (5 Min)
 
 In VS Code in Repo-Root:
 ```bash
@@ -79,32 +76,34 @@ pnpm dev        # läuft Next.js?
 pnpm test       # gibt's Tests?
 ```
 
-Das Ergebnis kurz hier in die Tabelle oben eintragen, dann sind alle Sessions auf dem gleichen Stand.
-
 ---
 
 ## ⚠️ Risiko-Register (heute)
 
-| Risiko | Handlung |
-|---|---|
-| Drei Sessions schreiben gleichzeitig in selbe Files | Strikte Phase-Isolation — jede Session arbeitet nur in ihrem Verzeichnis-Scope |
-| Merge-Konflikte | Sessions pushen zu Feature-Branches, nicht main |
-| Sonnet 4.6 + Codex 5.3 stylen unterschiedlich | Biome-Config + Pre-Commit-Hook erzwingt Format |
-| Plan-Drift | Status nach jedem Schritt updaten, nicht erst am Ende |
+| Risiko | Handlung | Prio |
+|---|---|---|
+| 5 Supabase-Migrations noch nicht auf dev gepusht | `pnpm supabase db push` ausführen | P0 |
+| Demo-Artwork-Bilder (8) fehlen noch | Generieren oder lizenzfrei beschaffen | P0 |
+| Stripe Test-Connected-Accounts (8) sind Platzhalter | Echte Stripe-Test-Account-IDs erstellen | P0 |
+| Doppler dev: `ELT_MODE` + `MCP_AUDIT_DB` nicht gesetzt | Nach Migrations-Push konfigurieren | P1 |
+| Supabase types.ts manuell gepatcht | Nach `db push` + `gen types` regenerieren | P1 |
+| Drei Sessions schreiben gleichzeitig in selbe Files | Strikte Phase-Isolation — jede Session arbeitet nur in ihrem Verzeichnis-Scope | Mitigated |
+| Merge-Konflikte | Sessions pushen zu Feature-Branches, nicht main | Mitigated |
 
 ---
 
-## 🎯 Phasen-Verteilungs-Vorschlag heute
+## 🎯 Nächste Schritte (Empfehlung für Opus 4.7)
 
-Empfehlung wenn Repo (Phase 1) + Infra (Phase 3) noch nicht stehen:
-
-| Session | Modell | Phase | Begründung |
-|---|---|---|---|
-| A | Sonnet 4.6 | Phase 1: Repo & Tooling | Komplex-architektonisch, Monorepo-Setup |
-| B | GPT 5.4 | Phase 2: Design Tokens + Storybook | UI-Sense |
-| C | Codex 5.3 | Phase 3 Vorbereitung: SQL-Migrations + Sanity Schemas | Pure Code-Generation |
-
-Wenn Phase 1+2+3 schon stehen → siehe Phasen 4–7 Prompts in `COPILOT_PROMPTS.md`.
+| Prio | Schritt | Owner |
+|---|---|---|
+| P0 | Supabase Migrations auf dev pushen (5 Files) | Opus/Sonnet |
+| P0 | Demo-Artwork-Bilder generieren/beschaffen | Lou |
+| P0 | Stripe Test-Connected-Account-IDs erstellen | Lou |
+| P1 | Doppler dev: `ELT_MODE=demo`, `MCP_AUDIT_DB=true` | Opus/Sonnet |
+| P1 | Supabase types regenerieren | Sonnet |
+| P1 | Pitch-Termin mit Lee Hoops terminieren | Lou |
+| P2 | Doppler prd: 22 ENV-Variablen füllen (post-Lee-OK) | Lou + Opus |
+| P2 | Demo-Video (60–90s) produzieren | Lou |
 
 ---
 
@@ -112,7 +111,8 @@ Wenn Phase 1+2+3 schon stehen → siehe Phasen 4–7 Prompts in `COPILOT_PROMPTS
 
 - Master-Plan v1.0: `ELBTRONIKA_Architekturplan_v1.0.md`
 - Aktive Version v1.1: `ELBTRONIKA_Architekturplan_v1.1.md`
-- Sonnet-Handover: `ELBTRONIKA_Sonnet_Handover_Prompt.md`
+- Opus-Handover: `OPUS_47_HANDOVER.md`
+- Session 3 Kontext: `memory/context/session-3-knowledge.md`
 - Copilot-Prompts: `COPILOT_PROMPTS.md`
 
 ---

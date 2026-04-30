@@ -1,138 +1,201 @@
 # ELBTRONIKA — Opus 4.7 Handover
 
-> **Layered handover.** Section 0 (Opus 4.6) is the current top layer. Sections 1–10 (Sonnet 4.6) remain valid as ground truth — read them after Section 0.
-> Date: 2026-04-30 | Authors: Opus 4.6 (Section 0, layered patch) → Sonnet 4.6 via Copilot (Sections 1–10, original handover)
+> **Layered handover.** Section 0 (Session 3 / Kimi K-2.6) is the current top layer. Sections 1–10 (Opus 4.6) remain valid as ground truth — read them after Section 0.
+> Date: 2026-04-30 | Authors: Kimi K-2.6 (Section 0) → Opus 4.6 (Sections 1–10)
 > Repo: `d:\Elbtronika\Elbtonika` (Windows) | Org: DiggAiHH/elbtronika
+> Branch: `feature/phase-11-ai` @ `666bc8c` | Tag: `v0.13.0-demo`
 
 ---
 
-## 0 · OPUS 4.6 LAYER — VALIDATION + NEXT-STEP PATCH (added 2026-04-30 evening)
+## 0 · SESSION 3 LAYER — DEMO-READINESS + PITCH-POLISH + TRUST-HARDENING
 
-### 0.1 Was ich validiert habe
-Sonnet's Handover ist sauber. Tech-Stack (Section 4) und Constraints (Section 8) bleiben unverändert gültig. Routing-Matrix (Section 7) und End-of-Session-Protocol (Section 10) sind als Pflicht-Standard zu übernehmen.
+### 0.1 Was passiert ist (2026-04-30, Kimi K-2.6)
 
-### 0.2 STATUS-Drift, die du als Opus 4.7 zuerst auflösen musst
+3 parallele Workstreams auf `feature/phase-11-ai` abgewickelt und gemergt:
 
-| Drift | Befund | Fix |
-|---|---|---|
-| Tag-Versionskonflikt | `v0.9.0` ist sowohl auf `feature/phase-8-audio` (Phase 9) **als auch** auf `feature/phase-11-ai` (Phase 11). Tags sind nicht-monoton. | Bei finalem Main-Merge: alte Branch-Tags annotieren (`v0.9.0-audio`, `v0.9.0-ai`) oder löschen, dann `v1.0.0` neu setzen. |
-| Plan-File-Naming | STATUS-Block in Sonnet-Handover Section 9 verweist auf `ELBTRONIKA_Architekturplan_v1.1.md` (korrekt). Im Workspace existiert noch `_v1.0.md` parallel mit `_v1.md`. | `git mv ELBTRONIKA_Architekturplan_v1.0.md ELBTRONIKA_Architekturplan_v1.md` (nur eine kanonische Datei). |
-| Phase-14/15/16 Naming | Kimi K-NN hat "Phase 14 Optimization", "Phase 15 Testing", "Phase 16 Launch" eingeführt. Plan v1.1 nennt Phase 14 = Testing, 15 = Launch. | Plan zu **v1.2** updaten: Optimization als Phase 14a, Testing als 14b, Launch bleibt 15, Hermes Trust als 16. Phase-Nummerierung kanonisieren. |
-| `v0.12.0 vor v0.11.0` | Tag `v0.12.0` (Phase 10 Stripe) wurde vor `v0.11.0` (Phase 13 Compliance) gesetzt — chronologisch ok, semantisch verwirrend. | Tolerieren bis Main-Merge, dann `v1.0.0` clean. |
+| Workstream | Branch | Agent | Deliverables |
+|---|---|---|---|
+| Phase 18–19 Tests & PRD-Doku | `feature/phase-18-19-tests-and-prd-docs` | Codex | E2E demo-flow.spec.ts (8 Steps), Doppler-prd runbook, live-switch script, pitch-rehearsal script, README, ADR 0020, file drift cleanup |
+| Phase 18 Demo-Readiness | `feature/phase-18-demo-readiness` | Sonnet | ELT_MODE layer, EnvProvider + useElbMode, Stripe demo layer (8 mock accounts), DemoBanner, shop filtering by mode, mcp_audit_log table + dual-mode logger, demo persona seed, Sanity `isDemo`, ADR 0014 + 0018, unit tests |
+| Phase 19 Pitch-Polish | `feature/phase-19-pitch-polish` | GPT | Landing refinement (USP, CTA, sound toggle), WalkthroughTour (5 steps), PressKit page, Pitch dashboard (investor-gated), Stripe test card hint, i18n DE/EN, investor role migration, demo video script, ADR 0019 |
 
-### 0.3 P0-Trust-Residuals — als ready-to-paste Sub-Prompt für Sonnet
+**Merge-Reihenfolge:** Codex → Sonnet → GPT (no-ff, jeweils mit Merge-Commit). Konflikte in `invoke/route.ts` (audit module), `layout.tsx` (integrations), `STATUS.md`, `packages/ui/src/index.ts` (exports) manuell gelöst.
 
-```
-=== SONNET 4.6 :: TRUST-RESIDUALS-CLEANUP ===
+**Ergebnis:** Typecheck grün, 41 Unit-Tests passing, E2E-Suite erweitert. Branch force-pushed, Tag `v0.13.0-demo` annotiert + gepusht.
 
-KONTEXT:
-Hermes Trust Waves 0–8 sind implementiert. Drei Residuals blockieren Production.
-Lies: STATUS.md, OPUS_47_HANDOVER.md Section 0, engineering-harness/HERMES_TRUST_HARNESS.md.
+### 0.2 Neue Architektur-Entscheidungen (ADRs)
 
-GIT-GATE:
-> git status -sb
-> git log --oneline -10
-> git branch --show-current
+| ADR | Titel | Status | Autor |
+|-----|-------|--------|-------|
+| 0014 | Trust Residuals: Audit DB + Service-Role Key | Accepted | Sonnet 4.6 |
+| 0018 | Demo-Mode Architecture (demo/staging/live) | Accepted | Sonnet 4.6 |
+| 0019 | Pitch Architecture (WalkthroughTour, Press-Kit, Pitch-Dashboard) | Accepted | GPT 4.6 |
+| 0020 | Modes + Doppler prd Strategy | Accepted | Codex 5.3 |
 
-BRANCH:
-feature/trust-residuals-cleanup (von aktuellem feature/phase-11-ai)
+Lesen vor Änderungen: `docs/adr/0018-demo-mode.md`, `docs/adr/0019-pitch-architecture.md`, `docs/adr/0020-doppler-prd-strategy.md`.
 
-TEIL 1 — Audit-DB-Table aktivieren (Wave 1 final):
-✓ supabase/migrations/20260430_mcp_audit_log.sql:
-  create table mcp_audit_log (
-    id uuid primary key default gen_random_uuid(),
-    actor_id uuid references auth.users(id),
-    role text not null,
-    server text not null,
-    tool text not null,
-    status text not null check (status in ('ok','denied','error')),
-    duration_ms int,
-    error_class text,
-    request_hash text,
-    created_at timestamptz default now()
-  );
-  alter table mcp_audit_log enable row level security;
-  create policy "service-role only" on mcp_audit_log for all using (auth.role() = 'service_role');
-✓ apps/web/src/lib/mcp/audit.ts: zweite Implementation hinter Feature-Flag MCP_AUDIT_DB=true; console.log bleibt als Fallback.
-✓ Test: invoke-Route triggert mit ENV=true → DB-Row vorhanden; mit ENV=false → console.log.
+### 0.3 ELT_MODE System
 
-TEIL 2 — Migrations applizieren:
-✓ Doppler dev: pnpm.cmd supabase db push
-✓ Verify: pnpm.cmd supabase migration list zeigt agent_tasks + orders_session_id + mcp_audit_log als applied.
-✓ Smoke-Test pro Migration: insert + select round-trip.
-✓ Doppler prd: dieselben Schritte gegen Production-Project (NUR nach Lou's GO!).
+Runtime-Variable steuert Demo/Staging/Live-Verhalten:
 
-TEIL 3 — Service-Role-Key für account/delete:
-✓ apps/web/src/lib/supabase/admin.ts: prüfen, dass createClient() mit SUPABASE_SERVICE_ROLE_KEY (nicht NEXT_PUBLIC_SUPABASE_ANON_KEY) aufgerufen wird.
-✓ Doppler dev/preview/prd: SUPABASE_SERVICE_ROLE_KEY gesetzt verifizieren.
-✓ Negativ-Test: temporär anon-Key in admin.ts → /api/account/delete muss 500 werfen mit klarer Fehlermeldung "service-role required".
-✓ Re-revert auf SR-Key, Test grün.
-
-DOD:
-- 3 Migrations live auf dev (prd nach Lou's GO)
-- mcp_audit_log schreibt unter Feature-Flag
-- account/delete läuft nur mit SR-Key
-- ADR docs/adr/0014-trust-residuals.md
-- pnpm.cmd --filter @elbtronika/web typecheck grün
-- Run-Log memory/runs/2026-04-30_Sonnet-46-trust-residuals.md
-- PR feat/trust-residuals-cleanup gegen feature/phase-11-ai, draft
-
-KONFLIKT-PRÄVENTION:
-- Exklusiv: supabase/migrations/, apps/web/src/lib/mcp/audit.ts, apps/web/src/lib/supabase/admin.ts
-- NICHT anfassen: andere Branch-Files
-
-STOPPE NACH SUB-PLAN, warte auf "GO Trust-Residuals".
-=== ENDE ===
+```typescript
+// apps/web/src/lib/env.ts
+ELT_MODE: "demo" | "staging" | "live"  // default: "demo"
 ```
 
-### 0.4 Final-Merge-Strategie (linear, audit-trail-clean)
+| Modus | Shop-Filter | Banner | Stripe |
+|-------|-------------|--------|--------|
+| demo | Nur `isDemo == true` | DemoBanner bottom-right teal | Test + Mock-Accounts |
+| staging | Kein Filter (beides) | Staging-Banner top orange | Test + Real-Accounts |
+| live | Nur `isDemo == false` | Kein Banner | Live |
 
+Client-Zugriff:
+```tsx
+const mode = useElbMode();  // "demo" | "staging" | "live"
 ```
-Schritt 1: feature/trust-residuals-cleanup → mergen in feature/phase-11-ai (squash)
-Schritt 2: feature/phase-11-ai rebase auf main, Konfliktauflösung (Lou + Opus)
-Schritt 3: PR feature/phase-11-ai → main (squash merge)
-Schritt 4: alte Tags v0.6.0..v0.12.0 als annotated tags umbenennen oder löschen
-Schritt 5: tag v1.0.0 auf main HEAD
-Schritt 6: Doppler prd final scharf, Netlify Production-Promote
-Schritt 7: DNS-TTL 60s, Switch, 48h Hypercare (Kimi-Setup)
+
+Server-Zugriff:
+```ts
+const { ELT_MODE } = getEnv();
 ```
 
-### 0.5 Was Opus 4.7 als allererstes machen sollte
+### 0.4 Demo-Personas (Seed-Daten)
 
-1. Read STATUS.md (latest), TASKS.md, diese Section 0 + Sonnet-Sections 1–10.
-2. Verify-Pass: `git status -sb`, `git log --oneline -20`, `gh pr list --state open`.
-3. Lou abholen mit Status-Bericht (max 150 Wörter): "Hier ist, was seit Handover passiert ist / als nächstes empfehle ich X / blockiert auf Y."
-4. **Validiere Session 3 readiness:** Open [SESSION3_EXECUTION_CHECKLIST.md](SESSION3_EXECUTION_CHECKLIST.md), walk through Pre-Launch sections A–B.
-5. Sub-Prompt für Sonnet aus Section 0.3 ausführen (oder anpassen, wenn Drift sich verschoben hat).
-6. Phase 0 Admin (Lou direkt) aktiv treiben: UG-Status, Stripe-KYC-Status, Anwalt-Termin.
-7. Erst nach Trust-Residuals + Phase 0 GREEN: Final-Merge-Strategie aus 0.4 ausführen.
+**Artists (5):** Mira Volk (Berlin, abstract digital), Kenji Aoki (Tokyo, post-cyberpunk), Helena Moraes (São Paulo, glitch), Theo Karagiannis (Athens, mediterranean futurism), Sasha Wren (London, dark surrealism)
 
-### 0.6 Plan-Update-Pflicht
+**DJs (3):** Lior K. (minimal techno), Nightform (ambient + breakbeat), Velvetrace (house + downtempo)
 
-Nach Final-Merge: **Plan v1.2 schreiben.** Inhalt:
-- Phase 14a Optimization, 14b Testing, 14c Hermes-Trust eingearbeitet
-- Phase 16 = Launch (canonical)
-- ADR-Index 0001..0014 vollständig
-- Risk Register aktualisiert (Stripe Live + Künstler-Pipeline-Stand)
-- Post-Launch Phase 17 Backlog: Audit-Dashboard, Multi-Item-Cart, NFT-Layer, Vinyl-Pipeline, Live-Vernissage
+**Rooms (3):** Lobby, Neon Hall, Quiet Garden
 
-### 0.7 Strategische Offen-Fragen für Lou
+**Mock Stripe Connected Accounts (8):** Platzhalter in `apps/web/src/lib/stripe/demo.ts` — müssen durch echte Stripe-Test-Account-IDs ersetzt werden (`acct_1...`).
 
-| # | Frage | Block für |
-|---|---|---|
-| F1 | Stripe-KYC durch oder noch in Bearbeitung? Antwort : "nein der ist noch nciht fertig aber erstelle mocks und irgendwas damit alles läudt bis das erledigt ist. was ich mache ist alles für den Heeren "Lee Hoops" liefern und wenn er überzeugt ist, danach kann man die Rechtliche Regulatorische sachen angehen. aber bis dahin brauche ich wirklich alle soweit perfekt fertig, damit wenn wir das Ok Kriegen von Lee  und die REgulatorische behördliche sachen anfangen, denn müssen wir ncuht erst da angfangen, sondern ist alles fertig um nur einfach paar werte zu schreiben. | Phase 10 Live, Final-Merge |
-| F2 | UG-Eintragung Status? Steuernummer da?  Antowrt:""| Stripe-KYC Abschluss |Siehe Frage F1 antwort.
-| F3 | Mind. 3 Künstler-Verträge unterzeichnet? Siehe Frage F1 antwort | Live-Content |
-| F4 | Anwalt-Final-Review der AGB/Datenschutz/Impressum durch? Siehe Frage F1 antwort | Production-Deploy |
-| F5 | DJ-Pipeline-Stand (mind. 2 unterzeichnet)? Siehe Frage F1 antwort | Launch-Content |
-| F6 | Stripe-Webhook-Signing-Secrets für prod rotated ?  Siehe Frage F1 antwort| Phase 10 Live |
-| F7 | Doppler `prd`-Environment final mit allen Live-Keys? " neien mach das selbst beitte emeit dem headless browser here " | Production-Deploy |
+### 0.5 Trust Residuals — Stand nach Session 3
 
-Wenn alle 7 = ja → Final-Merge ausführen. Wenn ≥1 = nein → Phase 0 weiter, Code-Stand bleibt auf `feature/phase-11-ai`.
+| Wave | Boundary | Status |
+|------|----------|--------|
+| 0 | MCP auth + role gate + tool allowlist | ✅ |
+| 1 | Structured audit log → DB + console | ✅ Dual-Mode (MCP_AUDIT_DB flag) |
+| 2 | Canonical `server/tool` naming | ✅ |
+| 3 | `agent_tasks` DB table (durable, not in-memory) | ✅ Migration pending dev push |
+| 4 | Idempotency + atomic claim lock + DB status | ✅ |
+| 5 | Flow APIs return `source: "simulated"\|"measured"` | ✅ |
+| 6 | `/api/analytics/vitals` gates on consent header | ✅ |
+| 7 | Stripe webhook order lookup via `stripe_session_id` | ✅ Migration pending dev push |
+| 8 | STATUS.md + TASKS.md updated | ✅ |
+
+**Dual-Mode Logger:** `apps/web/src/lib/mcp/audit.ts`
+- Console.log = immer aktiv (Zero-Dependency Fallback)
+- DB-Insert = nur wenn `MCP_AUDIT_DB=true`
+- Untyped Supabase-Insert (`as any`) um Typen-Drift zu bypassen — nach `supabase gen types` auflösen
+
+**Service-Role-Key:** `apps/web/src/lib/supabase/admin.ts` nutzt `SUPABASE_SERVICE_ROLE_KEY` (nicht Anon-Key). Für `account/delete` und Audit-DB-Writes.
+
+### 0.6 Pitch-Erlebnis-Choreografie (5 Min für Lee Hoops)
+
+| Minute | Aktion | Tech |
+|--------|--------|------|
+| 0:00–0:30 | Landing öffnet, Audio-Unlock, USP | SoundToggle, Enter Experience CTA |
+| 0:30–1:30 | WalkthroughTour auto-start (5 Steps) | WalkthroughTour, dismissible |
+| 1:30–3:00 | 3D-Galerie + Spatial Audio | CanvasRoot, PannerNode |
+| 3:00–4:00 | Artwork-Detail + Checkout | Test-Card-Hint: 4242 4242 4242 4242 |
+| 4:00–4:30 | Stripe-Dashboard Split | Transfer-Group Mock |
+| 4:30–5:00 | Press-Kit + Pitch-Dashboard | `/press`, `/pitch` (investor-gated) |
+
+### 0.7 Neue Routen & Komponenten
+
+**Routen:**
+| Route | Zweck | Gating |
+|-------|-------|--------|
+| `/:locale/press` | Press-Kit (Vision, Roadmap, Team) | Öffentlich |
+| `/:locale/pitch` | Investor Dashboard | `role === 'investor'` |
+| `/:locale/checkout` | Checkout + Test-Card-Hint | Demo-Mode only |
+
+**Komponenten (packages/ui):**
+| Komponente | Zweck |
+|------------|-------|
+| `DemoBanner` | Mode-Indikator (demo/staging/live), fixed position |
+| `WalkthroughTour` | 5-Step Onboarding, auto-start, skip/dismiss, i18n |
+
+**Provider (apps/web):**
+| Provider | Zweck |
+|----------|-------|
+| `EnvProvider` | ELT_MODE server→client Hydration via `window.__ELT_ENV__` |
+| `useElbMode()` | Hook liest Modus client-seitig |
+
+### 0.8 Migrations (Supabase — NOCH NICHT auf dev gepusht)
+
+| Datei | Inhalt | Blockiert auf |
+|-------|--------|---------------|
+| `20260430_agent_tasks.sql` | Durable Agent Tasks (Wave 3+4) | `supabase db push` |
+| `20260430_orders_session_id.sql` | `stripe_session_id` für Webhook-Lookup | `supabase db push` |
+| `20260430_mcp_audit_log.sql` | Audit-Tabelle + RLS + service-role policy | `supabase db push` |
+| `20260430_artworks_is_demo.sql` | `is_demo` Spalte + Index | `supabase db push` |
+| `20260430_investor_role.sql` | `investor` Role in profiles | `supabase db push` |
+
+**Wichtig:** Nach `db push` → `pnpm supabase gen types typescript` ausführen, um `packages/contracts/src/supabase/types.ts` zu regenerieren. Die manuellen Patches (`agent_tasks`, `orders.stripe_session_id`, `artworks.is_demo`, `profiles.role`) werden dann automatisch korrekt.
+
+### 0.9 Runbooks (neu in Session 3)
+
+| Runbook | Zweck | Pfad |
+|---------|-------|------|
+| Pitch-Rehearsal | Lou's 5-Minuten-Script | `docs/runbooks/pitch-rehearsal.md` |
+| Doppler prd Setup | 22 ENV-Variablen + Validation | `docs/runbooks/doppler-prd-setup.md` |
+| Live-Switch post-Lee-OK | 15-Minuten Live-Switch | `docs/runbooks/live-switch-post-lee-ok.md` |
+| Git Tags Cleanup | Annotated Tag-Migration | `docs/git-tags-cleanup.sh` |
+| Demo Assets License | Asset-Quellen + Lizenz | `docs/marketing/demo-assets-license.md` |
+| Demo Video Script | 60–90s Voice-Over | `docs/marketing/demo-video-script.md` |
+
+### 0.10 Test-Coverage nach Session 3
+
+**Unit Tests (41 passing):**
+- `__tests__/env/mode.test.ts` — ELT_MODE Validation
+- `__tests__/stripe/demo.test.ts` — Mock-Account-Mapping
+- `__tests__/shop/demo-mode.test.tsx` — Shop-Filter-Logik
+- `__tests__/landing/hero.test.tsx` — Placeholder
+- `__tests__/press/press-kit.test.tsx` — Placeholder
+- `__tests__/pitch/dashboard.test.tsx` — Placeholder
+
+**E2E Tests:**
+- `e2e/demo-flow.spec.ts` — 8-Step Investor Flow (Landing → Gallery → Shop → Detail → Checkout → Success → Tour → PressKit)
+- `e2e/shop.spec.ts` — Bestehend
+- `e2e/health.spec.ts` — Bestehend
+
+### 0.11 Offene Punkte (Session 3 → Opus 4.7)
+
+| Prio | Punkt | Owner | Blocker |
+|------|-------|-------|---------|
+| P0 | Supabase Migrations auf dev pushen | Opus/Sonnet | Doppler dev Zugriff |
+| P0 | Demo-Artwork-Bilder (8 Stück) generieren | Lou / Design | Asset-Quellen |
+| P0 | Stripe Test-Connected-Accounts (8) erstellen + IDs updaten | Lou | Stripe-KYC noch nicht fertig → Mock-IDs reichen für Demo |
+| P1 | Doppler dev: `ELT_MODE=demo` + `MCP_AUDIT_DB=true` setzen | Opus/Sonnet | Doppler dev Zugriff |
+| P1 | Doppler prd: 22 ENV-Variablen füllen (runbook vorhanden) | Lou + Opus | Live-Keys nicht vor Lee-OK |
+| P1 | Supabase types regenerieren nach Migration-Push | Sonnet | Migrations müssen applied sein |
+| P1 | Pitch-Termin mit Lee Hoops terminieren | Lou | — |
+| P2 | Demo-Video (60–90s) produzieren | Lou | Script vorhanden |
+| P2 | `packages/contracts/src/supabase/types.ts` — `as any` casts entfernen | Sonnet | Nach type regeneration |
+
+### 0.12 Was Opus 4.7 als nächstes machen sollte
+
+1. **Read:** Dieser Handover (Section 0), dann STATUS.md, TASKS.md, ADRs 0014/0018/0019/0020.
+2. **Verify-Pass:** `git status -sb`, `git log --oneline -20`, `git branch --show-current`, `git tag`.
+3. **Lou abholen** mit Status-Bericht (max 150 Wörter): Was seit v0.13.0-demo passiert ist / nächster empfohlener Schritt / Blocker.
+4. **Migrations pushen** (P0): `pnpm supabase db push` für alle 5 Migrations auf dev.
+5. **Doppler dev konfigurieren** (P0): `ELT_MODE=demo`, `MCP_AUDIT_DB=true`.
+6. **Supabase types regenerieren** nach erfolgreichem Push.
+7. **ADR 0021** schreiben: "Session 3 Integration — 3-Workstream Merge Pattern" (optional, für Dokumentation).
+
+### 0.13 Konflikt-Prävention für zukünftige Sessions
+
+- **Exklusiver Scope pro Session:** Siehe `PROMPTS_SESSION3_2026-04-30.md`
+- **Merge-Reihenfolge:** Codex → Sonnet → GPT (bewährt in Session 3)
+- **Branch-Gate:** `git status -sb` + `git log --oneline -10` vor jeder Implementation
+- **Status-Update:** STATUS.md nach jedem Schritt aktualisieren
+- **Typecheck:** `pnpm --filter @elbtronika/web typecheck` vor jedem Commit
+- **Keine Cross-Branch-Edits:** Ein File nur von einem Agenten gleichzeitig bearbeitet
 
 ---
 
-> **Folgende Sektionen 1–10 sind das Original-Handover von Sonnet 4.6 vom Vormittag des 2026-04-30. Bleiben gültig, sind die Detailtiefe für die Implementierungs-Routing-Entscheidungen.**
+> **Folgende Sektionen 1–10 sind das Original-Handover von Opus 4.6 vom 2026-04-30. Bleiben gültig als Detail-Grundlage für Architektur-Entscheidungen.**
 
 ---
 
@@ -174,12 +237,13 @@ Revenue: 60% artist / 20% DJ / 20% platform. Solo dev: Lou.
 | 14 | Optimization | ✅ Build 53 pages, 102kB FLJS |
 | 15 | Testing & QA | ✅ 104 tests pass, Lighthouse CI, ZAP |
 | 16 | Launch | 🟡 ready — Lighthouse CI, staging/prod deploy, 48h monitoring |
-| 17 | Hermes Trust (Waves 0–8) | ✅ 2026-04-30 |
+| 18 | Demo-Readiness | ✅ v0.13.0-demo |
+| 19 | Pitch-Polish | ✅ v0.13.0-demo |
 
 ### Active Branch
 ```
 main ← merge target
-feature/phase-11-ai ← last major feature branch (may need merge check)
+feature/phase-11-ai ← last major feature branch @ 666bc8c, tag v0.13.0-demo
 ```
 
 ---
@@ -191,22 +255,22 @@ All 8 waves from `engineering-harness/HERMES_TRUST_HARNESS.md` implemented today
 | Wave | Boundary | Status |
 |------|----------|--------|
 | 0 | MCP auth + role gate + allowlist | ✅ |
-| 1 | Structured audit log (actorId, role, server, tool, status, duration) | ✅ |
+| 1 | Structured audit log (actorId, role, server, tool, status, duration) | ✅ Dual-Mode |
 | 2 | Canonical `server/tool` naming at invoke boundary | ✅ |
-| 3 | `agent_tasks` DB table — durable, not in-memory | ✅ |
+| 3 | `agent_tasks` DB table — durable, not in-memory | ✅ Migration pending |
 | 4 | Idempotency + atomic claim lock + DB status on complete/fail | ✅ |
 | 5 | Flow APIs return explicit `source: "simulated"\|"measured"` | ✅ |
 | 6 | `/api/analytics/vitals` gates on consent header; client checks localStorage | ✅ |
-| 7 | Stripe webhook order lookup fixed (`stripe_session_id` stored + queried) | ✅ |
+| 7 | Stripe webhook order lookup fixed (`stripe_session_id` stored + queried) | ✅ Migration pending |
 | 8 | STATUS.md + TASKS.md updated | ✅ |
 
 ### Residual Risks → Your First Decision Point
 
 | Risk | Action needed |
 |------|--------------|
-| Audit events → console.log only | Decide: add `mcp_audit_log` Supabase table now or post-launch? |
-| 2 pending migrations not applied | `20260430_agent_tasks.sql` + `20260430_orders_session_id.sql` → Supabase prod |
-| `account/delete` needs service-role key | Confirm env var; service-role ≠ anon key |
+| Audit events → console.log only when MCP_AUDIT_DB=false | DB table exists, migration pending push. Set MCP_AUDIT_DB=true after push. |
+| 5 pending migrations not applied | `20260430_*.sql` → `supabase db push` auf dev |
+| `account/delete` needs service-role key | Confirm env var; service-role ≠ anon key. Verified in admin.ts. |
 
 ---
 
@@ -244,7 +308,7 @@ packages/ai/       → Claude curation API
 packages/flow/     → Audio-visual flow analysis
 packages/mcp/      → Hermes MCP connector
 supabase/migrations/ → Versioned SQL (apply via Supabase CLI)
-docs/adr/          → ADR 0001–0013+ (read before overriding decisions)
+docs/adr/          → ADR 0001–0020+ (read before overriding decisions)
 engineering-harness/HERMES_TRUST_HARNESS.md → Trust harness (read before MCP edits)
 STATUS.md          → Live project state (update after every session)
 TASKS.md           → Active / waiting / done tasks
@@ -260,24 +324,21 @@ Prioritized. Address top-down:
 ### 6.1 — Launch Readiness (Phase 16)
 Phase 16 is "🟡 ready." **Your call:**
 - Is there a blockers list before Go-Live? (check `docs/phase-3-dod.md` and `docs/phase-1-dod.md`)
-- Are the 2 pending migrations safe to apply to Supabase prod now?
+- Are the 5 pending migrations safe to apply to Supabase dev now?
 - Is the 48h monitoring plan written? If not, draft it.
 
 ### 6.2 — Audit Log Architecture
-`logAuditEvent()` currently writes to `console.log`.
-Options:
-- A) Add `mcp_audit_log` Supabase table now (pre-launch, trust-critical)
-- B) Defer to post-launch, log to Sentry in the meantime
-- C) Use Supabase's built-in audit extension
-
-**Recommendation needed from you.** Then hand to Sonnet for implementation.
+`logAuditEvent()` writes to console.log always; writes to DB when `MCP_AUDIT_DB=true`.
+Decision: **Session 3 hat Dual-Mode implementiert.** Nächster Schritt: Migration pushen + Flag aktivieren.
 
 ### 6.3 — Stripe Live Mode Enablement
 Phase 15 (Public Launch) gates Stripe live mode. Current state: test mode.
 Before enabling:
-- KYC completed? (was TBD in TASKS.md)
+- KYC completed? (Lou: "noch nicht fertig, erst nach Lee-OK")
 - Webhook signing secrets rotated for prod?
 - Transfer group logic tested end-to-end with real funds?
+
+**Decision:** Mock-Accounts reichen für Demo. Live-Switch erst nach Lee-OK.
 
 ### 6.4 — Legal Blocklist (blocks Phase 15)
 Still open per TASKS.md:
@@ -338,6 +399,9 @@ cat docs/adr/           # All ADRs (don't override without new ADR)
 
 # Trust harness
 cat engineering-harness/HERMES_TRUST_HARNESS.md
+
+# Session 3 context
+cat memory/context/session-3-knowledge.md
 
 # Run history
 ls memory/runs/         # Per-session logs
