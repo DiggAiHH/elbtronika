@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { createClient } from "@/src/lib/supabase/server";
 import { redirect } from "next/navigation";
+import { InvestorWelcomeModal } from "./InvestorWelcomeModal";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -61,6 +62,7 @@ export default async function PitchPage({ params }: { params: Promise<{ locale: 
 
   return (
     <main className="min-h-screen bg-[var(--color-background)] px-4 py-8 sm:px-6 lg:px-8">
+      <InvestorWelcomeModal locale={locale} />
       <div className="max-w-6xl mx-auto">
         <header className="mb-10">
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">{t("heading")}</h1>
