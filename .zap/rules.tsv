@@ -1,0 +1,26 @@
+# OWASP ZAP Baseline Scan Rules
+# Format: pluginid	alert	confidence	url	method	attack	param	rule	otherinfo
+# 10010	Informational	Low	.*	.*	.*	.*	PASS	Cookie No HttpOnly Flag (handled by Netlify headers)
+# 10011	Informational	Low	.*	.*	.*	.*	PASS	Cookie Without Secure Flag (handled by Netlify headers)
+10020	Informational	Medium	.*	.*	.*	.*	IGNORE	X-Frame-Options Header (handled by CSP frame-ancestors)
+10021	Informational	Medium	.*	.*	.*	.*	IGNORE	X-Content-Type-Options Header Missing (handled by Netlify headers)
+10027	Informational	Medium	.*	.*	.*	.*	IGNORE	Information Disclosure - Suspicious Comments
+10096	Informational	Medium	.*	.*	.*	.*	IGNORE	Timestamp Disclosure
+10097	Informational	Medium	.*	.*	.*	.*	IGNORE	Hash Disclosure
+10109	Informational	Medium	.*	.*	.*	.*	IGNORE	Modern Web Application
+10110	Informational	Medium	.*	.*	.*	.*	IGNORE	Dangerous JS Functions
+40012	Medium	High	.*	.*	.*	.*	PASS	Cross Site Scripting (Reflected)
+40014	Medium	High	.*	.*	.*	.*	PASS	Cross Site Scripting (Persistent)
+40018	Medium	High	.*	.*	.*	.*	PASS	SQL Injection
+40019	Medium	High	.*	.*	.*	.*	PASS	SQL Injection MySQL
+40020	Medium	High	.*	.*	.*	.*	PASS	SQL Injection Oracle
+40021	Medium	High	.*	.*	.*	.*	PASS	SQL Injection PostgreSQL
+40022	Medium	High	.*	.*	.*	.*	PASS	SQL Injection SQLite
+40024	Medium	High	.*	.*	.*	.*	PASS	SQL Injection MsSQL
+40026	Medium	High	.*	.*	.*	.*	PASS	OGNL Injection
+90017	Medium	High	.*	.*	.*	.*	PASS	XSLT Injection
+90019	Medium	High	.*	.*	.*	.*	PASS	Server Side Code Injection
+90020	Medium	High	.*	.*	.*	.*	PASS	Remote OS Command Injection
+90021	Medium	High	.*	.*	.*	.*	PASS	XPath Injection
+90022	Medium	High	.*	.*	.*	.*	PASS	Application Error Disclosure
+90023	Medium	High	.*	.*	.*	.*	PASS	XML External Entity Attack

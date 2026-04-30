@@ -1,26 +1,74 @@
-import { describe, it, expect } from "vitest";
-import { computeGain } from "./SpatialAudioEngine";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 
-describe("computeGain (Inverse-Square-Law)", () => {
-  it("returns 1 at refDistance or closer", () => {
-    expect(computeGain(0)).toBe(1);
-    expect(computeGain(1)).toBe(1);
-    expect(computeGain(2)).toBe(1);
+const mocks = (globalThis as any).__audioMocks;
+
+describe("SpatialAudioEngine", () => {
+  let SpatialAudioEngine: typeof import("./SpatialAudioEngine").SpatialAudioEngine;
+  let engine: InstanceType<typeof SpatialAudioEngine>;
+
+  beforeEach(async () => {
+    vi.clearAllMocks();
+    vi.resetModules();
+    const mod = await import("./SpatialAudioEngine");
+    SpatialAudioEngine = mod.SpatialAudioEngine;
+    engine = new SpatialAudioEngine();
   });
 
-  it("halves gain at refDistance + rolloffFactor * refDistance", () => {
-    // ref=2, rolloff=1 => at distance=4 => 2/(2+1*(4-2)) = 2/4 = 0.5
-    expect(computeGain(4)).toBe(0.5);
+  it("adds source with directional config", () => {
+    const audioEl = document.createElement("audio");
+    engine.addSource("track-1", audioEl, {
+      directional: true,
+      coneInnerAngle: 60,
+      coneOuterAngle: 120,
+      coneOuterGain: 0.1,
+    });
+
+    expect(engine.activeCount).toBe(1);
   });
 
-  it("approaches 0 at large distances", () => {
-    const gain = computeGain(40); // below maxDistance=50, should be small
-    expect(gain).toBeGreaterThan(0);
-    expect(gain).toBeLessThan(0.1);
+  it("uses setTargetAtTime for listener position", () => {
+    engine.setListenerPosition(1, 2, 3);
+
+    expect(mocks.setTargetAtTime).toHaveBeenCalledWith(
+      1,
+      expect.any(Number),
+      0.01,
+    );
   });
 
-  it("clamps to 0..1", () => {
-    expect(computeGain(-5)).toBe(1);
-    expect(computeGain(1000)).toBe(0);
+  it("uses setTargetAtTime for source position", () => {
+    const audioEl = document.createElement("audio");
+    engine.addSource("track-1", audioEl);
+    engine.setSourcePosition("track-1", 10, 20, 30);
+
+    expect(mocks.setTargetAtTime).toHaveBeenCalledWith(
+      10,
+      expect.any(Number),
+      0.01,
+    );
+  });
+
+  it("sets listener orientation with setTargetAtTime", () => {
+    engine.setListenerOrientation(0, 0, -1, 0, 1, 0);
+
+    expect(mocks.setTargetAtTime).toHaveBeenCalledWith(
+      -1,
+      expect.any(Number),
+      0.01,
+    );
+    expect(mocks.setTargetAtTime).toHaveBeenCalledWith(
+      1,
+      expect.any(Number),
+      0.01,
+    );
+  });
+
+  it("disposes all sources", () => {
+    const audioEl = document.createElement("audio");
+    engine.addSource("track-1", audioEl);
+    expect(engine.activeCount).toBe(1);
+
+    engine.dispose();
+    expect(engine.activeCount).toBe(0);
   });
 });

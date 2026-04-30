@@ -62,8 +62,8 @@ export function ArtworkMesh({
     if (!meshRef.current) return;
     const mesh = meshRef.current;
 
-    // Measure distance without allocating – reuse world position
-    const dx = camera.position.x - (mesh.position.x + (position[0] ?? 0 - (position[0] ?? 0)));
+    // Measure distance without allocating – mesh.position already equals the position prop
+    const dx = camera.position.x - mesh.position.x;
     const dy = camera.position.y - mesh.position.y;
     const dz = camera.position.z - mesh.position.z;
     const d = Math.sqrt(dx * dx + dy * dy + dz * dz);

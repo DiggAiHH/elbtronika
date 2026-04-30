@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 
 interface ArtworkItem {
   _id: string;
@@ -30,8 +30,8 @@ interface Props {
   locale: string;
 }
 
-export function ShopGrid({ artworks, filters }: Props) {
-  const locale = useLocale();
+export function ShopGrid({ artworks, filters, locale }: Props) {
+  const t = useTranslations("shop");
 
   // Client-side filter applied on top of SSR data
   const filtered = artworks.filter((a) => {
@@ -43,7 +43,7 @@ export function ShopGrid({ artworks, filters }: Props) {
   if (filtered.length === 0) {
     return (
       <p className="py-16 text-center text-[var(--color-text-secondary)]">
-        {locale === "de" ? "Keine Werke gefunden." : "No artworks found."}
+        {t("noResults")}
       </p>
     );
   }

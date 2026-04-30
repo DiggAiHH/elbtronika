@@ -9,6 +9,7 @@ import type { RevenueSplit } from "./schemas";
 
 const ARTIST_SHARE = 0.6;
 const DJ_SHARE = 0.2;
+const CURRENCY = "eur" as const;
 
 export function computeRevenueSplit(
   totalCents: number,
@@ -33,6 +34,7 @@ export interface TransferParams {
   artistAmountCents: number;
   djAccountId?: string | undefined;
   djAmountCents?: number | undefined;
+  orderId: string;
 }
 
 /**
@@ -44,24 +46,37 @@ export async function createTransfers(
 ): Promise<{ artistTransfer: Stripe.Transfer; djTransfer: Stripe.Transfer | undefined }> {
   const stripe = getStripe();
 
-  const artistTransfer = await stripe.transfers.create({
-    amount: params.artistAmountCents,
-    currency: "eur",
-    destination: params.artistAccountId,
-    source_transaction: params.paymentIntentId,
-    metadata: { elbtronika_type: "artist_payout" },
-  });
+  // Idempotency keys prevent duplicate transfers on retries
+  const artistIdempotencyKey = `transfer_artist_${params.orderId}_${params.artistAmountCents}`;
 
-  let djTransfer: Stripe.Transfer | undefined;
-  if (params.djAccountId && params.djAmountCents && params.djAmountCents > 0) {
-    djTransfer = await stripe.transfers.create({
-      amount: params.djAmountCents,
-      currency: "eur",
-      destination: params.djAccountId,
+  const artistPromise = stripe.transfers.create(
+    {
+      amount: params.artistAmountCents,
+      currency: CURRENCY,
+      destination: params.artistAccountId,
       source_transaction: params.paymentIntentId,
-      metadata: { elbtronika_type: "dj_payout" },
-    });
-  }
+      metadata: { elbtronika_type: "artist_payout" },
+    },
+    { idempotencyKey: artistIdempotencyKey },
+  );
+
+  const djPromise =
+    params.djAccountId && params.djAmountCents && params.djAmountCents > 0
+      ? stripe.transfers.create(
+          {
+            amount: params.djAmountCents,
+            currency: CURRENCY,
+            destination: params.djAccountId,
+            source_transaction: params.paymentIntentId,
+            metadata: { elbtronika_type: "dj_payout" },
+          },
+          {
+            idempotencyKey: `transfer_dj_${params.orderId}_${params.djAmountCents}`,
+          },
+        )
+      : Promise.resolve(undefined);
+
+  const [artistTransfer, djTransfer] = await Promise.all([artistPromise, djPromise]);
 
   return { artistTransfer, djTransfer };
 }
@@ -80,6 +95,7 @@ export interface CheckoutSessionParams {
   cancelUrl: string;
   platformFeeCents: number;
   buyerEmail?: string | undefined;
+  orderId: string;
 }
 
 export async function createCheckoutSession(
@@ -108,6 +124,7 @@ export async function createCheckoutSession(
           ...(params.imageUrl ? { images: [params.imageUrl] } : {}),
           metadata: {
             artwork_id: params.artworkId,
+            order_id: params.orderId,
           },
         },
       },
@@ -137,8 +154,16 @@ export async function createCheckoutSession(
         ? { dj_account: params.djStripeAccountId }
         : {}),
     },
+    // Platform fee for Stripe Connect
+    ...(params.platformFeeCents > 0
+      ? { application_fee_amount: params.platformFeeCents }
+      : {}),
+    // Link Stripe session to internal order
+    client_reference_id: params.orderId,
     ...(params.buyerEmail ? { customer_email: params.buyerEmail } : {}),
   };
 
-  return stripe.checkout.sessions.create(sessionParams);
+  const idempotencyKey = `checkout_${params.orderId}_${params.artworkId}`;
+
+  return stripe.checkout.sessions.create(sessionParams, { idempotencyKey });
 }

@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
+import withBundleAnalyzer from "@next/bundle-analyzer";
 
 const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 
@@ -7,12 +8,28 @@ const nextConfig: NextConfig = {
   // Enable React 19 strict mode
   reactStrictMode: true,
 
+  // Output standalone for containerized deployments
+  // NOTE: Disabled locally because Windows requires admin privileges for symlinks.
+  // Re-enable for Docker/container builds.
+  // output: "standalone",
+
+  // Remove X-Powered-By header
+  poweredByHeader: false,
+
+  // Enable gzip compression
+  compress: true,
+
+  // NOTE: typedRoutes disabled because dynamic i18n routes (${locale}) cannot be
+  // statically typed at compile time. Runtime validation via Zod is used instead.
+  // typedRoutes: true,
+
   // Experimental features
   experimental: {
-    // React Compiler disabled until babel-plugin-react-compiler added (Phase 7+)
-    // reactCompiler: true,
-    // Typed routes for type-safe navigation
-    typedRoutes: true,
+    // Partial Prerendering — Next.js 15.5.15 stable does NOT include PPR yet.
+    // Re-enable when Next.js 16 / canary is adopted.
+    // ppr: true,
+    // Server instrumentation hook for RUM / monitoring (Next.js 15.3+ experimental)
+    // instrumentationHook: true,
   },
 
   // Image domains (R2 CDN + Sanity)
@@ -25,8 +42,13 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
+        hostname: "cdn.sanity.io",
+        pathname: "/images/**",
+      },
+      {
+        protocol: "https",
         hostname: "*.sanity.io",
-        pathname: "/**",
+        pathname: "/files/**",
       },
     ],
     formats: ["image/avif", "image/webp"],
@@ -128,7 +150,20 @@ const nextConfig: NextConfig = {
   },
 
   // Transpile workspace packages
-  transpilePackages: ["@elbtronika/ui", "@elbtronika/contracts", "@elbtronika/three"],
+  transpilePackages: [
+    "@elbtronika/ui",
+    "@elbtronika/contracts",
+    "@elbtronika/three",
+    "@elbtronika/mcp",
+    "@elbtronika/agent",
+    "@elbtronika/flow",
+  ],
+
+
 };
 
-export default withNextIntl(nextConfig);
+const withAnalyzer = withBundleAnalyzer({
+  enabled: process.env.ANALYZE === "true",
+});
+
+export default withAnalyzer(withNextIntl(nextConfig));

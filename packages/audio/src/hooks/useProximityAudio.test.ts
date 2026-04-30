@@ -16,6 +16,7 @@ describe("useProximityAudio", () => {
       useProximityAudio(
         () => new Map(),
         () => [0, 0, 0],
+        () => [0, 0, -1, 0, 1, 0],
         [],
       ),
     );
@@ -30,6 +31,7 @@ describe("useProximityAudio", () => {
       useProximityAudio(
         () => proximity,
         () => [0, 0, 0],
+        () => [0, 0, -1, 0, 1, 0],
         [
           {
             artworkId: "art-1",

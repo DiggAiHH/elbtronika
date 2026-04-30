@@ -36,6 +36,19 @@
     "priceFrom": "From {price}",
     "sold": "Sold"
   },
+  "cart": {
+    "openButtonLabel": "Open cart",
+    "openButtonText": "Cart"
+  },
+  "recommender": {
+    "title": "Mood-based Recommendation",
+    "description": "Describe your desired mood — our AI suggests matching artworks.",
+    "placeholder": "e.g. dark and hypnotic",
+    "buttonLoading": "Thinking…",
+    "buttonIdle": "Recommend",
+    "errorNetwork": "Network error",
+    "remaining": "{count} requests remaining today"
+  },
   "artwork": {
     "backToShop": "Back to Shop",
     "byArtist": "By {artist}",
@@ -53,7 +66,8 @@
   },
   "gallery": {
     "title": "3D Gallery",
-    "description": "Experience ELBTRONIKA art in an immersive 3D space."
+    "description": "Experience ELBTRONIKA art in an immersive 3D space.",
+    "noScript": "The 3D gallery requires JavaScript. Please enable JavaScript in your browser."
   },
   "legal": {
     "imprint": "Imprint",

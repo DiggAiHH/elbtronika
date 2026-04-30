@@ -29,7 +29,7 @@ describe("logDecision", () => {
       {
         userId: "user-1",
         feature: "describe",
-        model: "claude-sonnet-4-6",
+        model: "claude-sonnet-4-20250514",
         output: "{}",
         inputTokens: 100,
         outputTokens: 50,
@@ -51,7 +51,7 @@ describe("logDecision", () => {
       {
         userId: null,
         feature: "recommend",
-        model: "claude-sonnet-4-6",
+        model: "claude-sonnet-4-20250514",
         output: "{}",
         inputTokens: 50,
         outputTokens: 30,

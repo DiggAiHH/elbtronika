@@ -1,0 +1,272 @@
+name: Production Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: "Type DEPLOY to confirm production deployment"
+        required: true
+        default: ""
+
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
+env:
+  NODE_VERSION: "22"
+
+jobs:
+  # ─────────────────────────────────────────────────────────
+  # 0. Require manual confirmation for workflow_dispatch
+  # ─────────────────────────────────────────────────────────
+  confirm:
+    name: Confirm Deployment
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.confirm != 'DEPLOY'
+    steps:
+      - name: Require confirmation
+        run: |
+          echo "ERROR: You must type DEPLOY to confirm production deployment"
+          exit 1
+
+  # ─────────────────────────────────────────────────────────
+  # 1. Pre-deploy checks
+  # ─────────────────────────────────────────────────────────
+  checks:
+    name: Pre-Deploy Checks
+    runs-on: ubuntu-latest
+    needs: [confirm]
+    if: always() && (needs.confirm.result == 'success' || needs.confirm.result == 'skipped')
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @elbtronika/web typecheck
+      - run: pnpm lint
+      - run: pnpm test
+      - run: pnpm audit --audit-level high
+        continue-on-error: true
+
+  # ─────────────────────────────────────────────────────────
+  # 2. Lighthouse audit (gate)
+  # ─────────────────────────────────────────────────────────
+  lighthouse:
+    name: Lighthouse Gate
+    runs-on: ubuntu-latest
+    needs: checks
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
+
+      - run: pnpm install --frozen-lockfile
+      - run: npm install -g @lhci/cli@0.14.x
+
+      - name: Run Lighthouse CI
+        run: lhci autorun
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+  # ─────────────────────────────────────────────────────────
+  # 3. Security scan (gate)
+  # ─────────────────────────────────────────────────────────
+  security:
+    name: Security Gate
+    runs-on: ubuntu-latest
+    needs: checks
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm audit --audit-level high
+
+      - name: Run npm audit fix check
+        run: pnpm audit --fix --dry-run || true
+
+  # ─────────────────────────────────────────────────────────
+  # 4. Build
+  # ─────────────────────────────────────────────────────────
+  build:
+    name: Build Production
+    runs-on: ubuntu-latest
+    needs: [lighthouse, security]
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Build (Production)
+        run: pnpm build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.PROD_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.PROD_SUPABASE_ANON_KEY }}
+          NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.SANITY_PROJECT_ID }}
+          NEXT_PUBLIC_SANITY_DATASET: "production"
+          NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${{ secrets.PROD_STRIPE_PUBLISHABLE_KEY }}
+          STRIPE_SECRET_KEY: ${{ secrets.PROD_STRIPE_SECRET_KEY }}
+          STRIPE_WEBHOOK_SECRET: ${{ secrets.PROD_STRIPE_WEBHOOK_SECRET }}
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-build
+          path: apps/web/.next/
+          retention-days: 7
+          if-no-files-found: error
+          include-hidden-files: true
+
+  # ─────────────────────────────────────────────────────────
+  # 5. Deploy to Netlify (Production)
+  # ─────────────────────────────────────────────────────────
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: production
+      url: https://elbtronika.art
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.PROD_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.PROD_SUPABASE_ANON_KEY }}
+          NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.SANITY_PROJECT_ID }}
+          NEXT_PUBLIC_SANITY_DATASET: "production"
+          NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${{ secrets.PROD_STRIPE_PUBLISHABLE_KEY }}
+
+      - name: Install Netlify CLI
+        run: npm install -g netlify-cli
+
+      - name: Deploy to Production
+        id: deploy
+        run: |
+          DEPLOY_OUTPUT=$(netlify deploy \
+            --prod \
+            --dir=apps/web/.next \
+            --site=${{ secrets.NETLIFY_SITE_ID }} \
+            --message="Production deploy: ${{ github.sha }}" \
+            --json)
+          echo "$DEPLOY_OUTPUT"
+          echo "deploy_url=$(echo "$DEPLOY_OUTPUT" | jq -r '.deploy_url')" >> $GITHUB_OUTPUT
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+
+      - name: Create GitHub Release
+        if: github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: "v${{ github.run_number }}"
+          name: "Production Release v${{ github.run_number }}"
+          body: |
+            Automated production deployment.
+            - Commit: ${{ github.sha }}
+            - Deploy URL: ${{ steps.deploy.outputs.deploy_url }}
+          generate_release_notes: true
+
+  # ─────────────────────────────────────────────────────────
+  # 6. Post-deploy validation
+  # ─────────────────────────────────────────────────────────
+  validate:
+    name: Post-Deploy Validation
+    runs-on: ubuntu-latest
+    needs: deploy
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Wait for deploy propagation
+        run: sleep 45
+
+      - name: Validate — Health endpoint
+        run: |
+          curl -sf https://elbtronika.art/api/health || exit 1
+
+      - name: Validate — Key pages
+        run: |
+          curl -sf https://elbtronika.art/ || exit 1
+          curl -sf https://elbtronika.art/shop || exit 1
+          curl -sf https://elbtronika.art/gallery || exit 1
+          curl -sf https://elbtronika.art/dashboard/pm || exit 1
+
+      - name: Validate — API endpoints
+        run: |
+          curl -sf https://elbtronika.art/api/health | grep -q '"status":"ok"' || exit 1
+
+      - name: Validate — Security headers
+        run: |
+          curl -sI https://elbtronika.art/ | grep -i "X-Frame-Options: DENY" || exit 1
+          curl -sI https://elbtronika.art/ | grep -i "X-Content-Type-Options: nosniff" || exit 1
+
+      - name: Notify Slack — Production Deploy Success
+        if: success()
+        uses: slackapi/slack-github-action@v1.27.0
+        with:
+          payload: |
+            {
+              "text": "🚀 *PRODUCTION DEPLOYED*\nURL: https://elbtronika.art\nCommit: ${{ github.sha }}\nAll gates passed ✅"
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_DEPLOY_WEBHOOK }}
+
+      - name: Notify Slack — Production Deploy Failed
+        if: failure()
+        uses: slackapi/slack-github-action@v1.27.0
+        with:
+          payload: |
+            {
+              "text": "🚨 *PRODUCTION DEPLOY FAILED*\nCommit: ${{ github.sha }}\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Run>"
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_DEPLOY_WEBHOOK }}
+
+  # ─────────────────────────────────────────────────────────
+  # 7. Trigger 48h monitoring
+  # ─────────────────────────────────────────────────────────
+  monitoring:
+    name: Start 48h Monitoring
+    runs-on: ubuntu-latest
+    needs: validate
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create monitoring issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = `🔍 48h Monitoring — Production Deploy ${new Date().toISOString().slice(0,10)}`;
+            const body = `## 48h Intensive Monitoring Phase Started\n\n- Deploy: ${{ github.sha }}\n- URL: https://elbtronika.art\n- Started: ${new Date().toISOString()}\n\n### Checklist\n- [ ] Hour 1: Health check + Core Web Vitals baseline\n- [ ] Hour 6: Error rate check\n- [ ] Hour 12: Traffic pattern review\n- [ ] Hour 24: Daily summary\n- [ ] Hour 36: Mid-phase health check\n- [ ] Hour 48: Final report + close issue\n\n### Automated Checks\nRun: \`node scripts/monitoring/48h-check.js\`\n`;
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title,
+              body,
+              labels: ['monitoring', 'production']
+            });

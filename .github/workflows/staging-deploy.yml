@@ -1,0 +1,163 @@
+name: Staging Deploy
+
+on:
+  push:
+    branches: [staging]
+  workflow_dispatch:
+
+concurrency:
+  group: staging-deploy
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: "22"
+
+jobs:
+  # ─────────────────────────────────────────────────────────
+  # 1. Pre-deploy checks
+  # ─────────────────────────────────────────────────────────
+  checks:
+    name: Pre-Deploy Checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @elbtronika/web typecheck
+      - run: pnpm lint
+      - run: pnpm test
+      - run: pnpm audit --audit-level high
+        continue-on-error: true
+
+  # ─────────────────────────────────────────────────────────
+  # 2. Build
+  # ─────────────────────────────────────────────────────────
+  build:
+    name: Build Staging
+    runs-on: ubuntu-latest
+    needs: checks
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Build (Staging)
+        run: pnpm build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.STAGING_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.STAGING_SUPABASE_ANON_KEY }}
+          NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.SANITY_PROJECT_ID }}
+          NEXT_PUBLIC_SANITY_DATASET: "staging"
+          NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${{ secrets.STAGING_STRIPE_PUBLISHABLE_KEY }}
+          STRIPE_SECRET_KEY: ${{ secrets.STAGING_STRIPE_SECRET_KEY }}
+          STRIPE_WEBHOOK_SECRET: ${{ secrets.STAGING_STRIPE_WEBHOOK_SECRET }}
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: staging-build
+          path: apps/web/.next/
+          retention-days: 1
+          if-no-files-found: error
+          include-hidden-files: true
+
+  # ─────────────────────────────────────────────────────────
+  # 3. Deploy to Netlify (Staging)
+  # ─────────────────────────────────────────────────────────
+  deploy:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: staging
+      url: https://staging.elbtronika.art
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.STAGING_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.STAGING_SUPABASE_ANON_KEY }}
+          NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.SANITY_PROJECT_ID }}
+          NEXT_PUBLIC_SANITY_DATASET: "staging"
+          NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${{ secrets.STAGING_STRIPE_PUBLISHABLE_KEY }}
+
+      - name: Install Netlify CLI
+        run: npm install -g netlify-cli
+
+      - name: Deploy to Staging
+        id: deploy
+        run: |
+          netlify deploy \
+            --prod \
+            --dir=apps/web/.next \
+            --site=${{ secrets.NETLIFY_STAGING_SITE_ID }} \
+            --message="Staging deploy: ${{ github.sha }}"
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+
+  # ─────────────────────────────────────────────────────────
+  # 4. Post-deploy smoke tests
+  # ─────────────────────────────────────────────────────────
+  smoke-tests:
+    name: Post-Deploy Smoke Tests
+    runs-on: ubuntu-latest
+    needs: deploy
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Wait for deploy propagation
+        run: sleep 30
+
+      - name: Smoke test — Health endpoint
+        run: |
+          curl -sf https://staging.elbtronika.art/api/health || exit 1
+
+      - name: Smoke test — Key pages
+        run: |
+          curl -sf https://staging.elbtronika.art/ || exit 1
+          curl -sf https://staging.elbtronika.art/shop || exit 1
+          curl -sf https://staging.elbtronika.art/gallery || exit 1
+
+      - name: Smoke test — API endpoints
+        run: |
+          curl -sf -X POST https://staging.elbtronika.art/api/health || exit 1
+
+      - name: Notify Slack — Staging Deploy Success
+        if: success()
+        uses: slackapi/slack-github-action@v1.27.0
+        with:
+          payload: |
+            {
+              "text": "✅ Staging deployed: https://staging.elbtronika.art\nCommit: ${{ github.sha }}"
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_DEPLOY_WEBHOOK }}
+
+      - name: Notify Slack — Staging Deploy Failed
+        if: failure()
+        uses: slackapi/slack-github-action@v1.27.0
+        with:
+          payload: |
+            {
+              "text": "❌ Staging deploy FAILED\nCommit: ${{ github.sha }}\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Run>"
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_DEPLOY_WEBHOOK }}

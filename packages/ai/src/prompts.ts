@@ -111,4 +111,80 @@ Erkläre dem Nutzer in 2–3 Sätzen, warum du diese Auswahl getroffen hast. Bez
   };
 }
 
+export function createFlowMatchPrompt(
+  req: import("./types").FlowMatchRequest,
+  audioFeatures: string,
+): import("./types").AIPrompt {
+  const lang = req.language ?? "de";
+  const limit = req.limit ?? 5;
+
+  const catalogText = req.artworkCatalog
+    .map(
+      (aw) =>
+        `- "${aw.title}" (ID: ${aw.id}) by ${aw.artist}${aw.medium ? `, ${aw.medium}` : ""}${aw.description ? ` — ${aw.description.slice(0, 100)}` : ""}`,
+    )
+    .join("\n");
+
+  const userContent = `Ein DJ-Set hat folgende Audio-Merkmale:
+${audioFeatures}
+
+Hier ist der aktuelle Kunstkatalog:
+${catalogText}
+
+Schlage ${limit} Artworks vor, die am besten zu diesem Set passen. Berücksichtige:
+1. Stimmungsübereinstimmung (dunkel/hell, energetisch/ruhig)
+2. Energie-Level (BPM, Arousal)
+3. Farbresonanz (Helligkeit der Musik vs. Bild)
+4. Komposition (strukturelle Ähnlichkeiten)
+
+Antworte als JSON:
+{
+  "matches": [
+    { "artworkId": "...", "title": "...", "artist": "...", "reason": "...", "confidence": 0.92 }
+  ]
+}`;
+
+  return {
+    system: buildSystemPrompt(SYSTEM_JSON, lang),
+    messages: [{ role: "user", content: userContent }],
+    model: DEFAULT_MODEL,
+    maxTokens: 2048,
+    temperature: 0.7,
+  };
+}
+
+export function createCurationPrompt(
+  roomName: string,
+  djName: string,
+  setDescription: string,
+  selectedArtworks: string,
+  language: "de" | "en" = "de",
+): import("./types").AIPrompt {
+  const userContent = language === "de"
+    ? `Erstelle eine Kuratier-Beschreibung für den Raum "${roomName}".
+DJ: ${djName}
+Set-Beschreibung: ${setDescription}
+
+Ausgewählte Artworks:
+${selectedArtworks}
+
+Schreibe 2-3 Sätze, die erklären, warum diese Werke zu diesem Set passen. Atmosphärisch, nie generisch.`
+    : `Create a curation description for room "${roomName}".
+DJ: ${djName}
+Set description: ${setDescription}
+
+Selected artworks:
+${selectedArtworks}
+
+Write 2-3 sentences explaining why these works fit this set. Atmospheric, never generic.`;
+
+  return {
+    system: buildSystemPrompt(SYSTEM_IDENTITY, language),
+    messages: [{ role: "user", content: userContent }],
+    model: DEFAULT_MODEL,
+    maxTokens: 1024,
+    temperature: 0.8,
+  };
+}
+
 export { SYSTEM_IDENTITY, SYSTEM_JSON };

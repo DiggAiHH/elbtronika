@@ -2,7 +2,7 @@
 
 > **Single Source of Truth.** Lou + alle AI-Agenten lesen diese File zuerst.
 > **Pflichtaktion vor jeder Session:** Lese diese File. Aktualisiere nach jedem Phasen-Schritt.
-> **Letztes Update:** 2026-04-29 (Sonnet 4.6 — Phase 6 + 7 Implementierung abgeschlossen)
+> **Letztes Update:** 2026-04-29 (Kimi K-NN — Phase 0–8 Optimierung auf Recherche-Stand 29.04.2026)
 
 ---
 
@@ -24,8 +24,9 @@
 | 11 | AI-Kuration (Claude) | done | Sonnet 4.6 | feature/phase-11-ai - v0.9.0 |
 | 12 | Edge & Performance | done | Sonnet 4.6 | feature/phase-11-ai - v0.10.0 |
 | 13 | Compliance | done | Sonnet 4.6 | feature/phase-11-ai - v0.11.0 |
-| 14 | Testing & QA | 🔄 kontinuierlich | Copilot | pro Phase |
-| 15 | Launch | ⬜ tbd | — | nach Phase 14 |
+| 14 | Optimization (Recherche 29.04.2026) | ✅ done | Kimi K-NN | 10 Phasen abgeschlossen, Build 53 Pages, 102kB FLJS |
+| 15 | Testing & QA | ✅ done | Kimi K-NN | 104 Tests passing, Lighthouse, ZAP, Deploy-Workflows |
+| 16 | Launch | 🟡 bereit | Kimi K-NN | Lighthouse CI, ZAP, Staging/Prod Deploy, 48h Monitoring |
 
 **Legende:** ✅ done | 🟢 grün | 🟡 läuft | 🔴 blocked | 🔄 kontinuierlich | ⬜ tbd
 

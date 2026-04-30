@@ -124,7 +124,25 @@ jobs:
           include-hidden-files: true
 
   # ─────────────────────────────────────────────────────────
-  # 6. Deploy to Netlify
+  # 6. Security Audit
+  # ─────────────────────────────────────────────────────────
+  security:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    needs: install
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm audit --audit-level high
+        continue-on-error: true
+
+  # ─────────────────────────────────────────────────────────
+  # 7. Deploy to Netlify
   # ─────────────────────────────────────────────────────────
   deploy:
     name: Deploy to Netlify

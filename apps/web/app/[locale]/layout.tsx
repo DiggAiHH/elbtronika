@@ -4,13 +4,19 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import "@/app/globals.css";
-import "@react-three/fiber";
-import { CanvasRoot } from "@elbtronika/three";
-import { GalleryHUD } from "@elbtronika/three";
+import dynamic from "next/dynamic";
 import { ConsentBanner } from "./components/ConsentBanner";
+import { WebVitals } from "./components/WebVitals";
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 
-// TODO Phase 2: Import actual font files from /public/fonts
-// For MVP we rely on system fonts + Google Fonts CDN (replaced in Phase 13 with self-hosted)
+const CanvasRoot = dynamic(() => import("@elbtronika/three").then((m) => ({ default: m.CanvasRoot })), {
+  loading: () => null,
+});
+
+const GalleryHUD = dynamic(() => import("@elbtronika/three").then((m) => ({ default: m.GalleryHUD })), {
+  loading: () => null,
+});
 
 type Props = {
   children: React.ReactNode;
@@ -50,7 +56,6 @@ export function generateStaticParams() {
 export default async function LocaleLayout({ children, params }: Props) {
   const { locale } = await params;
 
-  // Validate locale – return 404 for unknown locales
   if (!routing.locales.includes(locale as "de" | "en")) {
     notFound();
   }
@@ -59,14 +64,17 @@ export default async function LocaleLayout({ children, params }: Props) {
 
   return (
     <html lang={locale} className="dark">
-      <body>
-        <NextIntlClientProvider messages={messages}>
-          {/* Phase 7: 3D Canvas overlay – lives outside route tree, never unmounts */}
+      <body className="min-h-dvh flex flex-col">
+        <NextIntlClientProvider locale={locale} messages={messages}>
           <CanvasRoot />
-          {/* Phase 7: DOM HUD overlay – minimap + room indicator */}
           <GalleryHUD />
-          {children}
+          <Navbar />
+          <main className="flex-1">
+            {children}
+          </main>
+          <Footer />
           <ConsentBanner locale={locale as "de" | "en"} />
+          <WebVitals />
         </NextIntlClientProvider>
       </body>
     </html>

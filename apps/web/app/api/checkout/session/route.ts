@@ -98,8 +98,33 @@ export async function POST(request: NextRequest) {
   // Compute split
   const split = computeRevenueSplit(req.priceCents, !!djAccountId);
 
-  // Create Stripe Checkout Session
+  // Create pending order in Supabase
   try {
+    const { data: order, error: orderError } = await supabase
+      .from("orders")
+      .insert({
+        artwork_id: req.artworkId,
+        buyer_id: user.id,
+        amount_eur: req.priceCents / 100,
+        artist_payout_eur: split.artistCents / 100,
+        dj_payout_eur: split.djCents / 100,
+        platform_fee_eur: split.platformCents / 100,
+        status: "pending",
+        stripe_payment_intent_id: null,
+        stripe_charge_id: null,
+      })
+      .select("id")
+      .single();
+
+    if (orderError || !order) {
+      console.error("[checkout] order creation failed:", orderError?.message);
+      return NextResponse.json(
+        { error: "Failed to create order" },
+        { status: 500 },
+      );
+    }
+
+    // Create Stripe Checkout Session with order ID for tracking
     const session = await createCheckoutSession({
       artworkId: req.artworkId,
       artistStripeAccountId: artist.stripe_account_id,
@@ -110,29 +135,9 @@ export async function POST(request: NextRequest) {
       successUrl: req.successUrl,
       cancelUrl: req.cancelUrl,
       platformFeeCents: split.platformCents,
+      orderId: order.id,
       ...(user.email ? { buyerEmail: user.email } : {}),
     });
-
-    // Create pending order in Supabase
-    const { error: orderError } = await supabase.from("orders").insert({
-      artwork_id: req.artworkId,
-      buyer_id: user.id,
-      amount_eur: req.priceCents / 100,
-      artist_payout_eur: split.artistCents / 100,
-      dj_payout_eur: split.djCents / 100,
-      platform_fee_eur: split.platformCents / 100,
-      status: "pending",
-      stripe_payment_intent_id: null,
-      stripe_charge_id: null,
-    });
-
-    if (orderError) {
-      console.error("[checkout] order creation failed:", orderError.message);
-      return NextResponse.json(
-        { error: "Failed to create order" },
-        { status: 500 },
-      );
-    }
 
     return NextResponse.json(
       {

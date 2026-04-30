@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { Skeleton } from "./skeleton.js";
+import { Skeleton } from "./skeleton";
 
 const meta: Meta<typeof Skeleton> = {
   title: "Overlay & Feedback/Skeleton",

@@ -7,9 +7,8 @@ import { createClient } from "@/src/lib/supabase/server";
 import {
   generateJson,
   createDescriptionPrompt,
-  type AIDescriptionResult,
 } from "@elbtronika/ai";
-import { createMemoryStore, checkRateLimit } from "@elbtronika/ai/rate-limit";
+import { checkUserRateLimit, auditLog, hashText } from "@/src/lib/ai/server";
 
 const DescribeRequestSchema = z.object({
   bullets: z.array(z.string().min(1)).min(1).max(20),
@@ -18,57 +17,6 @@ const DescribeRequestSchema = z.object({
 });
 
 type DescribeRequest = z.infer<typeof DescribeRequestSchema>;
-
-// ---------------------------------------------------------------------------
-// Rate limit helper (in-memory for MVP — replace with Redis/Upstash in production)
-// ---------------------------------------------------------------------------
-const rateLimitStore = createMemoryStore();
-
-async function checkUserRateLimit(
-  userId: string,
-  role: string,
-): Promise<{ allowed: boolean; remaining: number; limit: number }> {
-  const result = await checkRateLimit(
-    { userId, role: role as "visitor" | "collector" | "artist" | "dj" | "curator" | "admin" },
-    rateLimitStore,
-  );
-  return {
-    allowed: result.allowed,
-    remaining: result.remaining,
-    limit: result.limit,
-  };
-}
-
-// ---------------------------------------------------------------------------
-// Audit helper — maps to existing ai_decisions schema
-// ---------------------------------------------------------------------------
-async function auditLog(
-  supabase: Awaited<ReturnType<typeof createClient>>,
-  entry: {
-    userId: string;
-    feature: "describe" | "recommend" | "explain";
-    promptHash: string;
-    model: string;
-    output: string;
-    inputTokens: number;
-    outputTokens: number;
-    latencyMs: number;
-  },
-) {
-  await supabase.from("ai_decisions").insert({
-    action: entry.feature,
-    triggered_by: entry.userId,
-    input_summary: entry.promptHash,
-    output_summary: entry.output,
-    model: entry.model,
-    metadata: {
-      inputTokens: entry.inputTokens,
-      outputTokens: entry.outputTokens,
-      latencyMs: entry.latencyMs,
-    },
-    confidence: null,
-  });
-}
 
 // ---------------------------------------------------------------------------
 // POST /api/ai/describe
@@ -123,18 +71,13 @@ export async function POST(request: NextRequest) {
       language: body.language ?? "de",
       tone: body.tone ?? "gallery",
     });
-    const { response, data } = await generateJson<AIDescriptionResult>(
+    const DescriptionResultSchema = z.object({
+      variants: z.array(z.string()),
+    });
+
+    const { response, data } = await generateJson(
       prompt,
-      (val) => {
-        if (
-          typeof val === "object" &&
-          val !== null &&
-          Array.isArray((val as Record<string, unknown>).variants)
-        ) {
-          return val as AIDescriptionResult;
-        }
-        throw new Error("Invalid AI response shape");
-      },
+      DescriptionResultSchema,
     );
 
     // Audit log (non-blocking)
@@ -171,12 +114,4 @@ export async function POST(request: NextRequest) {
       { status: 500 },
     );
   }
-}
-
-async function hashText(text: string): Promise<string> {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(text);
-  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("").slice(0, 32);
 }

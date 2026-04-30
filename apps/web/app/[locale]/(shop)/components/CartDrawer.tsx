@@ -1,12 +1,10 @@
 "use client";
 
-import { useCartStore } from "@/lib/cart/store";
-import { useLocale } from "next-intl";
+import { useCartStore } from "@/src/lib/cart/store";
 import Image from "next/image";
 
-export function CartDrawer() {
+export function CartDrawer({ locale = "en" }: { locale?: string }) {
   const { item, isOpen, closeCart, removeItem } = useCartStore();
-  const locale = useLocale();
 
   if (!isOpen) return null;
 

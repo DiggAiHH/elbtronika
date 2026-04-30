@@ -14,7 +14,12 @@ let audioContext: AudioContext | null = null;
 /** Lazy singleton – creates on first call, not on module load. */
 export function getAudioContext(): AudioContext {
   if (audioContext === null) {
-    audioContext = new AudioContext({ latencyHint: "interactive" });
+    try {
+      audioContext = new AudioContext({ latencyHint: "interactive" });
+    } catch (err) {
+      console.error("[audio] Failed to create AudioContext:", err);
+      throw new Error("AudioContext not supported in this browser");
+    }
   }
   return audioContext;
 }

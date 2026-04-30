@@ -1,8 +1,8 @@
 // ── Utilities ──────────────────────────────────────────────────────────────
 
 // ── Form Controls ──────────────────────────────────────────────────────────
-export { Button, type ButtonProps, buttonVariants } from "./components/button.js";
-export { Checkbox, type CheckboxProps } from "./components/checkbox.js";
+export { Button, type ButtonProps, buttonVariants } from "./components/button";
+export { Checkbox, type CheckboxProps } from "./components/checkbox";
 // ── Overlay & Feedback ─────────────────────────────────────────────────────
 export {
   Dialog,
@@ -15,8 +15,8 @@ export {
   DialogPortal,
   DialogTitle,
   DialogTrigger,
-} from "./components/dialog.js";
-export { Input, type InputProps, Textarea, type TextareaProps } from "./components/input.js";
+} from "./components/dialog";
+export { Input, type InputProps, Textarea, type TextareaProps } from "./components/input";
 // ── Layout ─────────────────────────────────────────────────────────────────
 export {
   Container,
@@ -27,10 +27,10 @@ export {
   type SpacerProps,
   Stack,
   type StackProps,
-} from "./components/layout.js";
-export { Select, type SelectProps } from "./components/select.js";
-export { Skeleton, type SkeletonProps } from "./components/skeleton.js";
-export { Slider, type SliderProps } from "./components/slider.js";
+} from "./components/layout";
+export { Select, type SelectProps } from "./components/select";
+export { Skeleton, type SkeletonProps } from "./components/skeleton";
+export { Slider, type SliderProps } from "./components/slider";
 export {
   Toast,
   ToastDescription,
@@ -38,7 +38,7 @@ export {
   ToastProvider,
   ToastTitle,
   ToastViewport,
-} from "./components/toast.js";
+} from "./components/toast";
 
 // ── Typography ─────────────────────────────────────────────────────────────
 export {
@@ -50,5 +50,5 @@ export {
   type NumericProps,
   Text,
   type TextProps,
-} from "./components/typography.js";
-export { cn } from "./lib/cn.js";
+} from "./components/typography";
+export { cn } from "./lib/cn";

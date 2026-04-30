@@ -18,6 +18,8 @@ export const CheckoutRequestSchema = z.object({
   imageUrl: z.string().url().optional(),
   successUrl: z.string().url(),
   cancelUrl: z.string().url(),
+  platformFeeCents: z.number().int().nonnegative().default(0),
+  orderId: z.string().uuid(),
 });
 
 export type CheckoutRequest = z.infer<typeof CheckoutRequestSchema>;
@@ -88,3 +90,12 @@ export const ConnectOnboardResponseSchema = z.object({
 });
 
 export type ConnectOnboardResponse = z.infer<typeof ConnectOnboardResponseSchema>;
+
+// ---------------------------------------------------------------------------
+// Validation Helpers
+// ---------------------------------------------------------------------------
+
+/** Validate Stripe Payment Intent ID format (pi_xxxxxxxxxxxxxxxx) */
+export function isValidPaymentIntentId(id: string): boolean {
+  return typeof id === "string" && id.startsWith("pi_") && id.length > 10;
+}

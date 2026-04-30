@@ -5,7 +5,11 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { z } from "zod";
 import { createClient } from "./server";
+
+// ── Validation schemas ───────────────────────────────────────────────────────
+const emailSchema = z.string().email("Ungültige E-Mail-Adresse.");
 
 // ── Magic link (passwordless email) ─────────────────────────────────────────
 export async function signInWithMagicLink(
@@ -14,8 +18,9 @@ export async function signInWithMagicLink(
 ): Promise<{ error: string | null }> {
   const email = formData.get("email") as string;
 
-  if (!email || !email.includes("@")) {
-    return { error: "Ungültige E-Mail-Adresse." };
+  const emailResult = emailSchema.safeParse(email);
+  if (!emailResult.success) {
+    return { error: emailResult.error.errors[0]?.message ?? "Ungültige E-Mail-Adresse." };
   }
 
   const supabase = await createClient();

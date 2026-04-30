@@ -7,9 +7,8 @@ import { createClient } from "@/src/lib/supabase/server";
 import {
   generateJson,
   createRecommendationPrompt,
-  type AIRecommendResult,
 } from "@elbtronika/ai";
-import { createMemoryStore, checkRateLimit } from "@elbtronika/ai/rate-limit";
+import { checkUserRateLimit, auditLog, hashText } from "@/src/lib/ai/server";
 
 const RecommendRequestSchema = z.object({
   mood: z.string().min(2).max(500),
@@ -18,59 +17,6 @@ const RecommendRequestSchema = z.object({
 });
 
 type RecommendRequest = z.infer<typeof RecommendRequestSchema>;
-
-const rateLimitStore = createMemoryStore();
-
-async function checkUserRateLimit(
-  userId: string,
-  role: string,
-): Promise<{ allowed: boolean; remaining: number; limit: number }> {
-  const result = await checkRateLimit(
-    { userId, role: role as "visitor" | "collector" | "artist" | "dj" | "curator" | "admin" },
-    rateLimitStore,
-  );
-  return {
-    allowed: result.allowed,
-    remaining: result.remaining,
-    limit: result.limit,
-  };
-}
-
-async function auditLog(
-  supabase: Awaited<ReturnType<typeof createClient>>,
-  entry: {
-    userId: string;
-    feature: "describe" | "recommend" | "explain";
-    promptHash: string;
-    model: string;
-    output: string;
-    inputTokens: number;
-    outputTokens: number;
-    latencyMs: number;
-  },
-) {
-  await supabase.from("ai_decisions").insert({
-    action: entry.feature,
-    triggered_by: entry.userId,
-    input_summary: entry.promptHash,
-    output_summary: entry.output,
-    model: entry.model,
-    metadata: {
-      inputTokens: entry.inputTokens,
-      outputTokens: entry.outputTokens,
-      latencyMs: entry.latencyMs,
-    },
-    confidence: null,
-  });
-}
-
-async function hashText(text: string): Promise<string> {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(text);
-  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("").slice(0, 32);
-}
 
 // ---------------------------------------------------------------------------
 // POST /api/ai/recommend
@@ -132,18 +78,20 @@ export async function POST(request: NextRequest) {
       { mood: body.mood, language: body.language ?? "de", limit: body.limit ?? 3 },
       catalogContext,
     );
-    const { response, data } = await generateJson<AIRecommendResult>(
+    const RecommendResultSchema = z.object({
+      suggestions: z.array(
+        z.object({
+          artworkId: z.string(),
+          title: z.string(),
+          artist: z.string(),
+          reason: z.string(),
+        }),
+      ),
+    });
+
+    const { response, data } = await generateJson(
       prompt,
-      (val) => {
-        if (
-          typeof val === "object" &&
-          val !== null &&
-          Array.isArray((val as Record<string, unknown>).suggestions)
-        ) {
-          return val as AIRecommendResult;
-        }
-        throw new Error("Invalid AI response shape");
-      },
+      RecommendResultSchema,
     );
 
     // Audit log (non-blocking)

@@ -10,7 +10,7 @@
  */
 
 import { useEffect, useRef } from "react";
-import { SpatialAudioEngine } from "../engine/SpatialAudioEngine";
+import { SpatialAudioEngine, computeGain } from "../engine/SpatialAudioEngine";
 import { HLSLoader } from "../engine/HLSLoader";
 import { useAudioStore } from "../store";
 
@@ -30,6 +30,7 @@ const GRACE_MS = 2000;
 export function useProximityAudio(
   getProximity: () => Map<string, number>,
   getCameraPosition: () => [number, number, number],
+  getCameraOrientation: () => [number, number, number, number, number, number],
   artworks: ProximityEntry[],
 ) {
   const engineRef = useRef<SpatialAudioEngine | null>(null);
@@ -81,6 +82,12 @@ export function useProximityAudio(
       const camPos = getCameraPosition();
       engine.setListenerPosition(camPos[0], camPos[1], camPos[2]);
 
+      const camOrient = getCameraOrientation();
+      engine.setListenerOrientation(
+        camOrient[0], camOrient[1], camOrient[2],
+        camOrient[3], camOrient[4], camOrient[5],
+      );
+
       const now = Date.now();
       const activeIds = new Set<string>();
 
@@ -101,7 +108,7 @@ export function useProximityAudio(
             loader
               .load({ src: art.hlsManifestUrl, autoPlay: true })
               .then((audioEl) => {
-                engine.addSource(art.artworkId, audioEl);
+                engine.addSource(art.artworkId, audioEl, { directional: true });
                 if (art.position) {
                   engine.setSourcePosition(
                     art.artworkId,
@@ -111,7 +118,9 @@ export function useProximityAudio(
                   );
                 }
               })
-              .catch(() => {});
+              .catch((err: unknown) => {
+                console.error(`[useProximityAudio] Failed to load HLS for ${art.artworkId}:`, err);
+              });
           } else {
             // Update existing source
             const loader = loadersRef.current.get(art.artworkId);
@@ -127,7 +136,9 @@ export function useProximityAudio(
                 );
               }
               if (loader.audioElement.paused) {
-                loader.audioElement.play().catch(() => {});
+                loader.audioElement.play().catch((err: unknown) => {
+                  console.warn(`[useProximityAudio] Play failed for ${art.artworkId}:`, err);
+                });
               }
             }
           }
@@ -162,13 +173,7 @@ export function useProximityAudio(
 
     rafId = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(rafId);
-  }, [spatialEnabled, isPlaying, getProximity, getCameraPosition, artworks]);
+  }, [spatialEnabled, isPlaying, getProximity, getCameraPosition, getCameraOrientation, artworks]);
 }
 
-/** Inverse-square-law gain. */
-function computeGain(distance: number): number {
-  if (distance <= REF_DISTANCE) return 1;
-  const gain =
-    REF_DISTANCE / (REF_DISTANCE + 1 * (distance - REF_DISTANCE));
-  return Math.max(0, Math.min(1, gain));
-}
+

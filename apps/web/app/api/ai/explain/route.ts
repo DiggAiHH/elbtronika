@@ -5,7 +5,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { createClient } from "@/src/lib/supabase/server";
 import { generateJson, createExplainPrompt } from "@elbtronika/ai";
-import { createMemoryStore, checkRateLimit } from "@elbtronika/ai/rate-limit";
+import { checkUserRateLimit, auditLog, hashText } from "@/src/lib/ai/server";
 
 const ExplainRequestSchema = z.object({
   decisionId: z.string().uuid(),
@@ -13,59 +13,6 @@ const ExplainRequestSchema = z.object({
 });
 
 type ExplainRequest = z.infer<typeof ExplainRequestSchema>;
-
-const rateLimitStore = createMemoryStore();
-
-async function checkUserRateLimit(
-  userId: string,
-  role: string,
-): Promise<{ allowed: boolean; remaining: number; limit: number }> {
-  const result = await checkRateLimit(
-    { userId, role: role as "visitor" | "collector" | "artist" | "dj" | "curator" | "admin" },
-    rateLimitStore,
-  );
-  return {
-    allowed: result.allowed,
-    remaining: result.remaining,
-    limit: result.limit,
-  };
-}
-
-async function auditLog(
-  supabase: Awaited<ReturnType<typeof createClient>>,
-  entry: {
-    userId: string;
-    feature: "describe" | "recommend" | "explain";
-    promptHash: string;
-    model: string;
-    output: string;
-    inputTokens: number;
-    outputTokens: number;
-    latencyMs: number;
-  },
-) {
-  await supabase.from("ai_decisions").insert({
-    action: entry.feature,
-    triggered_by: entry.userId,
-    input_summary: entry.promptHash,
-    output_summary: entry.output,
-    model: entry.model,
-    metadata: {
-      inputTokens: entry.inputTokens,
-      outputTokens: entry.outputTokens,
-      latencyMs: entry.latencyMs,
-    },
-    confidence: null,
-  });
-}
-
-async function hashText(text: string): Promise<string> {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(text);
-  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("").slice(0, 32);
-}
 
 // ---------------------------------------------------------------------------
 // POST /api/ai/explain
@@ -126,18 +73,13 @@ export async function POST(request: NextRequest) {
       body.language ?? "de",
     );
 
-    const { response, data } = await generateJson<{ explanation: string }>(
+    const ExplainResultSchema = z.object({
+      explanation: z.string(),
+    });
+
+    const { response, data } = await generateJson(
       prompt,
-      (val) => {
-        if (
-          typeof val === "object" &&
-          val !== null &&
-          typeof (val as Record<string, unknown>).explanation === "string"
-        ) {
-          return val as { explanation: string };
-        }
-        throw new Error("Invalid AI response shape");
-      },
+      ExplainResultSchema,
     );
 
     // Audit log

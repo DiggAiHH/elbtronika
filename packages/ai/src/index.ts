@@ -1,8 +1,20 @@
-export { generate, generateJson, DEFAULT_MODEL, OPUS_MODEL } from "./client";
+export {
+  generate,
+  generateJson,
+  stream,
+  AIClientError,
+  setLogHook,
+  resetClient,
+  DEFAULT_MODEL,
+  OPUS_MODEL,
+} from "./client";
+export type { GenerateOptions } from "./client";
 export {
   createDescriptionPrompt,
   createRecommendationPrompt,
   createExplainPrompt,
+  createFlowMatchPrompt,
+  createCurationPrompt,
   SYSTEM_IDENTITY,
   SYSTEM_JSON,
 } from "./prompts";
@@ -19,4 +31,10 @@ export type {
   AIDecisionLog,
   RateLimitStatus,
   UserRole,
+  AITool,
+  AIToolUse,
+  AIToolResult,
+  AgentPrompt,
+  FlowMatchRequest,
+  FlowMatchResult,
 } from "./types";

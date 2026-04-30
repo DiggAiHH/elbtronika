@@ -64,6 +64,9 @@ export async function handlePaymentIntentSucceeded(
     return;
   }
 
+  // Prefer order_id from metadata (set since v1.x); fallback to artwork_id for legacy sessions
+  const orderId = pi.metadata?.order_id ?? artworkId;
+
   const artistAccountId = await ctx.getArtistStripeAccount(artworkId);
   if (!artistAccountId) {
     console.warn(`[webhook] No Stripe account for artwork ${artworkId}`);
@@ -81,6 +84,7 @@ export async function handlePaymentIntentSucceeded(
       artistAmountCents: split.artistCents,
       djAccountId: djAccountId ?? undefined,
       djAmountCents: djAccountId ? split.djCents : undefined,
+      orderId,
     });
 
     console.log(`[webhook] Transfers created for payment ${pi.id}`);

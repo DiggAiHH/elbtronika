@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
 import { Button, Input } from "@elbtronika/ui";
 
 interface Suggestion {
@@ -15,54 +16,50 @@ interface Props {
 }
 
 export function MoodRecommender({ locale = "de" }: Props) {
+  const t = useTranslations("recommender");
   const [mood, setMood] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const [suggestions, setSuggestions] = useState<Suggestion[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [remaining, setRemaining] = useState<number | null>(null);
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (!mood.trim()) return;
 
-    setLoading(true);
-    setError(null);
-    setSuggestions(null);
+    startTransition(async () => {
+      setError(null);
+      setSuggestions(null);
 
-    try {
-      const res = await fetch("/api/ai/recommend", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ mood: mood.trim(), language: locale }),
-      });
+      try {
+        const res = await fetch("/api/ai/recommend", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ mood: mood.trim(), language: locale }),
+        });
 
-      const data = await res.json();
+        const data = await res.json();
 
-      if (!res.ok) {
-        setError(data.error ?? "Unknown error");
-        return;
+        if (!res.ok) {
+          setError(data.error ?? "Unknown error");
+          return;
+        }
+
+        setSuggestions(data.suggestions);
+        setRemaining(data.meta?.remaining ?? null);
+      } catch {
+        setError(t("errorNetwork"));
       }
-
-      setSuggestions(data.suggestions);
-      setRemaining(data.meta?.remaining ?? null);
-    } catch {
-      setError(locale === "de" ? "Netzwerkfehler" : "Network error");
-    } finally {
-      setLoading(false);
-    }
+    });
   };
 
   return (
     <div className="flex flex-col gap-4 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
       <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">
-        {locale === "de"
-          ? "Stimmungsbasierte Empfehlung"
-          : "Mood-based Recommendation"}
+        {t("title")}
       </h3>
 
       <p className="text-xs text-[var(--color-text-secondary)]">
-        {locale === "de"
-          ? "Beschreibe deine gewünschte Stimmung — unsere KI schlägt passende Werke vor."
-          : "Describe your desired mood — our AI suggests matching artworks."}
+        {t("description")}
       </p>
 
       <div className="flex gap-2">
@@ -72,25 +69,15 @@ export function MoodRecommender({ locale = "de" }: Props) {
           onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
             if (e.key === "Enter") handleSubmit();
           }}
-          placeholder={
-            locale === "de"
-              ? "z.B. düster und hypnotisch"
-              : "e.g. dark and hypnotic"
-          }
+          placeholder={t("placeholder")}
           className="flex-1"
         />
         <Button
           variant="primary"
           onClick={handleSubmit}
-          disabled={loading || !mood.trim()}
+          disabled={isPending || !mood.trim()}
         >
-          {loading
-            ? locale === "de"
-              ? "Denke…"
-              : "Thinking…"
-            : locale === "de"
-              ? "Empfehlen"
-              : "Recommend"}
+          {isPending ? t("buttonLoading") : t("buttonIdle")}
         </Button>
       </div>
 
@@ -100,9 +87,7 @@ export function MoodRecommender({ locale = "de" }: Props) {
 
       {remaining !== null && (
         <p className="text-xs text-[var(--color-text-tertiary)]">
-          {locale === "de"
-            ? `Noch ${remaining} Anfragen heute`
-            : `${remaining} requests remaining today`}
+          {t("remaining", { count: remaining })}
         </p>
       )}
 

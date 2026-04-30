@@ -1,174 +1,101 @@
 "use client";
 
-import { useEffect } from "react";
-import { Button } from "@elbtronika/ui";
-import { useConsentStore } from "@/src/lib/consent/store";
+import { useEffect, useState } from "react";
 
-interface Props {
-  locale?: "de" | "en";
+interface Consent {
+  necessary: boolean;
+  analytics: boolean;
+  marketing: boolean;
+  timestamp: string;
 }
 
-const LABELS = {
-  de: {
-    title: "Datenschutz-Einstellungen",
-    description:
-      "Wir verwenden Cookies und Tracking-Technologien, um dein Erlebnis zu verbessern. Du kannst deine Zustimmung jederzeit widerrufen.",
-    essential: "Essenziell (erforderlich)",
-    analytics: "Analytics (anonymisiert)",
-    spatial: "Spatial Tracking (3D-Galerie)",
-    marketing: "Marketing",
-    acceptAll: "Alle akzeptieren",
-    rejectAll: "Nur Essenzielle",
-    save: "Speichern",
-    manage: "Datenschutz-Einstellungen",
-  },
-  en: {
-    title: "Privacy Settings",
-    description:
-      "We use cookies and tracking technologies to improve your experience. You can withdraw consent at any time.",
-    essential: "Essential (required)",
-    analytics: "Analytics (anonymised)",
-    spatial: "Spatial Tracking (3D Gallery)",
-    marketing: "Marketing",
-    acceptAll: "Accept All",
-    rejectAll: "Essential Only",
-    save: "Save",
-    manage: "Privacy Settings",
-  },
-};
+function getConsent(): Consent | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = localStorage.getItem("elbtronika-consent");
+    return raw ? (JSON.parse(raw) as Consent) : null;
+  } catch {
+    return null;
+  }
+}
 
-export function ConsentBanner({ locale = "de" }: Props) {
-  const {
-    choices,
-    bannerShown,
-    setConsent,
-    acceptAll,
-    rejectAll,
-    showBanner,
-    hideBanner,
-  } = useConsentStore();
+function setConsent(consent: Consent) {
+  if (typeof window === "undefined") return;
+  localStorage.setItem("elbtronika-consent", JSON.stringify(consent));
+}
 
-  const t = LABELS[locale];
+export function ConsentBanner({ locale }: { locale: "de" | "en" }) {
+  const [visible, setVisible] = useState(false);
 
-  // Show banner on first visit if any non-essential choice is undecided
   useEffect(() => {
-    const hasDecided =
-      choices.analytics !== null &&
-      choices.spatial_tracking !== null &&
-      choices.marketing !== null;
-    if (!hasDecided && !bannerShown) {
-      showBanner();
-    }
-  }, [choices, bannerShown, showBanner]);
+    const consent = getConsent();
+    if (!consent) setVisible(true);
+  }, []);
 
-  // Sync consent to server when choices change
-  useEffect(() => {
-    const hasDecided =
-      choices.analytics !== null &&
-      choices.spatial_tracking !== null &&
-      choices.marketing !== null;
-    if (!hasDecided) return;
-
-    // Fire-and-forget log to server
+  function acceptAll() {
+    const consent: Consent = {
+      necessary: true,
+      analytics: true,
+      marketing: true,
+      timestamp: new Date().toISOString(),
+    };
+    setConsent(consent);
+    setVisible(false);
+    // Send to server
     fetch("/api/consent", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        analytics: choices.analytics,
-        spatial_tracking: choices.spatial_tracking,
-        marketing: choices.marketing,
-      }),
-    }).catch(() => {
-      /* best-effort logging */
-    });
-  }, [choices]);
-
-  if (!bannerShown) {
-    return (
-      <button
-        onClick={showBanner}
-        className="fixed bottom-2 right-2 z-50 rounded-[var(--radius-md)] bg-[var(--color-surface)] px-3 py-1.5 text-xs text-[var(--color-text-secondary)] shadow hover:text-[var(--color-text-primary)]"
-      >
-        {t.manage}
-      </button>
-    );
+      body: JSON.stringify(consent),
+    }).catch(() => {});
   }
 
+  function acceptNecessaryOnly() {
+    const consent: Consent = {
+      necessary: true,
+      analytics: false,
+      marketing: false,
+      timestamp: new Date().toISOString(),
+    };
+    setConsent(consent);
+    setVisible(false);
+    fetch("/api/consent", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(consent),
+    }).catch(() => {});
+  }
+
+  if (!visible) return null;
+
   return (
-    <div className="fixed inset-x-0 bottom-0 z-50 border-t border-[var(--color-border)] bg-[var(--color-bg)] p-4 shadow-lg">
-      <div className="mx-auto max-w-4xl">
-        <h3 className="mb-1 text-sm font-semibold text-[var(--color-text-primary)]">
-          {t.title}
-        </h3>
-        <p className="mb-3 text-xs text-[var(--color-text-secondary)]">
-          {t.description}
+    <div
+      role="dialog"
+      aria-label={locale === "de" ? "Cookie-Einwilligung" : "Cookie consent"}
+      className="fixed bottom-0 left-0 right-0 z-50 border-t border-zinc-800 bg-zinc-950/95 backdrop-blur-sm px-4 py-4"
+    >
+      <div className="mx-auto flex max-w-4xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-sm text-zinc-300">
+          {locale === "de"
+            ? "Wir verwenden Cookies für grundlegende Funktionen, Analysen und Marketing. Du kannst deine Einwilligung jederzeit widerrufen."
+            : "We use cookies for essential functions, analytics, and marketing. You can revoke your consent at any time."}
         </p>
-
-        <div className="mb-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
-          <ConsentToggle
-            label={t.essential}
-            checked={true}
-            disabled
-            onChange={() => {}}
-          />
-          <ConsentToggle
-            label={t.analytics}
-            checked={choices.analytics ?? false}
-            onChange={(v) => setConsent("analytics", v)}
-          />
-          <ConsentToggle
-            label={t.spatial}
-            checked={choices.spatial_tracking ?? false}
-            onChange={(v) => setConsent("spatial_tracking", v)}
-          />
-          <ConsentToggle
-            label={t.marketing}
-            checked={choices.marketing ?? false}
-            onChange={(v) => setConsent("marketing", v)}
-          />
-        </div>
-
-        <div className="flex gap-2">
-          <Button variant="primary" size="sm" onClick={acceptAll}>
-            {t.acceptAll}
-          </Button>
-          <Button variant="secondary" size="sm" onClick={rejectAll}>
-            {t.rejectAll}
-          </Button>
-          <Button variant="ghost" size="sm" onClick={hideBanner}>
-            {t.save}
-          </Button>
+        <div className="flex shrink-0 gap-2">
+          <button
+            type="button"
+            onClick={acceptNecessaryOnly}
+            className="rounded-md border border-zinc-700 px-3 py-2 text-xs font-medium text-zinc-300 hover:bg-zinc-800 transition-colors"
+          >
+            {locale === "de" ? "Nur Notwendige" : "Necessary only"}
+          </button>
+          <button
+            type="button"
+            onClick={acceptAll}
+            className="rounded-md bg-white px-3 py-2 text-xs font-medium text-black hover:bg-zinc-200 transition-colors"
+          >
+            {locale === "de" ? "Alle akzeptieren" : "Accept all"}
+          </button>
         </div>
       </div>
     </div>
-  );
-}
-
-function ConsentToggle({
-  label,
-  checked,
-  disabled,
-  onChange,
-}: {
-  label: string;
-  checked: boolean;
-  disabled?: boolean;
-  onChange: (v: boolean) => void;
-}) {
-  return (
-    <label className="flex cursor-pointer items-center gap-2 rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2">
-      <input
-        type="checkbox"
-        checked={checked}
-        disabled={disabled}
-        onChange={(e) => onChange(e.target.checked)}
-        className="h-4 w-4 accent-[var(--color-primary)]"
-      />
-      <span
-        className={`text-xs ${disabled ? "text-[var(--color-text-tertiary)]" : "text-[var(--color-text-primary)]"}`}
-      >
-        {label}
-      </span>
-    </label>
   );
 }

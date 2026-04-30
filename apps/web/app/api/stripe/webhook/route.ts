@@ -4,6 +4,7 @@
 
 import { type NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/src/lib/supabase/server";
+import type { WebhookContext } from "@elbtronika/payments";
 import {
   getStripe,
   getWebhookSecret,
@@ -12,6 +13,52 @@ import {
   handlePaymentIntentSucceeded,
   handlePaymentIntentFailed,
 } from "@elbtronika/payments";
+
+// ---------------------------------------------------------------------------
+// Shared Supabase-backed webhook context
+// ---------------------------------------------------------------------------
+function createWebhookContext(supabase: Awaited<ReturnType<typeof createClient>>): WebhookContext {
+  return {
+    updateOrder: async (params) => {
+      await supabase
+        .from("orders")
+        .update({
+          status: params.status,
+          stripe_payment_intent_id: params.stripePaymentIntentId ?? null,
+          stripe_charge_id: params.stripeChargeId ?? null,
+        })
+        .eq("id", params.orderId);
+    },
+    getOrderBySessionId: async (sessionId) => {
+      const { data } = await supabase
+        .from("orders")
+        .select("id, artwork_id, buyer_id, artist_payout_eur, dj_payout_eur, status")
+        .eq("stripe_payment_intent_id", sessionId)
+        .maybeSingle();
+      return data ?? null;
+    },
+    getArtistStripeAccount: async (artworkId) => {
+      const { data } = await supabase
+        .from("artworks")
+        .select("artist_id, artists(stripe_account_id)")
+        .eq("id", artworkId)
+        .single();
+      return (data?.artists as { stripe_account_id: string } | null)
+        ?.stripe_account_id ?? null;
+    },
+    getDjStripeAccount: async (artworkId) => {
+      const { data } = await supabase
+        .from("artworks")
+        .select("set_id, sets(dj_id, djs(stripe_account_id))")
+        .eq("id", artworkId)
+        .single();
+      return (
+        (data as unknown as { sets?: { dj_id: string; djs?: { stripe_account_id: string } } } | null)
+          ?.sets?.djs?.stripe_account_id ?? null
+      );
+    },
+  };
+}
 
 // ---------------------------------------------------------------------------
 // POST /api/stripe/webhook
@@ -54,6 +101,8 @@ export async function POST(request: NextRequest) {
     payload: JSON.parse(JSON.stringify(event)) as Record<string, never>,
   });
 
+  const ctx = createWebhookContext(supabase);
+
   try {
     switch (event.type) {
       case "account.updated": {
@@ -72,86 +121,12 @@ export async function POST(request: NextRequest) {
       }
 
       case "checkout.session.completed": {
-        await handleCheckoutSessionCompleted(event.data.object,
-          {
-            updateOrder: async (params) => {
-              await supabase
-                .from("orders")
-                .update({
-                  status: params.status,
-                  stripe_payment_intent_id: params.stripePaymentIntentId ?? null,
-                  stripe_charge_id: params.stripeChargeId ?? null,
-                })
-                .eq("id", params.orderId);
-            },
-            getOrderBySessionId: async (sessionId) => {
-              const { data } = await supabase
-                .from("orders")
-                .select("id, artwork_id, buyer_id, artist_payout_eur, dj_payout_eur, status")
-                .eq("stripe_payment_intent_id", sessionId)
-                .maybeSingle();
-              return data ?? null;
-            },
-            getArtistStripeAccount: async (artworkId) => {
-              const { data } = await supabase
-                .from("artworks")
-                .select("artist_id, artists(stripe_account_id)")
-                .eq("id", artworkId)
-                .single();
-              return (data?.artists as { stripe_account_id: string } | null)
-                ?.stripe_account_id ?? null;
-            },
-            getDjStripeAccount: async (artworkId) => {
-              const { data } = await supabase
-                .from("artworks")
-                .select("set_id, sets(dj_id, djs(stripe_account_id))")
-                .eq("id", artworkId)
-                .single();
-              return (
-                (data as unknown as { sets?: { dj_id: string; djs?: { stripe_account_id: string } } } | null)
-                  ?.sets?.djs?.stripe_account_id ?? null
-              );
-            },
-          },
-        );
+        await handleCheckoutSessionCompleted(event.data.object, ctx);
         break;
       }
 
       case "payment_intent.succeeded": {
-        await handlePaymentIntentSucceeded(event.data.object,
-          {
-            updateOrder: async (params) => {
-              await supabase
-                .from("orders")
-                .update({
-                  status: params.status,
-                  stripe_payment_intent_id: params.stripePaymentIntentId ?? null,
-                })
-                .eq("id", params.orderId);
-            },
-            getOrderBySessionId: async () => null,
-            getArtistStripeAccount: async (artworkId) => {
-              const { data } = await supabase
-                .from("artworks")
-                .select("artist_id, artists(stripe_account_id)")
-                .eq("id", artworkId)
-                .single();
-              return (data?.artists as { stripe_account_id: string } | null)
-                ?.stripe_account_id ?? null;
-            },
-            getDjStripeAccount: async (artworkId) => {
-              const { data } = await supabase
-                .from("artworks")
-                .select("set_id, sets(dj_id, djs(stripe_account_id))")
-                .eq("id", artworkId)
-                .single();
-              return (
-                (data as unknown as { sets?: { dj_id: string; djs?: { stripe_account_id: string } } } | null)
-                  ?.sets?.djs?.stripe_account_id ?? null
-              );
-            },
-          },
-        );
+        await handlePaymentIntentSucceeded(event.data.object, ctx);
 
         // Mark order as paid
         const paymentIntent = event.data.object as import("stripe").Stripe.PaymentIntent;
@@ -163,26 +138,7 @@ export async function POST(request: NextRequest) {
       }
 
       case "payment_intent.payment_failed": {
-        await handlePaymentIntentFailed(event.data.object,
-          {
-            updateOrder: async (params) => {
-              await supabase
-                .from("orders")
-                .update({ status: params.status })
-                .eq("id", params.orderId);
-            },
-            getOrderBySessionId: async (sessionId) => {
-              const { data } = await supabase
-                .from("orders")
-                .select("id, artwork_id, buyer_id, artist_payout_eur, dj_payout_eur, status")
-                .eq("stripe_payment_intent_id", sessionId)
-                .maybeSingle();
-              return data ?? null;
-            },
-            getArtistStripeAccount: async () => null,
-            getDjStripeAccount: async () => null,
-          },
-        );
+        await handlePaymentIntentFailed(event.data.object, ctx);
         break;
       }
     }

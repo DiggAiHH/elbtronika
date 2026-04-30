@@ -32,9 +32,22 @@
     "filterByArtist": "Nach Künstler filtern",
     "filterByDj": "Nach DJ filtern",
     "filterByPrice": "Nach Preis filtern",
-    "noResults": "Keine Kunstwerke gefunden.",
+    "noResults": "Keine Werke gefunden.",
     "priceFrom": "Ab {price}",
     "sold": "Verkauft"
+  },
+  "cart": {
+    "openButtonLabel": "Warenkorb öffnen",
+    "openButtonText": "Warenkorb"
+  },
+  "recommender": {
+    "title": "Stimmungsbasierte Empfehlung",
+    "description": "Beschreibe deine gewünschte Stimmung — unsere KI schlägt passende Werke vor.",
+    "placeholder": "z.B. düster und hypnotisch",
+    "buttonLoading": "Denke…",
+    "buttonIdle": "Empfehlen",
+    "errorNetwork": "Netzwerkfehler",
+    "remaining": "Noch {count} Anfragen heute"
   },
   "artwork": {
     "backToShop": "Zurück zum Shop",
@@ -53,7 +66,8 @@
   },
   "gallery": {
     "title": "3D-Galerie",
-    "description": "Erlebe ELBTRONIKA-Kunst in einem immersiven 3D-Raum."
+    "description": "Erlebe ELBTRONIKA-Kunst in einem immersiven 3D-Raum.",
+    "noScript": "Die 3D-Galerie benötigt JavaScript. Bitte aktiviere JavaScript in deinem Browser."
   },
   "legal": {
     "imprint": "Impressum",

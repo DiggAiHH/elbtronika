@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { Container, Grid, Spacer, Stack } from "./layout.js";
-import { Text } from "./typography.js";
+import { Container, Grid, Spacer, Stack } from "./layout";
+import { Text } from "./typography";
 
 const meta: Meta = {
   title: "Layout",

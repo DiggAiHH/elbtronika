@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "../lib/cn.js";
+import { cn } from "../lib/cn";
 
 export interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Predefined shape variant */

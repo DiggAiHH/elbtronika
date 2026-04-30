@@ -1,5 +1,6 @@
 // Phase 7 – packages/three barrel export
 export { CanvasRoot } from "./CanvasRoot";
+export { CanvasErrorBoundary } from "./components/CanvasErrorBoundary";
 export { useThreeStore } from "./store";
 export type { ThreeStore, ThreeMode } from "./store";
 export { ArtworkMesh } from "./components/Artwork";

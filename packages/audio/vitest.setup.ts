@@ -1,10 +1,27 @@
+(globalThis as any).__audioMocks = {
+  setTargetAtTime: vi.fn(),
+  connect: vi.fn(),
+  disconnect: vi.fn(),
+  setOrientation: vi.fn(),
+  setPosition: vi.fn(),
+};
+
+const m = (globalThis as any).__audioMocks;
+
 class MockAudioContext {
   state = "suspended";
   listener = {
-    positionX: { value: 0 },
-    positionY: { value: 0 },
-    positionZ: { value: 0 },
-    setPosition: () => {},
+    positionX: { value: 0, setTargetAtTime: m.setTargetAtTime },
+    positionY: { value: 0, setTargetAtTime: m.setTargetAtTime },
+    positionZ: { value: 0, setTargetAtTime: m.setTargetAtTime },
+    forwardX: { value: 0, setTargetAtTime: m.setTargetAtTime },
+    forwardY: { value: 0, setTargetAtTime: m.setTargetAtTime },
+    forwardZ: { value: 0, setTargetAtTime: m.setTargetAtTime },
+    upX: { value: 0, setTargetAtTime: m.setTargetAtTime },
+    upY: { value: 0, setTargetAtTime: m.setTargetAtTime },
+    upZ: { value: 0, setTargetAtTime: m.setTargetAtTime },
+    setOrientation: m.setOrientation,
+    setPosition: m.setPosition,
   };
   currentTime = 0;
 
@@ -15,9 +32,9 @@ class MockAudioContext {
 
   createGain() {
     return {
-      gain: { value: 1, setTargetAtTime: () => {} },
-      connect: () => {},
-      disconnect: () => {},
+      gain: { value: 1, setTargetAtTime: m.setTargetAtTime },
+      connect: m.connect,
+      disconnect: m.disconnect,
     };
   }
 
@@ -30,11 +47,11 @@ class MockAudioContext {
       rolloffFactor: 1,
       coneInnerAngle: 360,
       coneOuterAngle: 360,
-      positionX: { value: 0 },
-      positionY: { value: 0 },
-      positionZ: { value: 0 },
-      connect: () => {},
-      disconnect: () => {},
+      positionX: { value: 0, setTargetAtTime: m.setTargetAtTime },
+      positionY: { value: 0, setTargetAtTime: m.setTargetAtTime },
+      positionZ: { value: 0, setTargetAtTime: m.setTargetAtTime },
+      connect: m.connect,
+      disconnect: m.disconnect,
     };
   }
 
@@ -45,28 +62,28 @@ class MockAudioContext {
       ratio: { value: 0 },
       attack: { value: 0 },
       release: { value: 0 },
-      connect: () => {},
-      disconnect: () => {},
+      connect: m.connect,
+      disconnect: m.disconnect,
     };
   }
 
   createMediaElementSource() {
     return {
-      connect: () => {},
-      disconnect: () => {},
+      connect: m.connect,
+      disconnect: m.disconnect,
     };
   }
 
   createDelay() {
     return {
-      delayTime: { value: 0, setTargetAtTime: () => {} },
-      connect: () => {},
-      disconnect: () => {},
+      delayTime: { value: 0, setTargetAtTime: m.setTargetAtTime },
+      connect: m.connect,
+      disconnect: m.disconnect,
     };
   }
 
   get destination() {
-    return {} as AudioDestinationNode;
+    return { connect: m.connect, disconnect: m.disconnect } as AudioDestinationNode;
   }
 }
 

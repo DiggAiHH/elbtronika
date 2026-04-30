@@ -1,9 +1,11 @@
 import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
 import type { Metadata } from "next";
-import { getClient } from "@/lib/sanity/client";
-import { allArtworksQuery } from "@/lib/sanity/queries";
+import { getClient } from "@/src/lib/sanity/client";
+import { allArtworksQuery } from "@/src/lib/sanity/queries";
 import GallerySceneInjector from "./GallerySceneInjector";
+
+export const dynamic = "force-dynamic";
 
 interface GalleryPageProps {
   params: Promise<{ locale: string }>;
@@ -20,6 +22,7 @@ export async function generateMetadata({ params }: GalleryPageProps): Promise<Me
 
 export default async function GalleryPage({ params }: GalleryPageProps) {
   const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "gallery" });
 
   // Fetch first 3 artworks for Room1 initial state
   const artworks = await getClient().fetch(
@@ -51,9 +54,7 @@ export default async function GalleryPage({ params }: GalleryPageProps) {
       {/* Accessible fallback */}
       <noscript>
         <p style={{ padding: "2rem", color: "rgba(255,255,255,0.7)" }}>
-          {locale === "de"
-            ? "Die 3D-Galerie benötigt JavaScript. Bitte aktiviere JavaScript in deinem Browser."
-            : "The 3D gallery requires JavaScript. Please enable JavaScript in your browser."}
+          {t("noScript")}
         </p>
       </noscript>
     </>

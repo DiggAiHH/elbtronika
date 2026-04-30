@@ -14,6 +14,8 @@ describe("CheckoutRequestSchema", () => {
       title: "Neon Dreams",
       successUrl: "https://elbtronika.art/success",
       cancelUrl: "https://elbtronika.art/cancel",
+      platformFeeCents: 2000,
+      orderId: "550e8400-e29b-41d4-a716-446655440002",
     };
 
     const result = CheckoutRequestSchema.safeParse(data);
@@ -28,6 +30,8 @@ describe("CheckoutRequestSchema", () => {
       title: "Test",
       successUrl: "https://elbtronika.art/success",
       cancelUrl: "https://elbtronika.art/cancel",
+      platformFeeCents: 0,
+      orderId: "550e8400-e29b-41d4-a716-446655440002",
     };
 
     const result = CheckoutRequestSchema.safeParse(data);
@@ -42,6 +46,8 @@ describe("CheckoutRequestSchema", () => {
       title: "Test",
       successUrl: "https://elbtronika.art/success",
       cancelUrl: "https://elbtronika.art/cancel",
+      platformFeeCents: 0,
+      orderId: "550e8400-e29b-41d4-a716-446655440002",
     };
 
     const result = CheckoutRequestSchema.safeParse(data);

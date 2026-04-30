@@ -7,9 +7,24 @@ import { getClient } from "@/lib/sanity/client";
 import { artworkBySlugQuery } from "@/lib/sanity/queries";
 import { ArtworkAudioPlayer } from "./ArtworkAudioPlayer";
 
+import { allArtworkSlugsQuery } from "@/lib/sanity/queries";
+
 type Props = {
   params: Promise<{ locale: string; slug: string }>;
 };
+
+export const dynamicParams = true;
+
+export async function generateStaticParams() {
+  try {
+    const client = getClient();
+    const slugs = await client.fetch<string[]>(allArtworkSlugsQuery, {}, { next: { revalidate: 3600 } });
+    return slugs.map((slug) => ({ slug }));
+  } catch {
+    // Fallback: no static params at build time
+    return [];
+  }
+}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale, slug } = await params;
