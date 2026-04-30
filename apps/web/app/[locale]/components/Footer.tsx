@@ -18,13 +18,17 @@ const footerLinks = {
     { label: "Discord", href: "#" },
     { label: "Newsletter", href: "#" },
   ],
+  discover: [
+    { label: "Press Kit", href: "/press" },
+    { label: "Take the tour", href: "#", action: "reset-tour" },
+  ],
 };
 
 export default function Footer() {
   return (
     <footer className="relative border-t border-white/[0.06] bg-[#050508]">
       <div className="max-w-7xl mx-auto px-6 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-12 mb-12">
           {/* Brand */}
           <div className="md:col-span-1">
             <div className="flex items-center gap-2 mb-4">
@@ -75,6 +79,33 @@ export default function Footer() {
                   <Link href={link.href} className="text-sm text-white/50 hover:text-[#00f5d4] transition-colors duration-300">
                     {link.label}
                   </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-white/30 mb-4">Discover</h4>
+            <ul className="space-y-2">
+              {footerLinks.discover.map((link) => (
+                <li key={link.label}>
+                  {link.action === "reset-tour" ? (
+                    <button
+                      onClick={() => {
+                        if (typeof window !== "undefined") {
+                          localStorage.removeItem("elt-tour-dismissed");
+                          window.location.reload();
+                        }
+                      }}
+                      className="text-sm text-white/50 hover:text-[#00f5d4] transition-colors duration-300"
+                    >
+                      {link.label}
+                    </button>
+                  ) : (
+                    <Link href={link.href} className="text-sm text-white/50 hover:text-[#00f5d4] transition-colors duration-300">
+                      {link.label}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>

@@ -21,6 +21,11 @@ const GalleryHUD = dynamic(() => import("@elbtronika/three").then((m) => ({ defa
   loading: () => null,
 });
 
+const WalkthroughTour = dynamic(
+  () => import("@elbtronika/ui").then((m) => ({ default: m.WalkthroughTour })),
+  { ssr: false }
+);
+
 type Props = {
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
@@ -81,6 +86,7 @@ export default async function LocaleLayout({ children, params }: Props) {
             <ConsentBanner locale={locale as "de" | "en"} />
             <WebVitals />
             <DemoBanner mode={ELT_MODE} />
+            <WalkthroughTour locale={locale} />
           </EnvProvider>
         </NextIntlClientProvider>
       </body>
