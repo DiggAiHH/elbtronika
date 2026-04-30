@@ -72,6 +72,12 @@ pnpm format
 
 # Lighthouse CI
 pnpm --filter @elbtronika/web lighthouse
+
+# Doppler prd ENV validation
+# Bash (Linux/macOS/CI):
+doppler run --config prd -- bash scripts/validate-doppler-prd.sh
+# PowerShell (Windows):
+doppler run --config prd -- pwsh scripts/validate-doppler-prd.ps1
 ```
 
 ---
@@ -131,7 +137,7 @@ Alle Feature-Branches gegen `feature/phase-11-ai`. Final-Merge nach Lee-OK.
 
 ## Docs
 
-- [Architekturplan v1.2](ELBTRONIKA_Architekturplan_v1.2.md)
+- [Architekturplan v1.3](ELBTRONIKA_Architekturplan_v1.3.md)
 - [Trust Harness](engineering-harness/HERMES_TRUST_HARNESS.md)
 - [Doppler prd Setup](docs/runbooks/doppler-prd-setup.md)
 - [Live-Switch Choreografie](docs/runbooks/live-switch-post-lee-ok.md)
