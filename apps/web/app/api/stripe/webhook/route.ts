@@ -30,10 +30,11 @@ function createWebhookContext(supabase: Awaited<ReturnType<typeof createClient>>
         .eq("id", params.orderId);
     },
     getOrderBySessionId: async (sessionId) => {
+      // Wave 7: look up by stripe_session_id (stored at checkout creation time)
       const { data } = await supabase
         .from("orders")
         .select("id, artwork_id, buyer_id, artist_payout_eur, dj_payout_eur, status")
-        .eq("stripe_payment_intent_id", sessionId)
+        .eq("stripe_session_id", sessionId)
         .maybeSingle();
       return data ?? null;
     },

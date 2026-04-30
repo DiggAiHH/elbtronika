@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
     }
 
     // In production: download audio, analyze with @elbtronika/flow analyzeAudio()
-    // For now, generate simulated analysis and store it
+    // Wave 5: source:"simulated" — random values, not measured audio analysis
     const analysis = {
       set_id: body.setId,
       bpm: 128 + Math.floor(Math.random() * 20) - 10,
@@ -49,6 +49,7 @@ export async function POST(request: NextRequest) {
       spectral_centroid: 2000 + Math.floor(Math.random() * 4000),
       mood_tags: ["energetic", "driving", "dark"],
       embedding: Array(128).fill(0).map(() => Math.random()),
+      source: "simulated" as const,
     };
 
     try {
@@ -62,7 +63,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       setId: body.setId,
       analysis,
-      message: "Audio analysis completed (simulated)",
+      // Wave 5: explicit label so callers can distinguish simulated from measured scores
+      source: "simulated",
+      message: "Audio analysis completed (simulated — not measured from real audio)",
     }, { status: 200 });
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);

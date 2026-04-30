@@ -139,6 +139,12 @@ export async function POST(request: NextRequest) {
       ...(user.email ? { buyerEmail: user.email } : {}),
     });
 
+    // Wave 7: Store session ID so the webhook can reconcile by stripe_session_id
+    await supabase
+      .from("orders")
+      .update({ stripe_session_id: session.id })
+      .eq("id", order.id);
+
     return NextResponse.json(
       {
         sessionId: session.id,

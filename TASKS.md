@@ -35,3 +35,48 @@
 - [ ] **Phase 16: Automation + Agents** - Webhooks, Agent-Flows, Minimal-Touch Ops
 
 ## Done
+
+- [x] **Hermes Trust Wave 0** — `/api/mcp/invoke` + `/api/mcp/tools` auth + role gate + tool allowlist (2026-04-30)
+- [x] **Hermes Trust Wave 1** — Structured audit log on every MCP invocation attempt (2026-04-30)
+- [x] **Hermes Trust Wave 2** — Canonical `server/tool` naming enforced at invoke boundary (2026-04-30)
+- [x] **Hermes Trust Wave 3** — `agent_tasks` DB table; task state persisted, not in-memory (2026-04-30)
+- [x] **Hermes Trust Wave 4** — Idempotency key + atomic claim lock; execution updates DB status on success/failure (2026-04-30)
+- [x] **Hermes Trust Wave 5** — Flow analyze/match APIs return explicit `source: "simulated" | "measured"` (2026-04-30)
+- [x] **Hermes Trust Wave 6** — Vitals endpoint gates on `x-consent-analytics` header; client checks consent before sending (2026-04-30)
+- [x] **Hermes Trust Wave 7** — Stripe webhook order lookup fixed (stripe_session_id); checkout stores session ID; orders now confirm after payment (2026-04-30)
+- [x] **Hermes Trust Wave 8** — STATUS.md + TASKS.md updated to reflect implemented behavior (2026-04-30)
+
+## Remaining Trust Tasks (next session)
+
+- [ ] **Audit DB table** — Move `logAuditEvent` from console to `mcp_audit_log` Supabase table for durable audit trail
+- [ ] **Apply migrations** — `20260430_agent_tasks.sql` and `20260430_orders_session_id.sql` must be applied to Supabase
+- [x] **Verify service-role key** — `createAdminClient()` in `apps/web/src/lib/supabase/admin.ts` correctly uses `SUPABASE_SERVICE_ROLE_KEY` (2026-04-30)
+
+## Phase 18 — Demo-Readiness
+
+- [ ] **ELT_MODE env layer** — `apps/web/src/lib/env.ts` erweitern um `ELT_MODE: 'demo' | 'staging' | 'live'`
+- [ ] **EnvProvider + useElbMode()** — RSC → Client Hydration
+- [ ] **Stripe Demo Layer** — Mock-Connected-Accounts + Demo-Checkout
+- [ ] **Demo Persona Seed** — 5 Artists, 3 DJs, 8 Artworks, 3 Rooms
+- [ ] **Demo Banner** — `packages/ui` Komponente, conditional render
+- [ ] **Shop Filter** — Demo/Live/Staging Artwork-Filter
+- [ ] **ADR 0014 + 0018** — Trust-Residuals + Demo-Mode
+
+## Phase 19 — Pitch-Polish
+
+- [ ] **Landing refinement** — Hero-Animation, USP, Sound-Toggle
+- [ ] **Walkthrough Tour** — 5 Steps, dismissible, i18n
+- [ ] **Press Kit** — `/press` Vision, Roadmap, Team, Numbers
+- [ ] **Pitch Dashboard** — `/pitch` investor-gated, Mock-Daten
+- [ ] **Stripe Test-Card Hint** — Subtiler Hinweis im Checkout
+- [ ] **Investor Login** — Magic-Link, Auto-Welcome
+- [ ] **ADR 0019** — Pitch-Architektur
+
+## Phase 18–19 — Tests & Docs
+
+- [ ] **E2E Demo-Flow** — `apps/web/e2e/demo-flow.spec.ts` 8 Steps
+- [ ] **Doppler prd Setup-Doku** — Schritt-für-Schritt-Anleitung
+- [ ] **Live-Switch Runbook** — 15-Minuten-Choreografie
+- [ ] **Pitch-Rehearsal** — Lou's 5-Minuten-Script
+- [ ] **README** — Modes, Quick-Start, Troubleshooting
+- [ ] **ADR 0020** — Modes + Doppler Strategy
