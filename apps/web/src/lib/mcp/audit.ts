@@ -5,7 +5,7 @@
  * - If MCP_AUDIT_DB=true, additionally persists to Supabase mcp_audit_log table
  */
 
-import { createAdminClient } from "@/src/lib/supabase/admin";
+import { createClient } from "@supabase/supabase-js";
 
 export interface AuditEvent {
   actorId: string;
@@ -60,7 +60,10 @@ export async function logAuditEvent(event: {
   // 2. DB persistence — behind feature flag
   if (process.env.MCP_AUDIT_DB === "true") {
     try {
-      const admin = createAdminClient();
+      const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+      const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+      if (!url || !serviceKey) return;
+      const admin = createClient(url, serviceKey, { auth: { autoRefreshToken: false, persistSession: false } });
       const { error } = await admin.from("mcp_audit_log").insert({
         actor_id: event.actorId,
         role: event.role,

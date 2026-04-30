@@ -113,6 +113,10 @@ export async function POST(request: NextRequest) {
 
   try {
     const serverFactory = serverMap[rawServer];
+      if (!serverFactory) {
+        await logAuditEvent({ actorId: user.id, role: profile.role, server: rawServer, tool: rawTool, status: 404, errorClass: "server_not_found" });
+        return NextResponse.json({ error: `Server not found: ${rawServer}` }, { status: 404 });
+      }
     const server = serverFactory();
     const response = await server.handleHttp({
       jsonrpc: "2.0",

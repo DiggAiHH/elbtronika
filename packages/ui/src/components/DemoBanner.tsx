@@ -1,6 +1,4 @@
-"use client";
-
-import { type ReactNode } from "react";
+﻿"use client";
 
 type ElbMode = "demo" | "staging" | "live";
 
@@ -9,16 +7,6 @@ interface DemoBannerProps {
   version?: string;
 }
 
-/**
- * DemoBanner — subtle but visible indicator of the current environment mode.
- * - demo: bottom-right, teal badge
- * - staging: top, orange banner
- * - live: hidden
- *
- * Usage in app:
- *   const { mode } = useElbMode();
- *   <DemoBanner mode={mode} />
- */
 export function DemoBanner({ mode, version = "v0.13" }: DemoBannerProps) {
   if (mode === "live") return null;
 
@@ -33,7 +21,6 @@ export function DemoBanner({ mode, version = "v0.13" }: DemoBannerProps) {
     );
   }
 
-  // Demo mode
   return (
     <div
       data-testid="demo-banner"
@@ -45,22 +32,6 @@ export function DemoBanner({ mode, version = "v0.13" }: DemoBannerProps) {
         <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00f5d4]" />
       </span>
       <span className="font-medium">Demo Environment · {version}</span>
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="14"
-        height="14"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="opacity-70"
-      >
-        <circle cx="12" cy="12" r="10" />
-        <path d="M12 16v-4" />
-        <path d="M12 8h.01" />
-      </svg>
     </div>
   );
 }
