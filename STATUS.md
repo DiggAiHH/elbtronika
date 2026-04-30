@@ -2,7 +2,7 @@
 
 > **Single Source of Truth.** Lou + alle AI-Agenten lesen diese File zuerst.
 > **Pflichtaktion vor jeder Session:** Lese diese File. Aktualisiere nach jedem Phasen-Schritt.
-> **Letztes Update:** 2026-04-29 (Kimi K-NN — Phase 0–8 Optimierung auf Recherche-Stand 29.04.2026)
+> **Letztes Update:** 2026-04-30 (Kimi K-2.6 — Session 3: Demo-Readiness + Pitch-Polish + Tests/Doku)
 
 ---
 
@@ -27,6 +27,9 @@
 | 14 | Optimization (Recherche 29.04.2026) | ✅ done | Kimi K-NN | 10 Phasen abgeschlossen, Build 53 Pages, 102kB FLJS |
 | 15 | Testing & QA | ✅ done | Kimi K-NN | 104 Tests passing, Lighthouse, ZAP, Deploy-Workflows |
 | 16 | Launch | 🟡 bereit | Kimi K-NN | Lighthouse CI, ZAP, Staging/Prod Deploy, 48h Monitoring |
+
+| **18** | **Demo-Readiness** | ✅ done | **Kimi K-2.6** | **ELT_MODE, Demo-Personas, Stripe-Demo-Layer, DemoBanner** |
+| **19** | **Pitch-Polish** | ✅ done | **Kimi K-2.6** | **WalkthroughTour, Press-Kit, Pitch-Dashboard, Test-Card-Hint** |
 
 **Legende:** ✅ done | 🟢 grün | 🟡 läuft | 🔴 blocked | 🔄 kontinuierlich | ⬜ tbd
 
