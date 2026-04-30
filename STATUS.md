@@ -2,7 +2,7 @@
 
 > **Single Source of Truth.** Lou + alle AI-Agenten lesen diese File zuerst.
 > **Pflichtaktion vor jeder Session:** Lese diese File. Aktualisiere nach jedem Phasen-Schritt.
-> **Letztes Update:** 2026-04-30 (Kimi K-2.6 — Session 3: 3-Workstream Merge + 8 Demo-Artworks generiert, v0.13.0-demo)
+> **Letztes Update:** 2026-04-30 (Kimi K-2.6 — Session 3 Wrap + ULTRAPLAN Protocol + v1.3 Plan konsolidiert)
 
 ---
 
@@ -30,6 +30,7 @@
 | 17 | Hermes Trust (Waves 0–8) | ✅ done | Kimi K-2.6 | Dual-Mode Audit, DB-Persistenz, 5 Migrations |
 | 18 | Demo-Readiness | ✅ done | Kimi K-2.6 | ELT_MODE, Demo-Personas, Stripe-Demo-Layer, DemoBanner |
 | 19 | Pitch-Polish | ✅ done | Kimi K-2.6 | WalkthroughTour, Press-Kit, Pitch-Dashboard, Test-Card-Hint |
+| **20** | **Pre-Pitch-Cleanup** | **🟡 läuft** | **Sonnet + Lou** | **Migrations push, Doppler ENV, Stripe Accounts, Types regen** |
 
 **Legende:** ✅ done | 🟢 grün | 🟡 läuft | 🔴 blocked | 🔄 kontinuierlich | ⬜ tbd
 
@@ -96,12 +97,12 @@ pnpm test       # gibt's Tests?
 
 | Prio | Schritt | Owner |
 |---|---|---|
-| P0 | Supabase Migrations auf dev pushen (5 Files) | Opus/Sonnet |
-| ~~P0~~ | ~~Demo-Artwork-Bilder generieren/beschaffen~~ | ✅ Kimi K-2.6 |
-| P0 | Stripe Test-Connected-Account-IDs erstellen | Lou |
-| P1 | Doppler dev: `ELT_MODE=demo`, `MCP_AUDIT_DB=true` | Opus/Sonnet |
-| P1 | Supabase types regenerieren | Sonnet |
+| P0 | 20.1 Supabase Migrations auf dev pushen (5 Files) | Sonnet |
+| P0 | 20.3 Stripe Test-Connected-Account-IDs erstellen | Lou |
+| P1 | 20.2 Doppler dev: `ELT_MODE=demo`, `MCP_AUDIT_DB=true` | Sonnet |
+| P1 | 20.4 Supabase types regenerieren + `as any` casts entfernen | Sonnet |
 | P1 | Pitch-Termin mit Lee Hoops terminieren | Lou |
+| P1 | 20.5 Pitch-Probelauf intern (30 Min) | Lou |
 | P2 | Doppler prd: 22 ENV-Variablen füllen (post-Lee-OK) | Lou + Opus |
 | P2 | Demo-Video (60–90s) produzieren | Lou |
 
@@ -110,8 +111,10 @@ pnpm test       # gibt's Tests?
 ## 📖 Plan-Referenz
 
 - Master-Plan v1.0: `ELBTRONIKA_Architekturplan_v1.0.md`
-- Aktive Version v1.1: `ELBTRONIKA_Architekturplan_v1.1.md`
+- Aktive Version v1.3: `ELBTRONIKA_Architekturplan_v1.3.md` ← KANONISCH
+- Vorgänger: v1.0, v1.1, v1.2 (Audit-Trail)
 - Opus-Handover: `OPUS_47_HANDOVER.md`
+- Pre-Flight Protocol: `engineering-harness/PRE_FLIGHT_PROTOCOL.md` ← Agent-Bootstrap
 - Session 3 Kontext: `memory/context/session-3-knowledge.md`
 - Copilot-Prompts: `COPILOT_PROMPTS.md`
 
