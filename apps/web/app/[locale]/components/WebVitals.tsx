@@ -16,12 +16,32 @@ export function WebVitals() {
         path: window.location.pathname,
       });
 
-      // Queue to analytics endpoint (non-blocking)
+      // Wave 6: Only report if user has granted analytics consent
+      let analyticsConsented = false;
+      try {
+        const stored = localStorage.getItem("elt-consent");
+        if (stored) {
+          const parsed = JSON.parse(stored) as { state?: { choices?: { analytics?: boolean } } };
+          analyticsConsented = parsed?.state?.choices?.analytics === true;
+        }
+      } catch {
+        // localStorage not available — skip reporting
+      }
+      if (!analyticsConsented) return;
+
+      // Queue to analytics endpoint with consent signal (non-blocking)
       if (navigator.sendBeacon) {
-        navigator.sendBeacon("/api/analytics/vitals", new Blob([body], { type: "application/json" }));
+        // sendBeacon does not support custom headers; fall through to fetch
+        fetch("/api/analytics/vitals", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "x-consent-analytics": "true" },
+          body,
+          keepalive: true,
+        }).catch(() => {});
       } else {
         fetch("/api/analytics/vitals", {
           method: "POST",
+          headers: { "Content-Type": "application/json", "x-consent-analytics": "true" },
           body,
           keepalive: true,
         }).catch(() => {});

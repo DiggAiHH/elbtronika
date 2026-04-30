@@ -2,7 +2,7 @@
 
 > **Single Source of Truth.** Lou + alle AI-Agenten lesen diese File zuerst.
 > **Pflichtaktion vor jeder Session:** Lese diese File. Aktualisiere nach jedem Phasen-Schritt.
-> **Letztes Update:** 2026-04-29 (Kimi K-NN — Phase 0–8 Optimierung auf Recherche-Stand 29.04.2026)
+> **Letztes Update:** 2026-04-30 (Sonnet 4.6 — Hermes Trust Waves 0–8 implementiert)
 
 ---
 
@@ -18,17 +18,42 @@
 | 5 | Content Model & CMS | ✅ done | Copilot | v0.5.0 |
 | 6 | Classic Mode (Shop) | ✅ done | Sonnet 4.6 | v0.6.0 — Shop/Artist/DJ/Cart implementiert |
 | 7 | Immersive Mode (3D) | ✅ done | Sonnet 4.6 | v0.7.0 — packages/three + CanvasRoot + Gallery Route |
-| 8 | Spatial Audio | done | Sonnet 4.6 | feature/phase-8-audio @ e8d0892 - v0.8.0 |
-| 9 | Mode Transitions | done | Sonnet 4.6 | feature/phase-8-audio @ 4ac7525 |
-| 10 | Stripe Connect | done | Sonnet 4.6 | feature/phase-11-ai - v0.12.0 |
-| 11 | AI-Kuration (Claude) | done | Sonnet 4.6 | feature/phase-11-ai - v0.9.0 |
-| 12 | Edge & Performance | done | Sonnet 4.6 | feature/phase-11-ai - v0.10.0 |
-| 13 | Compliance | done | Sonnet 4.6 | feature/phase-11-ai - v0.11.0 |
+| 8 | Spatial Audio | ✅ done | Sonnet 4.6 | feature/phase-8-audio @ e8d0892 - v0.8.0 |
+| 9 | Mode Transitions | ✅ done | Sonnet 4.6 | feature/phase-8-audio @ 4ac7525 |
+| 10 | Stripe Connect | ✅ done | Sonnet 4.6 | feature/phase-11-ai - v0.12.0 |
+| 11 | AI-Kuration (Claude) | ✅ done | Sonnet 4.6 | feature/phase-11-ai - v0.9.0 |
+| 12 | Edge & Performance | ✅ done | Sonnet 4.6 | feature/phase-11-ai - v0.10.0 |
+| 13 | Compliance | ✅ done | Sonnet 4.6 | feature/phase-11-ai - v0.11.0 |
 | 14 | Optimization (Recherche 29.04.2026) | ✅ done | Kimi K-NN | 10 Phasen abgeschlossen, Build 53 Pages, 102kB FLJS |
 | 15 | Testing & QA | ✅ done | Kimi K-NN | 104 Tests passing, Lighthouse, ZAP, Deploy-Workflows |
 | 16 | Launch | 🟡 bereit | Kimi K-NN | Lighthouse CI, ZAP, Staging/Prod Deploy, 48h Monitoring |
+| 17 | Hermes Trust (Waves 0–8) | ✅ done | Sonnet 4.6 | 2026-04-30 — alle Trust-Boundaries implementiert |
 
 **Legende:** ✅ done | 🟢 grün | 🟡 läuft | 🔴 blocked | 🔄 kontinuierlich | ⬜ tbd
+
+---
+
+## 🔄 Letzte Aktion (30.04.2026) — Hermes Trust Waves 0–8
+
+Alle Trust-Boundaries aus `engineering-harness/HERMES_TRUST_HARNESS.md` implementiert:
+
+| Wave | Ziel | Implementiert |
+|---|---|---|
+| 0 | MCP-Routes gesperrt für Anonyme und falsche Rollen | Auth + role gate auf `/api/mcp/invoke` und `/api/mcp/tools`; Tool-Allowlist vor Invocation |
+| 1 | Jeder MCP-Aufruf auditierbar | `logAuditEvent()` in invoke route — logt actorId, role, server, tool, status, duration, errorClass; kein Geheimnis |
+| 2 | Kanonische Tool-Namen | `/api/mcp/invoke` akzeptiert `server/tool`-Form oder `{server, tool}`; actionable Fehlermeldung bei unbekanntem Tool |
+| 3 | Durable Agent Tasks | `agent_tasks` Tabelle (Migration `20260430_agent_tasks.sql`); Route liest/schreibt DB statt In-Memory-Map |
+| 4 | Kein Fire-and-Forget | Idempotenz-Check (gleiche Goal = bestehende Task zurückgeben); atomares Claim-Lock via `run_id`; DB-Status-Update bei Completion/Failure |
+| 5 | Flow Honesty | `/api/flow/analyze` gibt `source: "simulated"` zurück; `/api/flow/match` gibt `audioSource: "measured" \| "simulated"` zurück |
+| 6 | Privacy & Consent | `/api/analytics/vitals` gibt 204 ohne `x-consent-analytics: true` Header; `WebVitals.tsx` prüft `elt-consent` localStorage vor Übertragung |
+| 7 | Checkout Honesty | Bug gefixt: `getOrderBySessionId` suchte nach `stripe_payment_intent_id` (war null) statt `stripe_session_id`; Migration + Checkout-Route speichert Session-ID; Webhook findet jetzt Order |
+| 8 | Dokumentation | Diese Datei + TASKS.md aktualisiert |
+
+**Residual risks / next steps:**
+- Audit-Events gehen aktuell nur in console.log — für Prod wäre ein DB-backed `mcp_audit_log` besser
+- `agent_tasks` Migration muss manuell auf Supabase applied werden (Migrations-Tool je nach Setup)
+- `stripe_session_id` Migration ebenso
+- Der `supabase.auth.admin.deleteUser()` in `account/delete` benötigt service-role key (nicht anon key) — prüfen ob korrekt konfiguriert
 
 ---
 
@@ -107,8 +132,9 @@ Wenn Phase 1+2+3 schon stehen → siehe Phasen 4–7 Prompts in `COPILOT_PROMPTS
 
 ## 📖 Plan-Referenz
 
-- Master-Plan v1.0: `ELBTRONIKA_Architekturplan_v1.0.md`
+- Master-Plan v1.0: `ELBTRONIKA_Architekturplan_v1.md`
 - Aktive Version v1.1: `ELBTRONIKA_Architekturplan_v1.1.md`
+- Aktive Version v1.2: `ELBTRONIKA_Architekturplan_v1.2.md`
 - Sonnet-Handover: `ELBTRONIKA_Sonnet_Handover_Prompt.md`
 - Copilot-Prompts: `COPILOT_PROMPTS.md`
 

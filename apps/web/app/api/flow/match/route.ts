@@ -50,6 +50,8 @@ export async function POST(request: NextRequest) {
       .single();
 
     const audioFeatures = audioFeaturesRaw as Record<string, unknown> | null;
+    // Wave 5: explicit source label — "measured" if DB features exist, "simulated" if defaults used
+    const audioSource: "measured" | "simulated" = audioFeatures ? "measured" : "simulated";
 
     // Fetch published artworks
     const { data: artworks } = await supabase
@@ -126,6 +128,8 @@ export async function POST(request: NextRequest) {
       setId: body.setId,
       matches,
       totalAnalyzed: artworkInputs.length,
+      // Wave 5: callers can distinguish real analysis from simulated defaults
+      audioSource,
     }, { status: 200 });
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
