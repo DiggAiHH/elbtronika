@@ -2,7 +2,7 @@
  * MCP Invoke API
  * POST /api/mcp/invoke — Invoke an MCP tool by canonical name
  * Requires: authenticated session + curator or admin role
- * Wave 0: Auth gate, role gate, server/tool allowlist
+ * Wave 0: Auth gate, role gate, tool allowlist
  * Wave 1: Structured audit log for every attempt (allowed and denied)
  * Wave 2: Accepts canonical "server/tool" form or {server, tool} separately
  */
@@ -10,6 +10,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { createClient } from "@/src/lib/supabase/server";
+import { logAuditEvent } from "@/src/lib/mcp/audit";
 import {
   createSupabaseMCPServer,
   createSanityMCPServer,
@@ -52,29 +53,6 @@ const serverMap: Record<string, () => MCPServer> = {
   stripe: createStripeMCPServer,
   audio: createAudioMCPServer,
 };
-
-// Wave 1: Structured audit — no secrets, tokens, or private data
-function logAuditEvent(event: {
-  actorId: string;
-  role: string;
-  server: string;
-  tool: string;
-  status: number;
-  durationMs?: number;
-  errorClass?: string;
-}) {
-  console.log(JSON.stringify({
-    event: "mcp_invoke",
-    ts: new Date().toISOString(),
-    actorId: event.actorId,
-    role: event.role,
-    server: event.server,
-    tool: event.tool,
-    status: event.status,
-    durationMs: event.durationMs,
-    errorClass: event.errorClass,
-  }));
-}
 
 export async function POST(request: NextRequest) {
   // Wave 0: Auth gate
@@ -120,13 +98,13 @@ export async function POST(request: NextRequest) {
   // Wave 0: Allowlist check — deny unlisted servers
   const allowedTools = ALLOWED_TOOLS[rawServer];
   if (!allowedTools) {
-    logAuditEvent({ actorId: user.id, role: profile.role, server: rawServer, tool: rawTool, status: 404, errorClass: "server_not_found" });
+    await logAuditEvent({ actorId: user.id, role: profile.role, server: rawServer, tool: rawTool, status: 404, errorClass: "server_not_found" });
     return NextResponse.json({ error: `Server not found: ${rawServer}` }, { status: 404 });
   }
 
   // Wave 0: Allowlist check — deny unlisted or blocked tools
   if (!allowedTools.includes(rawTool)) {
-    logAuditEvent({ actorId: user.id, role: profile.role, server: rawServer, tool: rawTool, status: 403, errorClass: "tool_not_allowed" });
+    await logAuditEvent({ actorId: user.id, role: profile.role, server: rawServer, tool: rawTool, status: 403, errorClass: "tool_not_allowed" });
     return NextResponse.json(
       { error: `Tool not allowed: ${rawServer}/${rawTool}. Use canonical form server/tool.` },
       { status: 403 },
@@ -135,6 +113,10 @@ export async function POST(request: NextRequest) {
 
   try {
     const serverFactory = serverMap[rawServer];
+    if (!serverFactory) {
+      await logAuditEvent({ actorId: user.id, role: profile.role, server: rawServer, tool: rawTool, status: 404, errorClass: "server_not_found" });
+      return NextResponse.json({ error: `Server not found: ${rawServer}` }, { status: 404 });
+    }
     const server = serverFactory();
     const response = await server.handleHttp({
       jsonrpc: "2.0",
@@ -147,17 +129,17 @@ export async function POST(request: NextRequest) {
 
     if (response && "error" in (response as Record<string, unknown>)) {
       const error = (response as { error?: { message: string } }).error;
-      logAuditEvent({ actorId: user.id, role: profile.role, server: rawServer, tool: rawTool, status: 500, durationMs, errorClass: "tool_error" });
+      await logAuditEvent({ actorId: user.id, role: profile.role, server: rawServer, tool: rawTool, status: 500, durationMs, errorClass: "tool_error" });
       return NextResponse.json({ error: error?.message ?? "Tool execution failed" }, { status: 500 });
     }
 
     const result = (response as { result?: unknown })?.result;
-    logAuditEvent({ actorId: user.id, role: profile.role, server: rawServer, tool: rawTool, status: 200, durationMs });
+    await logAuditEvent({ actorId: user.id, role: profile.role, server: rawServer, tool: rawTool, status: 200, durationMs });
     return NextResponse.json({ result }, { status: 200 });
   } catch (err) {
     const durationMs = Date.now() - startMs;
     const message = err instanceof Error ? err.message : String(err);
-    logAuditEvent({ actorId: user.id, role: profile.role, server: rawServer, tool: rawTool, status: 500, durationMs, errorClass: "execution_exception" });
+    await logAuditEvent({ actorId: user.id, role: profile.role, server: rawServer, tool: rawTool, status: 500, durationMs, errorClass: "execution_exception" });
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

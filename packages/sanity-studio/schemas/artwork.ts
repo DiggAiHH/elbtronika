@@ -137,5 +137,12 @@ export const artwork = defineType({
       title: 'Published At',
       type: 'datetime',
     }),
+    defineField({
+      name: 'isDemo',
+      title: 'Demo Content',
+      type: 'boolean',
+      initialValue: false,
+      description: 'Mark as demo content — hidden in live mode, shown in demo mode',
+    }),
   ],
 })
