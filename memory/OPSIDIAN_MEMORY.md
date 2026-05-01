@@ -72,6 +72,24 @@
 | Run-05 | `memory/runs/2026-04-30_Kimi_Run-05.md` | Kimi | System | ULTRAPLAN Protocol v2 |
 | Opus-01 | `memory/runs/2026-04-30_Opus_47-Run01.md` | Opus | 4.7 | Plan v1.4 Update |
 | Run-06 | `memory/runs/2026-04-30_Kimi_GapFill-MergeFix_Run-06.md` | Kimi | System | Phase 20.B Sonnet Finalize + Protocol v3.0 |
+| Run-07 | `memory/runs/2026-04-30_Kimi_Cleanup-StubFix_Run-07.md` | Kimi | System | Phase 20.A+B+C Cleanup |
+
+## Phase 20.A+B+C — Complete (2026-04-30)
+
+- Commit: `a52c004` on `feature/phase-11-ai`
+- **Room.tsx:66 FIXED** — non-null assertion nach `filter((s) => s.artwork !== null)`
+- **4 Stub Tests FIXED** — hero.test.tsx (3), dashboard.test.tsx (1) → strukturelle Smoke-Tests
+- **InvestorWelcomeModal RESTORED** — Re-import in pitch/page.tsx (war bei Merge verloren gegangen)
+- **Logger-Migration COMPLETE** — auth-actions.ts + mcp/audit.ts → logger.ts (bereits existent)
+- **console.* calls ELIMINIERT** aus src/lib (nur logger.ts und audit.ts-Fallback bleiben)
+- **STATUS_INVENTUR.md** — 33 Features fertig, 10 offene P2-Punkte
+- **15 Tests passing** in 4 Suites (env 6, pitch 4, supabase/admin 2, landing 3)
+
+## Handoff an Opus (2026-04-30)
+
+- **Datei:** `memory/handoffs/KIMI_TO_OPUS_PHASE20_HANDOFF.md` — 10KB vollständiger Kontext
+- **Auftrag:** Plan v1.5 erstellen, 4 Agent-Prompt-Vorlagen (Codex/Sonnet/GPT/Kimi), Phase 21 definieren
+- **Status:** Code ist bereit für `v0.14.0-prepitch`
 
 ## Plan-Updates
 
