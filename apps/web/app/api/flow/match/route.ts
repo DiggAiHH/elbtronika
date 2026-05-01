@@ -15,6 +15,34 @@ const MatchRequestSchema = z.object({
   diversify: z.boolean().default(true),
 });
 
+function toNumber(value: unknown, fallback: number): number {
+  return typeof value === "number" && Number.isFinite(value) ? value : fallback;
+}
+
+function toStringArray(value: unknown, fallback: string[]): string[] {
+  if (!Array.isArray(value)) return fallback;
+  const out = value.filter((entry): entry is string => typeof entry === "string");
+  return out.length > 0 ? out : fallback;
+}
+
+function toDominantColors(value: unknown): ArtFeatures["dominantColors"] {
+  if (!Array.isArray(value)) {
+    return [{ r: 128, g: 128, b: 128, percentage: 1 }];
+  }
+
+  const parsed = value
+    .filter((entry): entry is Record<string, unknown> => typeof entry === "object" && entry !== null)
+    .map((entry) => ({
+      r: Math.round(toNumber(entry.r, 128)),
+      g: Math.round(toNumber(entry.g, 128)),
+      b: Math.round(toNumber(entry.b, 128)),
+      percentage: toNumber(entry.percentage, 0),
+    }))
+    .filter((color) => color.percentage >= 0);
+
+  return parsed.length > 0 ? parsed : [{ r: 128, g: 128, b: 128, percentage: 1 }];
+}
+
 export async function POST(request: NextRequest) {
   const supabase = await createClient();
   const {
@@ -67,42 +95,87 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ matches: [], message: "No artworks available" }, { status: 200 });
     }
 
-    // Build audio features (from DB or simulate)
+    // Build audio features (from DB or simulate).
+    // Use defensive parsers because DB rows can hold null/strings/missing fields when
+    // the simulation upsert race-conditions with schema migrations or test fixtures.
     const audio = {
-      bpm: (audioFeatures?.bpm as number) ?? 128,
+      bpm: toNumber(audioFeatures?.bpm, 128),
       bpmConfidence: 0.9,
-      key: (audioFeatures?.key as string) ?? "A minor",
+      key: typeof audioFeatures?.key === "string" ? audioFeatures.key : "A minor",
       camelot: "8A",
       keyConfidence: 0.85,
-      valence: (audioFeatures?.valence as number) ?? 0.5,
-      arousal: (audioFeatures?.arousal as number) ?? 0.5,
-      spectralCentroid: (audioFeatures?.spectral_centroid as number) ?? 3000,
+      valence: toNumber(audioFeatures?.valence, 0.5),
+      arousal: toNumber(audioFeatures?.arousal, 0.5),
+      spectralCentroid: toNumber(audioFeatures?.spectral_centroid, 3000),
       spectralRolloff: 4500,
       zeroCrossingRate: 0.05,
       rmsEnergy: 0.3,
       dominantFrequencyRange: "mid" as const,
-      moodTags: (audioFeatures?.mood_tags as string[]) ?? ["energetic"],
+      moodTags: toStringArray(audioFeatures?.mood_tags, ["energetic"]),
       estimatedGenre: "techno",
     };
 
-    // Build artwork features (simplified since artwork_features table is new)
+    const artworkIds = artworks.map((aw) => aw.id);
+    const { data: artworkFeaturesRows } = await (supabase as any)
+      .from("artwork_features")
+      .select("*")
+      .in("artwork_id", artworkIds);
+
+    const artworkFeaturesById = new Map<string, Record<string, unknown>>();
+    if (Array.isArray(artworkFeaturesRows)) {
+      for (const row of artworkFeaturesRows as Array<Record<string, unknown>>) {
+        const artworkId = row.artwork_id;
+        if (typeof artworkId === "string") {
+          artworkFeaturesById.set(artworkId, row);
+        }
+      }
+    }
+
+    // Build artwork features from DB rows when available, fallback otherwise.
     const artworkInputs = artworks.map((aw: Record<string, unknown>) => {
-      const artFeat: ArtFeatures = {
-        dominantColors: [{ r: 128, g: 128, b: 128, percentage: 1 }],
-        colorHarmony: "complex",
-        brightness: 0.5,
-        contrast: 0.5,
-        saturation: 0.5,
-        compositionScore: 0.5,
-        symmetryScore: 0.5,
-        styleTags: ["abstract"],
-        moodTags: ["balanced"],
-        complexity: 0.5,
-      };
+      const row = artworkFeaturesById.get(String(aw.id));
+      const artFeat: ArtFeatures = row
+        ? {
+            dominantColors: toDominantColors(row.dominant_colors),
+            colorHarmony: (typeof row.color_harmony === "string"
+              ? row.color_harmony
+              : "complex") as ArtFeatures["colorHarmony"],
+            brightness: toNumber(row.brightness, 0.5),
+            contrast: toNumber(row.contrast, 0.5),
+            saturation: toNumber(row.saturation, 0.5),
+            compositionScore: toNumber(row.composition_score, 0.5),
+            symmetryScore: toNumber(row.symmetry_score, 0.5),
+            styleTags: toStringArray(row.style_tags, ["abstract"]),
+            moodTags: toStringArray(row.mood_tags, ["balanced"]),
+            complexity: toNumber(row.complexity, 0.5),
+          }
+        : {
+            dominantColors: [{ r: 128, g: 128, b: 128, percentage: 1 }],
+            colorHarmony: "complex",
+            brightness: 0.5,
+            contrast: 0.5,
+            saturation: 0.5,
+            compositionScore: 0.5,
+            symmetryScore: 0.5,
+            styleTags: ["abstract"],
+            moodTags: ["balanced"],
+            complexity: 0.5,
+          };
+      // Supabase joins return either an object (one-to-one) or an array (one-to-many).
+      // Normalize defensively so we never bleed `undefined` into the LLM-facing match reason.
+      const artistsRaw = aw.artists;
+      const artistsRecord: Record<string, unknown> | null = Array.isArray(artistsRaw)
+        ? ((artistsRaw[0] as Record<string, unknown>) ?? null)
+        : artistsRaw && typeof artistsRaw === "object"
+          ? (artistsRaw as Record<string, unknown>)
+          : null;
+      const artistName =
+        artistsRecord && typeof artistsRecord.name === "string" ? artistsRecord.name : "Unknown";
+
       return {
         id: String(aw.id),
-        title: String(aw.title ?? "Untitled"),
-        artist: String((aw.artists as Record<string, unknown>)?.name ?? "Unknown"),
+        title: typeof aw.title === "string" && aw.title.length > 0 ? aw.title : "Untitled",
+        artist: artistName,
         features: artFeat,
       };
     });
@@ -132,6 +205,8 @@ export async function POST(request: NextRequest) {
         setId: body.setId,
         matches,
         totalAnalyzed: artworkInputs.length,
+        artworkFeaturesSource:
+          artworkFeaturesById.size > 0 ? "db+fallback" : "fallback-only",
         // Wave 5: callers can distinguish real analysis from simulated defaults
         audioSource,
       },

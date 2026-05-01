@@ -91,7 +91,10 @@ export class SpatialAudioEngine {
     config?: SourceConfig,
   ): MediaElementAudioSourceNode {
     if (this.pannerPool.has(trackId)) {
-      return this.pannerPool.get(trackId)?.source;
+      const existing = this.pannerPool.get(trackId);
+      if (existing) {
+        return existing.source;
+      }
     }
 
     const source = this.ctx.createMediaElementSource(audioEl);
@@ -224,7 +227,11 @@ export class SpatialAudioEngine {
 
   /** Dispose all nodes and clear internal state. */
   dispose(): void {
-    for (const [id] of this.pannerPool) {
+    // Snapshot the keys before iterating because removeSource() mutates pannerPool.
+    // Map iterators are spec-stable, but a snapshot keeps dispose() resilient if the
+    // implementation later switches to a different container (e.g. WeakMap).
+    const ids = [...this.pannerPool.keys()];
+    for (const id of ids) {
       this.removeSource(id);
     }
     this.pannerPool.clear();
