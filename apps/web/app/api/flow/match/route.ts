@@ -15,8 +15,32 @@ const MatchRequestSchema = z.object({
   diversify: z.boolean().default(true),
 });
 
+const FALLBACK_DOMINANT_COLORS: ArtFeatures["dominantColors"] = [
+  { r: 128, g: 128, b: 128, percentage: 1 },
+];
+
+function clamp(value: number, min: number, max: number): number {
+  return Math.min(max, Math.max(min, value));
+}
+
 function toNumber(value: unknown, fallback: number): number {
-  return typeof value === "number" && Number.isFinite(value) ? value : fallback;
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    if (trimmed.length > 0) {
+      const parsed = Number(trimmed);
+      if (Number.isFinite(parsed)) return parsed;
+    }
+  }
+  return fallback;
+}
+
+function toUnitInterval(value: unknown, fallback: number): number {
+  return clamp(toNumber(value, fallback), 0, 1);
+}
+
+function toByte(value: unknown, fallback: number): number {
+  return Math.round(clamp(toNumber(value, fallback), 0, 255));
 }
 
 function toStringArray(value: unknown, fallback: string[]): string[] {
@@ -27,20 +51,26 @@ function toStringArray(value: unknown, fallback: string[]): string[] {
 
 function toDominantColors(value: unknown): ArtFeatures["dominantColors"] {
   if (!Array.isArray(value)) {
-    return [{ r: 128, g: 128, b: 128, percentage: 1 }];
+    return FALLBACK_DOMINANT_COLORS;
   }
 
   const parsed = value
     .filter((entry): entry is Record<string, unknown> => typeof entry === "object" && entry !== null)
-    .map((entry) => ({
-      r: Math.round(toNumber(entry.r, 128)),
-      g: Math.round(toNumber(entry.g, 128)),
-      b: Math.round(toNumber(entry.b, 128)),
-      percentage: toNumber(entry.percentage, 0),
-    }))
-    .filter((color) => color.percentage >= 0);
+    .map((entry) => {
+      const rawPercentage = toNumber(entry.percentage, 0);
+      const normalizedPercentage =
+        rawPercentage > 1 ? clamp(rawPercentage / 100, 0, 1) : clamp(rawPercentage, 0, 1);
 
-  return parsed.length > 0 ? parsed : [{ r: 128, g: 128, b: 128, percentage: 1 }];
+      return {
+        r: toByte(entry.r, 128),
+        g: toByte(entry.g, 128),
+        b: toByte(entry.b, 128),
+        percentage: normalizedPercentage,
+      };
+    })
+    .filter((color) => color.percentage > 0);
+
+  return parsed.length > 0 ? parsed : FALLBACK_DOMINANT_COLORS;
 }
 
 export async function POST(request: NextRequest) {
@@ -76,7 +106,7 @@ export async function POST(request: NextRequest) {
     // Fetch audio features if available (cast for new schema)
     const { data: audioFeaturesRaw } = await (supabase as any)
       .from("audio_features")
-      .select("*")
+      .select("bpm, key, valence, arousal, spectral_centroid, mood_tags")
       .eq("set_id", body.setId)
       .single();
 
@@ -99,14 +129,14 @@ export async function POST(request: NextRequest) {
     // Use defensive parsers because DB rows can hold null/strings/missing fields when
     // the simulation upsert race-conditions with schema migrations or test fixtures.
     const audio = {
-      bpm: toNumber(audioFeatures?.bpm, 128),
+      bpm: clamp(toNumber(audioFeatures?.bpm, 128), 60, 200),
       bpmConfidence: 0.9,
       key: typeof audioFeatures?.key === "string" ? audioFeatures.key : "A minor",
       camelot: "8A",
       keyConfidence: 0.85,
-      valence: toNumber(audioFeatures?.valence, 0.5),
-      arousal: toNumber(audioFeatures?.arousal, 0.5),
-      spectralCentroid: toNumber(audioFeatures?.spectral_centroid, 3000),
+      valence: toUnitInterval(audioFeatures?.valence, 0.5),
+      arousal: toUnitInterval(audioFeatures?.arousal, 0.5),
+      spectralCentroid: clamp(toNumber(audioFeatures?.spectral_centroid, 3000), 0, 12000),
       spectralRolloff: 4500,
       zeroCrossingRate: 0.05,
       rmsEnergy: 0.3,
@@ -118,7 +148,9 @@ export async function POST(request: NextRequest) {
     const artworkIds = artworks.map((aw) => aw.id);
     const { data: artworkFeaturesRows } = await (supabase as any)
       .from("artwork_features")
-      .select("*")
+      .select(
+        "artwork_id, dominant_colors, color_harmony, brightness, contrast, saturation, composition_score, symmetry_score, style_tags, mood_tags, complexity",
+      )
       .in("artwork_id", artworkIds);
 
     const artworkFeaturesById = new Map<string, Record<string, unknown>>();
@@ -140,14 +172,14 @@ export async function POST(request: NextRequest) {
             colorHarmony: (typeof row.color_harmony === "string"
               ? row.color_harmony
               : "complex") as ArtFeatures["colorHarmony"],
-            brightness: toNumber(row.brightness, 0.5),
-            contrast: toNumber(row.contrast, 0.5),
-            saturation: toNumber(row.saturation, 0.5),
-            compositionScore: toNumber(row.composition_score, 0.5),
-            symmetryScore: toNumber(row.symmetry_score, 0.5),
+            brightness: toUnitInterval(row.brightness, 0.5),
+            contrast: toUnitInterval(row.contrast, 0.5),
+            saturation: toUnitInterval(row.saturation, 0.5),
+            compositionScore: toUnitInterval(row.composition_score, 0.5),
+            symmetryScore: toUnitInterval(row.symmetry_score, 0.5),
             styleTags: toStringArray(row.style_tags, ["abstract"]),
             moodTags: toStringArray(row.mood_tags, ["balanced"]),
-            complexity: toNumber(row.complexity, 0.5),
+            complexity: toUnitInterval(row.complexity, 0.5),
           }
         : {
             dominantColors: [{ r: 128, g: 128, b: 128, percentage: 1 }],
