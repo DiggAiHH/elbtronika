@@ -36,17 +36,17 @@ git clone https://github.com/DiggAiHH/elbtronika.git
 cd elbtronika
 
 # 2. Dependencies installieren
-pnpm install
+pnpm.cmd install
 
 # 3. Doppler konfigurieren
 doppler login
 doppler setup --project elbtronika --config dev
 
 # 4. Lokale Supabase starten (optional)
-pnpm supabase start
+pnpm.cmd supabase start
 
 # 5. Dev-Server starten
-pnpm dev
+pnpm.cmd dev
 ```
 
 Öffne [http://localhost:3000](http://localhost:3000).
@@ -57,21 +57,21 @@ pnpm dev
 
 ```bash
 # Unit + Integration (Vitest)
-pnpm --filter @elbtronika/web test
+pnpm.cmd --filter @elbtronika/web test
 
 # E2E (Playwright)
-pnpm --filter @elbtronika/web test:e2e
+pnpm.cmd --filter @elbtronika/web test:e2e
 
 # Type-Check
-pnpm --filter @elbtronika/web typecheck
-pnpm --filter @elbtronika/contracts typecheck
+pnpm.cmd --filter @elbtronika/web typecheck
+pnpm.cmd --filter @elbtronika/contracts typecheck
 
 # Lint + Format (Biome)
-pnpm lint
-pnpm format
+pnpm.cmd lint
+pnpm.cmd format
 
 # Lighthouse CI
-pnpm --filter @elbtronika/web lighthouse
+pnpm.cmd --filter @elbtronika/web lighthouse
 
 # Doppler prd ENV validation
 # Bash (Linux/macOS/CI):

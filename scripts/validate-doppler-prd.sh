@@ -1,90 +1,103 @@
 #!/usr/bin/env bash
-# validate-doppler-prd.sh
-# Prüft ob alle Pflicht-ENV-Vars im Doppler prd Environment gesetzt sind.
-# Verwendung: doppler run --config prd -- bash scripts/validate-doppler-prd.sh
-# Oder lokal (mit exportierten Vars): bash scripts/validate-doppler-prd.sh
+# Doppler prd Environment Validation Script
+# Bash — Linux/macOS/CI
+#
+# Usage: doppler run --config prd -- bash scripts/validate-doppler-prd.sh
+#
+# Validates that ALL required environment variables are present and non-empty.
+# Exits with 0 if valid, 1 if any required var is missing.
 
 set -euo pipefail
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
+CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
-MISSING=0
-PRESENT=0
+REQUIRED=(
+    # Core App
+    "ELT_MODE"
+    "NEXT_PUBLIC_SITE_URL"
 
-check_var() {
-  local var="$1"
-  local secret="${2:-false}"
-  local value="${!var:-}"
+    # Supabase
+    "NEXT_PUBLIC_SUPABASE_URL"
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY"
+    "SUPABASE_SERVICE_ROLE_KEY"
 
-  if [[ -z "$value" ]]; then
-    echo -e "${RED}✗ MISSING${NC}  $var"
-    MISSING=$((MISSING + 1))
-  else
-    if [[ "$secret" == "true" ]]; then
-      echo -e "${GREEN}✓ SET${NC}     $var = [REDACTED]"
+    # Stripe
+    "STRIPE_SECRET_KEY"
+    "STRIPE_PUBLISHABLE_KEY"
+    "STRIPE_WEBHOOK_SECRET"
+    "STRIPE_CONNECT_REDIRECT_URL"
+
+    # Sanity
+    "NEXT_PUBLIC_SANITY_PROJECT_ID"
+    "NEXT_PUBLIC_SANITY_DATASET"
+    "SANITY_API_READ_TOKEN"
+    "SANITY_API_TOKEN"
+    "SANITY_WEBHOOK_SECRET"
+
+    # Cloudflare R2
+    "CLOUDFLARE_R2_ACCOUNT_ID"
+    "CLOUDFLARE_R2_ACCESS_KEY_ID"
+    "CLOUDFLARE_R2_SECRET_ACCESS_KEY"
+    "CLOUDFLARE_R2_BUCKET"
+    "CLOUDFLARE_R2_PUBLIC_URL"
+
+    # AI & Messaging
+    "ANTHROPIC_API_KEY"
+    "RESEND_API_KEY"
+
+    # Monitoring & Trust
+    "SENTRY_DSN"
+    "MCP_AUDIT_DB"
+)
+
+WARNINGS=(
+    # Optional but recommended
+    "NEXT_PUBLIC_SANITY_DATASET"
+)
+
+FAILED=0
+WARNED=0
+
+echo -e "${CYAN}========================================${NC}"
+echo -e "${CYAN}Doppler prd Environment Validation${NC}"
+echo -e "${CYAN}========================================${NC}"
+echo ""
+
+for var in "${REQUIRED[@]}"; do
+    val="${!var:-}"
+    if [ -z "$val" ]; then
+        echo -e "  ${RED}[FAIL]${NC} $var  → MISSING or EMPTY"
+        FAILED=$((FAILED + 1))
     else
-      echo -e "${GREEN}✓ SET${NC}     $var = $value"
+        display="${val:0:2}***${val: -2}"
+        echo -e "  ${GREEN}[OK]${NC}   $var  → $display (length: ${#val})"
     fi
-    PRESENT=$((PRESENT + 1))
-  fi
-}
-
-echo "======================================"
-echo "  ELBTRONIKA — Doppler prd Validation"
-echo "======================================"
-echo ""
-
-echo "--- Core App ---"
-check_var "ELT_MODE"
-check_var "NEXT_PUBLIC_SITE_URL"
-check_var "MCP_AUDIT_DB"
+done
 
 echo ""
-echo "--- Supabase ---"
-check_var "NEXT_PUBLIC_SUPABASE_URL"
-check_var "NEXT_PUBLIC_SUPABASE_ANON_KEY"
-check_var "SUPABASE_SERVICE_ROLE_KEY" true
+for var in "${WARNINGS[@]}"; do
+    val="${!var:-}"
+    if [ -z "$val" ]; then
+        echo -e "  ${YELLOW}[WARN]${NC} $var  → MISSING (optional but recommended)"
+        WARNED=$((WARNED + 1))
+    fi
+done
 
 echo ""
-echo "--- Stripe ---"
-check_var "STRIPE_SECRET_KEY" true
-check_var "STRIPE_PUBLISHABLE_KEY"
-check_var "STRIPE_WEBHOOK_SECRET" true
-check_var "STRIPE_CONNECT_REDIRECT_URL"
-
-echo ""
-echo "--- Sanity ---"
-check_var "NEXT_PUBLIC_SANITY_PROJECT_ID"
-check_var "NEXT_PUBLIC_SANITY_DATASET"
-check_var "SANITY_API_TOKEN" true
-check_var "SANITY_WEBHOOK_SECRET" true
-
-echo ""
-echo "--- Cloudflare R2 ---"
-check_var "CLOUDFLARE_R2_ACCOUNT_ID"
-check_var "CLOUDFLARE_R2_ACCESS_KEY_ID"
-check_var "CLOUDFLARE_R2_SECRET_ACCESS_KEY" true
-check_var "CLOUDFLARE_R2_BUCKET"
-check_var "CLOUDFLARE_R2_PUBLIC_URL"
-
-echo ""
-echo "--- AI / Services ---"
-check_var "ANTHROPIC_API_KEY" true
-check_var "RESEND_API_KEY" true
-check_var "SENTRY_DSN"
-
-echo ""
-echo "======================================"
-echo -e "  ${GREEN}✓ Present: $PRESENT${NC} | ${RED}✗ Missing: $MISSING${NC}"
-echo "======================================"
-
-if [[ "$MISSING" -gt 0 ]]; then
-  echo -e "${RED}FAIL: $MISSING required variable(s) missing from Doppler prd.${NC}"
-  exit 1
+echo -e "${CYAN}========================================${NC}"
+if [ "$FAILED" -eq 0 ]; then
+    echo -e "${GREEN}Result: ALL REQUIRED VARIABLES PRESENT${NC}"
+    if [ "$WARNED" -gt 0 ]; then
+        echo -e "${YELLOW}Warnings: $WARNED optional vars missing${NC}"
+    fi
+    echo -e "${CYAN}========================================${NC}"
+    exit 0
 else
-  echo -e "${GREEN}OK: All required variables are set.${NC}"
-  exit 0
+    echo -e "${RED}Result: $FAILED REQUIRED VARIABLES MISSING${NC}"
+    echo -e "${CYAN}========================================${NC}"
+    exit 1
 fi
