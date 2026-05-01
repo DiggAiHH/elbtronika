@@ -38,7 +38,7 @@ function HeroSection({ locale }: { locale: string }) {
           Curated sonic commerce
         </p>
 
-        <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-6 animate-fade-in-up delay-100 font-[var(--font-display)] leading-[0.95]">
+        <h1 className="text-5xl md:text-7xl lg:text-8xl font-semibold tracking-tight mb-6 animate-fade-in-up delay-100 font-[var(--font-display)] leading-[0.95]">
           <span className="text-[#f2ede4]">Where</span>{" "}
           <span className="text-[#e8a020]">Techno</span>
           <br />
@@ -146,7 +146,7 @@ function FeaturesSection({ locale }: { locale: string }) {
     <section className="relative py-32 px-6">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-20">
-          <h2 className="text-3xl md:text-5xl font-bold mb-4">
+          <h2 className="text-3xl md:text-5xl font-semibold mb-4">
             <span className="text-white">Three Ways to</span>{" "}
             <span className="gradient-text">Experience</span>
           </h2>
@@ -245,7 +245,7 @@ function HowItWorksSection() {
     <section className="relative py-32 px-6">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-20">
-          <h2 className="text-3xl md:text-5xl font-bold mb-4">
+          <h2 className="text-3xl md:text-5xl font-semibold mb-4">
             <span className="text-white">How It</span> <span className="gradient-text">Works</span>
           </h2>
         </div>
@@ -280,7 +280,7 @@ function CTASection({ locale }: { locale: string }) {
       </div>
 
       <div className="relative z-10 max-w-3xl mx-auto text-center">
-        <h2 className="text-4xl md:text-6xl font-bold mb-6">
+        <h2 className="text-4xl md:text-6xl font-semibold mb-6">
           <span className="text-white">Ready to</span>{" "}
           <span className="gradient-text">Dive In?</span>
         </h2>

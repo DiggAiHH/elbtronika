@@ -14,14 +14,12 @@ export default async function CheckoutPage({ params }: Props) {
   return (
     <main className="min-h-screen bg-[var(--color-background)] px-4 py-16">
       <div className="mx-auto max-w-xl">
-        <h1 className="text-2xl font-bold text-[var(--color-text-primary)] text-center mb-8">
+        <h1 className="text-2xl font-semibold text-[var(--color-text-primary)] text-center mb-8">
           {t("title")}
         </h1>
 
         <div className="p-6 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)]">
-          <p className="text-[var(--color-text-secondary)] text-center mb-6">
-            {t("comingSoon")}
-          </p>
+          <p className="text-[var(--color-text-secondary)] text-center mb-6">{t("comingSoon")}</p>
 
           {isDemo && (
             <div
@@ -34,9 +32,7 @@ export default async function CheckoutPage({ params }: Props) {
               <p className="mt-2 text-lg font-mono text-[var(--color-primary)] tracking-wider">
                 4242 4242 4242 4242
               </p>
-              <p className="mt-1 text-xs text-[var(--color-text-muted)]">
-                {t("testCardHint")}
-              </p>
+              <p className="mt-1 text-xs text-[var(--color-text-muted)]">{t("testCardHint")}</p>
             </div>
           )}
         </div>
