@@ -1,19 +1,25 @@
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import { getEnv, getPublicEnv } from "@/src/lib/env";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { getEnv, getPublicEnv, resetEnv } from "@/src/lib/env";
 
 describe("Env — ELT_MODE", () => {
   const originalEnv = { ...process.env };
 
+  function setMinimalEnv() {
+    process.env.NEXT_PUBLIC_SUPABASE_URL = "https://test.supabase.co";
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "test-anon-key-12345678901234567890";
+    process.env.STRIPE_SECRET_KEY = "sk_test_123";
+    process.env.STRIPE_WEBHOOK_SECRET = "whsec_test_123";
+    process.env.NEXT_PUBLIC_SANITY_PROJECT_ID = "test-project";
+  }
+
   beforeEach(() => {
-    // Reset cached env
-    // @ts-expect-error — clearing internal cache for tests
-    _env = null;
+    setMinimalEnv();
+    resetEnv();
   });
 
   afterEach(() => {
     process.env = { ...originalEnv };
-    // @ts-expect-error
-    _env = null;
+    resetEnv();
   });
 
   it("defaults to demo when ELT_MODE is missing", () => {
