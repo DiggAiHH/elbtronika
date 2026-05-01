@@ -42,6 +42,16 @@
 4. Memory-Disziplin: OPSIDIAN_MEMORY.md ist zentrale Index-Datei für alle Handoffs + Run-Logs
 5. **Gap-Fill-Inventur**: Nie annehmen dass etwas fertig ist nur weil Datei existiert — Inhalt prüfen!
 
+## Phase 20.B — Sonnet Finalize (2026-04-30)
+
+- Commit: `716f15c` on `feature/phase-11-ai`
+- **Kritisch:** 17 Dateien hatten unaufgelöste Git-Merge-Konflikte (HEAD vs feature/phase-18-19-tests-and-prd-docs) — alle behoben
+- **Migrations bereinigt:** Doppelte `mcp_audit_log` entfernt, `CREATE TYPE IF NOT EXISTS` fix (PostgreSQL), `agent_tasks` aus `flow_engine.sql` extrahiert
+- **env.ts erweitert:** Alle 22 Doppler PRD Vars abgedeckt, `.optional()` für Demo/Staging-Kompatibilität
+- **UI Duplikate entfernt:** `demo-banner.tsx` + `walkthrough-tour.tsx` (kebab-case) gelöscht, PascalCase-Versionen behalten
+- **Neue Dateien:** `supabase/config.toml` (CLI-Config), `supabase/smoke-test-audit.sql` (DB-Validation)
+- **43 Tests green:** env (6), pitch (4), press (5), supabase/admin (2), demo-banner (5), walkthrough-tour (11), stripe/demo (4), shop/demo-mode (3), landing/hero (3)
+
 ## Plan-Updates
 
 - **v1.4** (2026-04-30) — Opus 4.7: Phase 20 Sequenzierung, GPT-Drift-Dokumentation, Merge-Map, Agent-Prompts
