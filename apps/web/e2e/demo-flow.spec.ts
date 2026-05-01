@@ -188,7 +188,6 @@ test.describe("Lite Mode Fallback", () => {
     await page.goto("/de/gallery?lite=1");
     await page.waitForLoadState("networkidle");
 
-    const _canvas = page.locator("canvas").or(page.locator("[data-testid='gallery-canvas']"));
     // In lite mode canvas may or may not render; we just verify no error page
     const errorHeading = page.locator("text=/404|error|fehler/i");
     expect(await errorHeading.isVisible().catch(() => false)).toBe(false);

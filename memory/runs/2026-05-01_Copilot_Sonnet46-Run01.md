@@ -1,0 +1,5 @@
+- **Datum:** 2026-05-01
+- **Agent/Model:** GitHub Copilot / Claude Sonnet 4.6
+- **Task:** Init skill (AGENTS.md review) + ultraplan → Copilot-specific pre-flight protocol + run-log discipline
+- **Outcome:** Fixed 3 AGENTS.md inaccuracies (phase status, biome severities, commit pattern); created `engineering-harness/COPILOT_AGENT_PREFLIGHT.md` with full tool taxonomy, skill routing, deferred tool loading, Windows gotchas, connector map, memory discipline
+- **Lesson:** VS Code Copilot tools live in 3 tiers (built-in / deferred / skills) — always check tier before calling; workspace root (`D:\Elbtronika`) ≠ monorepo root (`D:\Elbtronika\Elbtonika`) — all file tool paths must be absolute

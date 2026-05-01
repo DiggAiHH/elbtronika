@@ -1,0 +1,5 @@
+- **Datum:** 2026-05-01
+- **Agent/Model:** GitHub Copilot / Claude Sonnet 4.6
+- **Task:** Continue non-stop: clear current web typecheck blockers and lock harness lessons into protocol
+- **Outcome:** Fixed 4 blockers (`press-kit.test.tsx`, `admin.test.ts`, `demo-flow.spec.ts`, `SpatialAudioEngine.ts`), web typecheck now passes, focused vitest run passes (7 tests), preflight quick-recovery table extended with new TS/vitest failure patterns
+- **Lesson:** Fastest stabilization path is error-driven patching from exact typecheck output, then immediate narrow re-validation and protocol codification of each fix pattern

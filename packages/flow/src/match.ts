@@ -32,31 +32,36 @@ const DEFAULT_MATCH_OPTS: Required<MatchOptions> = {
   diversifyStyles: true,
 };
 
+const MUSICAL_KEYS = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+const MOOD_TAGS = ["dark", "bright", "energetic", "ambient", "intense", "chill"];
+const STYLE_TAGS = ["minimal", "bold", "detailed", "abstract"];
+
+function clamp01(value: number): number {
+  return Math.min(1, Math.max(0, value));
+}
+
 /**
  * Create an embedding vector from audio features.
  * Normalized to [0, 1] range.
  */
 export function audioToEmbedding(audio: AudioFeatures): number[] {
-  // 16-dimensional embedding
-  const bpmNorm = (audio.bpm - 60) / 140; // 60-200 → 0-1
-  const valenceNorm = audio.valence;
-  const arousalNorm = audio.arousal;
-  const brightnessNorm = Math.min(1, audio.spectralCentroid / 8000);
-  const rmsNorm = Math.min(1, audio.rmsEnergy * 2);
-  const zcrNorm = Math.min(1, audio.zeroCrossingRate * 10);
+  // 25-dimensional embedding: 7 base + 12 key + 6 mood
+  const bpmNorm = clamp01((audio.bpm - 60) / 140); // 60-200 → 0-1
+  const valenceNorm = clamp01(audio.valence);
+  const arousalNorm = clamp01(audio.arousal);
+  const brightnessNorm = clamp01(audio.spectralCentroid / 8000);
+  const rmsNorm = clamp01(audio.rmsEnergy * 2);
+  const zcrNorm = clamp01(audio.zeroCrossingRate * 10);
 
   // Key encoding (one-hot-ish for 12 tones + major/minor)
   const keyBase = audio.key.split(" ")[0] ?? "C";
-  const keyIndex = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"].indexOf(
-    keyBase,
-  );
+  const keyIndex = MUSICAL_KEYS.indexOf(keyBase);
   const isMinor = audio.key.includes("minor");
   const keyEmbedding = Array(12).fill(0);
   if (keyIndex >= 0) keyEmbedding[keyIndex] = 1;
 
   // Mood tag encoding (6 common tags)
-  const moodTags = ["dark", "bright", "energetic", "ambient", "intense", "chill"];
-  const moodEmbedding = moodTags.map((tag) => (audio.moodTags.includes(tag) ? 1 : 0));
+  const moodEmbedding = MOOD_TAGS.map((tag) => (audio.moodTags.includes(tag) ? 1 : 0));
 
   return [
     bpmNorm,
@@ -75,12 +80,12 @@ export function audioToEmbedding(audio: AudioFeatures): number[] {
  * Create an embedding vector from art features.
  */
 export function artToEmbedding(art: ArtFeatures): number[] {
-  // 16-dimensional embedding (same dimension as audio)
-  const brightnessNorm = art.brightness;
-  const saturationNorm = art.saturation;
-  const contrastNorm = art.contrast;
-  const compositionNorm = art.compositionScore;
-  const complexityNorm = art.complexity;
+  // 19-dimensional embedding: 9 base + 6 mood + 4 style
+  const brightnessNorm = clamp01(art.brightness);
+  const saturationNorm = clamp01(art.saturation);
+  const contrastNorm = clamp01(art.contrast);
+  const compositionNorm = clamp01(art.compositionScore);
+  const complexityNorm = clamp01(art.complexity);
 
   // Color harmony encoding
   const harmonyMap: Record<string, number> = {
@@ -94,17 +99,15 @@ export function artToEmbedding(art: ArtFeatures): number[] {
 
   // Dominant color encoding (average RGB)
   const avgColor = art.dominantColors[0] ?? { r: 128, g: 128, b: 128, percentage: 1 };
-  const rNorm = avgColor.r / 255;
-  const gNorm = avgColor.g / 255;
-  const bNorm = avgColor.b / 255;
+  const rNorm = clamp01(avgColor.r / 255);
+  const gNorm = clamp01(avgColor.g / 255);
+  const bNorm = clamp01(avgColor.b / 255);
 
   // Mood tag encoding (same 6 tags as audio for alignment)
-  const moodTags = ["dark", "bright", "energetic", "ambient", "intense", "chill"];
-  const moodEmbedding = moodTags.map((tag) => (art.moodTags.includes(tag) ? 1 : 0));
+  const moodEmbedding = MOOD_TAGS.map((tag) => (art.moodTags.includes(tag) ? 1 : 0));
 
   // Style tag encoding
-  const styleTags = ["minimal", "bold", "detailed", "abstract"];
-  const styleEmbedding = styleTags.map((tag) => (art.styleTags.includes(tag) ? 1 : 0));
+  const styleEmbedding = STYLE_TAGS.map((tag) => (art.styleTags.includes(tag) ? 1 : 0));
 
   return [
     brightnessNorm,
@@ -117,7 +120,7 @@ export function artToEmbedding(art: ArtFeatures): number[] {
     gNorm,
     bNorm,
     ...moodEmbedding,
-    ...styleEmbedding.slice(0, 6),
+    ...styleEmbedding,
   ];
 }
 
@@ -125,6 +128,11 @@ export function artToEmbedding(art: ArtFeatures): number[] {
  * Cosine similarity between two vectors.
  */
 export function cosineSimilarity(a: number[], b: number[]): number {
+  if (a.length === 0 || b.length === 0) return 0;
+
+  // Mismatched vectors are treated as incomparable to avoid NaN propagation.
+  if (a.length !== b.length) return 0;
+
   let dot = 0;
   let magA = 0;
   let magB = 0;

@@ -19,7 +19,7 @@ describe("Press Kit Page", () => {
       { value: "60/20/20", label: "Revenue Split" },
     ];
     expect(stats).toHaveLength(4);
-    expect(stats[3].value).toBe("60/20/20");
+    expect(stats.at(-1)?.value).toBe("60/20/20");
   });
 
   it("roadmap has 4 phases", () => {

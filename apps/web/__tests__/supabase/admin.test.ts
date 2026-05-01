@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import { createAdminClient } from "../../src/lib/supabase/admin";
 
 describe("createAdminClient", () => {

@@ -1,0 +1,5 @@
+- **Datum:** 2026-05-01
+- **Agent/Model:** GitHub Copilot / Claude Sonnet 4.6
+- **Task:** Deep search and optimization of frontend/backend/ML pipelines, then codify what worked and failed into harness protocol
+- **Outcome:** Optimized ML flow reliability by hardening vector similarity, deterministic simulated analysis, and DB-backed artwork feature usage; added ML deep-search + browser harness loops to engineering-harness/COPILOT_AGENT_PREFLIGHT.md
+- **Lesson:** Highest-impact ML fixes came from provenance-first checks (measured/simulated/fallback) and deterministic behavior over random demo outputs; always patch route data-source usage before tuning scoring heuristics

@@ -2,7 +2,7 @@
 
 > **Single Source of Truth.** Lou + alle AI-Agenten lesen diese File zuerst.
 > **Pflichtaktion vor jeder Session:** Lese diese File. Aktualisiere nach jedem Phasen-Schritt.
-> **Letztes Update:** 2026-04-30 (Opus 4.8 — Phase 18/19 Test-Recovery & Lint-Green)
+> **Letztes Update:** 2026-05-01 (GPT-5.3-Codex + Opus 4.7 Audit — ML-Guard-Wave verifiziert und dokumentiert)
 
 ---
 
@@ -48,7 +48,42 @@
 
 ---
 
-## 🔄 Heutige Aktion (29.04.2026)
+## 🔄 Heutige Aktion (01.05.2026)
+
+- Opus-4.7-Audit der Wave-Dateien übernommen und als Guard-Sprint konsolidiert.
+- Defensive Guards aktiv in `flow/analyze`, `flow/match`, `SpatialAudioEngine`.
+- Determinismus in simulierten Flow-Analysen bestätigt (`seedFromString` + `mulberry32`).
+- Verifikation erfolgreich:
+  - `pnpm.cmd --filter @elbtronika/web typecheck` ✅
+  - `pnpm.cmd --filter @elbtronika/flow typecheck` ✅
+  - `npx.cmd vitest run apps/web/__tests__/press/press-kit.test.tsx apps/web/__tests__/supabase/admin.test.ts --passWithNoTests` ✅
+- Fokus-Commit erstellt: `e426c0f` (`feat(flow): harden deterministic matching and route feature sourcing`).
+- Handover/Run-Logs für Copilot + Opus ergänzt (`memory/handoffs`, `memory/runs`).
+
+---
+
+## 📝 Session Notes — GPT-5.3-Codex (01.05.2026)
+
+### Guard-Wave Abschluss
+- `apps/web/app/api/flow/analyze/route.ts`
+  - Deterministische Simulation statt `Math.random`.
+  - `pickOne` fail-fast bei leerem Input-Array.
+- `apps/web/app/api/flow/match/route.ts`
+  - Defensive Parser für numerische/string-array Felder (`toNumber`, `toStringArray`).
+  - Artist-Join-Normalisierung (Array vs. Objekt) vor Name-Zugriff.
+  - Feature-Provenance im Response (`artworkFeaturesSource`).
+- `packages/audio/src/engine/SpatialAudioEngine.ts`
+  - `dispose()` iteriert über Key-Snapshot statt mutierender Live-Map.
+
+### Projektstand nach heutigem Lauf
+- Typprüfung in den betroffenen Paketen ist grün.
+- Zielgerichtete Regressionstests für Press/Supabase sind grün.
+- Harness-Dokumentation für Agent-Workflows ist aktualisiert und lint-stabil.
+- Ein Teil der Wave ist bewusst noch uncommitted, um separat und kontrolliert zu bündeln.
+
+### Unmittelbar danach
+- Restliche Wave-Dateien in einen zweiten separaten Commit aufnehmen.
+- Weiterhin: kein Push ohne explizites Lou-GO.
 
 ---
 
@@ -110,7 +145,7 @@
 
 - **Org:** DiggAiHH
 - **Repo:** elbtronika
-- **Branch:** `feature/phase-11-ai` @ `0a59f44`
+- **Branch:** `feature/phase-11-ai` @ `e426c0f` (plus lokale Folgeänderungen)
 - **Letzter Tag:** `v0.13.0-demo`
 - **CI:** github.com/DiggAiHH/elbtronika/actions
 

@@ -23,7 +23,7 @@ The project runs in three runtime modes controlled by the Doppler variable `ELT_
 | **Staging** | `staging` | QA, smoke-tests before live | Mix of demo + real artists | Test-Mode + real Connected-Accounts |
 | **Live** | `live` | Public launch | Only real artists, real sales | Live-Mode |
 
-The project is a **pnpm monorepo** managed with Turborepo. It is built by a solo developer (Lou) with AI pair-programming. Development is phase-driven (Phase 0–19). As of 2026-04-30, Phases 1–17 are complete on `main`. Phase 16 (Launch) is ready. Phases 18–19 are in planning.
+The project is a **pnpm monorepo** managed with Turborepo. It is built by a solo developer (Lou) with AI pair-programming. Development is phase-driven (Phase 0–20+). As of 2026-05-01, Phases 1–20 (A/B/C) are complete on `feature/phase-11-ai`. Phase 16 (Launch) is ready; Phases 18–19 have shipped.
 
 ---
 
@@ -174,8 +174,8 @@ Single tool for lint + format. Configuration in `biome.json`.
 - `noUnusedVariables`: error
 - `useImportType`: error
 - `noNonNullAssertion`: warn
-- `noExplicitAny`: error
-- `noConsole`: warn (off in test files)
+- `noExplicitAny`: warn
+- `noConsole`: off (globally)
 - `noBarrelFile`: warn
 
 ### TypeScript Strictness
@@ -198,12 +198,12 @@ Root `tsconfig.base.json` extends into all packages:
 
 ### Commit Convention
 
-Conventional Commits enforced via commitlint + husky:
+commitlint + husky configured for Conventional Commits, but AI-agent commits frequently use ad-hoc formats:
 ```
-feat(scope): subject
-fix(scope): subject
-docs(scope): subject
-chore(scope): subject
+feat(scope): subject           # conventional
+security+deadcode+bugfix: …    # AI-agent freeform
+Phase 20.A+B+C: …              # phase-tagged
+merge: <model> into <branch>   # AI merge marker
 ```
 
 Pre-commit hook runs `biome check --write --no-errors-on-unmatched` on staged files.
