@@ -1,12 +1,12 @@
 # Pre-Flight Protocol — Agent Operations Manual
 
 > **Jeder Agent liest dies vor dem ersten Tool-Call.**
-> Dies ist die verdichtete Betriebsanleitung für alle Tools, Skills und Workflows auf diesem Windows-System.
-> Gültig ab: 2026-04-30 | Autor: Kimi (System-Agent) | Letzte Session: Phase 18/19 Recovery
+> Dies ist die verdichtete Betriebsanleitung fuer alle Tools, Skills und Workflows auf diesem Windows-System.
+> Gueltig ab: 2026-04-30 | Autor: Kimi (System-Agent) | Letzte Session: Phase 18/19/20 Gap-Fill
 
 ---
 
-## 1. System-Identität (Dieser Computer)
+## 1. System-Identitaet (Dieser Computer)
 
 | Attribut | Wert |
 |----------|------|
@@ -17,7 +17,7 @@
 | **Linter** | Biome v2 (`biome.json` im Root) |
 | **Test-Runner** | Vitest v4 (jsdom) |
 | **Type-Checker** | `tsc --noEmit` pro Paket |
-| **Git-Branch** | `feature/phase-18-19-tests-and-prd-docs` |
+| **Git-Branch** | Wechselt pro Task — immer `git branch --show-current` pruefen |
 
 ---
 
@@ -29,14 +29,14 @@
 Brauche ich Datei-INHALT?
 ├── Ja, einzelne Datei (bekannter Pfad) → ReadFile
 ├── Ja, mehrere Dateien (bekannte Pfade) → ReadFile (parallel)
-├── Ja, aber ich weiß nicht wo → Grep
+├── Ja, aber ich weiss nicht wo → Grep
 ├── Ja, Verzeichnis-Struktur → Glob
 └── Nein, nur Operation → Shell / StrReplaceFile / WriteFile
 
-Brauche ich Code-ÄNDERUNG?
+Brauche ich Code-AENDERUNG?
 ├── Ja, einzelne String-Replace → StrReplaceFile
 ├── Ja, komplette Datei neu → WriteFile
-├── Ja, Datei anhängen → WriteFile (mode: append)
+├── Ja, Datei anhaengen → WriteFile (mode: append)
 ├── Ja, komplexe Multi-File → Agent (subagent_type: coder)
 └── Nein → ReadFile / Grep
 
@@ -44,53 +44,55 @@ Brauche ich Codebase-EXPLORATION?
 ├── Ja, <3 Suchen, bekannte Dateien → Grep + ReadFile selbst
 ├── Ja, >3 Suchen oder Module verstehen → Agent (subagent_type: explore)
 ├── Ja, Architektur-Planung → Agent (subagent_type: plan)
-└── Ja, nur lesen, kein Code ändern → explore-Agent (immer)
+└── Ja, nur lesen, kein Code aendern → explore-Agent (immer)
 ```
 
 ### 2.2 Per-Tool Best Practices
 
 #### `ReadFile`
 - **Parallelisieren**: Bis zu 5 ReadFile-Calls in EINEM Response
-- **Line-Offset**: `line_offset=-100` für Log-Tails, `line_offset=1, n_lines=50` für große Files
+- **Line-Offset**: `line_offset=-100` fuer Log-Tails, `line_offset=1, n_lines=50` fuer grosse Files
 - **Nie blind**: Wenn du einen Pfad nicht kennst, zuerst `Glob` oder `Grep`
-- **Truncation check**: Wenn "..." am Zeilenende → `n_lines` erhöhen oder offset verschieben
+- **Truncation check**: Wenn "..." am Zeilenende → `n_lines` erhoehen oder offset verschieben
 
 #### `WriteFile`
 - **>100 Zeilen**: Erster Call `overwrite`, danach `append`-Calls
-- **UTF-8 erzwingen**: Nie PowerShell `>` oder `echo` für Code-Files (erzeugt UTF-16/BOM!)
+- **UTF-8 erzwingen**: Nie PowerShell `>` oder `echo` fuer Code-Files (erzeugt UTF-16/BOM!)
 - **Atomic**: WriteFile ist atomar — entweder ganz oder gar nicht
+- **Parent-Directory**: `New-Item -ItemType Directory -Path <dir>` VOR WriteFile, wenn Verzeichnis nicht existiert
 
 #### `StrReplaceFile`
-- **Bevorzugt**: Immer StrReplaceFile vor WriteFile wählen (minimaler Diff)
+- **Bevorzugt**: Immer StrReplaceFile vor WriteFile waehlen (minimaler Diff)
 - **Multi-Replace**: Array von edits in EINEM Call
-- **replace_all**: Nur bei sicheren Massen-Replacements (z.B. Import-Path ändern)
+- **replace_all**: Nur bei sicheren Massen-Replacements (z.B. Import-Path aendern)
 - **Fehlschlag**: Wenn `old` nicht exakt matcht → ReadFile nochmal lesen
 
 #### `Shell`
 - **Windows PowerShell**: Jeder Call ist eine FRISCHE Session. `cd`, Env-Vars, History persistieren NICHT
-- **Chaining**: `;` statt `&&` (PowerShell), Ergebnis mit `if ($?)` prüfen
-- **Timeout**: Langläufer (builds, tests) mit `timeout` setzen. Hintergrund mit `run_in_background=true`
+- **Chaining**: `;` statt `&&` (PowerShell), Ergebnis mit `if ($?)` pruefen
+- **Timeout**: Langlaeufer (builds, tests) mit `timeout` setzen. Hintergrund mit `run_in_background=true`
 - **Pfad-Trenner**: `/` oder `\` — beides geht, aber `\` ist Windows-konventionell
-- **`.cmd` Pflicht**: `pnpm.cmd`, `npx.cmd`, `npm.cmd` — nie ohne `.cmd`-Suffix auf Windows!
+- **`.cmd` Pflicht**: `pnpm.cmd`, `npx.cmd`, `npm.cmd`, `biome.cmd` — nie ohne `.cmd`-Suffix auf Windows!
 - **Nie interaktiv**: Keine `git commit` ohne `-m` oder `-F`. Keine `vim`/`nano`
+- **Git checkout pruefen**: Nach `git checkout` IMMER `git branch --show-current` ausfuehren — PowerShell-Pipes wechseln manchmal nicht den Branch!
 
 #### `Grep`
-- **Case-insensitive**: `-i: true` für Imports/Variablen-Suche
-- **Output-Mode**: `files_with_matches` für "welche Files", `content` für "was steht drin"
-- **Head-Limit**: Standard 250 — für große Repos `0` setzen (sparsam)
-- **Multiline**: `-U` für Regex über mehrere Zeilen
+- **Case-insensitive**: `-i: true` fuer Imports/Variablen-Suche
+- **Output-Mode**: `files_with_matches` fuer "welche Files", `content` fuer "was steht drin"
+- **Head-Limit**: Standard 250 — fuer grosse Repos `0` setzen (sparsam)
+- **Multiline**: `-U` fuer Regex ueber mehrere Zeilen
 
 #### `Glob`
 - **Kein `**` am Anfang**: `src/**/*.ts` geht, `**/*.ts` wird rejected
-- **Keine node_modules**: Nie `node_modules/**/*.js` — zu groß
+- **Keine node_modules**: Nie `node_modules/**/*.js` — zu gross
 
 #### `Agent` (Subagent)
 - **Explore** (read-only): Codebase verstehen, Module finden, Patterns suchen. >3 Suchen = explore-Agent
 - **Coder** (read-write): Software-Engineering-Arbeit mit Files editieren
-- **Plan** (read-only): Architektur-Planung vor Code-Änderungen. Nutze `skill='plan'`
+- **Plan** (read-only): Architektur-Planung vor Code-Aenderungen. Nutze `skill='plan'`
 - **Research** (read-only): Schnelle Codebase-Exploration. Nutze `skill='research'`
-- **Parallelisieren**: Unabhängige explore-Agents parallel starten
-- **Context**: Neuer Agent hat KEINEN Kontext — alles Nötige im Prompt wiederholen
+- **Parallelisieren**: Unabhaengige explore-Agents parallel starten
+- **Context**: Neuer Agent hat KEINEN Kontext — alles Noetige im Prompt wiederholen
 
 ---
 
@@ -105,7 +107,7 @@ Brauche ich Codebase-EXPLORATION?
 | `cross-review` | User sagt "review with opus/gemini/..." | Model explizit genannt |
 | `frontend-design` | User will UI, Landingpage, Dashboard, Mockup | Design-Extraktion + HTML/TSX Output |
 | `init` | "init repo", "create AGENTS.md", "contributor guidelines" | Projekt-Setup, Onboarding-Docs |
-| `plan` | Architektur-Planung, Implementation-Plan | Vor jeder nicht-trivialen Code-Änderung |
+| `plan` | Architektur-Planung, Implementation-Plan | Vor jeder nicht-trivialen Code-Aenderung |
 | `playwright` | "test website", "screenshot", "login flow", "broken links" | Browser-Automation |
 | `research` | Codebase-Exploration, Pattern-Suche | Read-only, schnell, parallelisierbar |
 | `microsoft-foundry` | "deploy agent", "Foundry", "evaluate agent" | Azure Foundry spezifisch |
@@ -115,7 +117,7 @@ Brauche ich Codebase-EXPLORATION?
 
 | Skill | Pfad | Trigger |
 |-------|------|---------|
-| `Mechanism Agent` | `.sixth/skills/Mechanism Agent.md` | Agent hört auf / wartet unnötig / TypeScript-Fixation-Loop |
+| `Mechanism Agent` | `.sixth/skills/Mechanism Agent.md` | Agent hoert auf / wartet unnoetig / TypeScript-Fixation-Loop |
 | `designlang-tokens` | `design-extract-output/*/.claude/skills/designlang/SKILL.md` | Frontend-Styling mit extrahierten Design-Tokens |
 
 ### 3.3 Skill-Aufruf-Muster
@@ -137,18 +139,23 @@ Agent(subagent_type="coder", skill="frontend-design", prompt="...design this pag
 
 ### 4.1 Fatal Error Patterns
 
-| # | Fehler | Ursache | Prävention |
+| # | Fehler | Ursache | Praevention |
 |---|--------|---------|------------|
-| 1 | **UTF-16/BOM Dateien** | PowerShell `>` oder `echo` erzeugt UTF-16 LE | **NIE** `>` für Code-Files. WriteFile oder `Out-File -Encoding utf8` |
+| 1 | **UTF-16/BOM Dateien** | PowerShell `>` oder `echo` erzeugt UTF-16 LE | **NIE** `>` fuer Code-Files. WriteFile oder `Out-File -Encoding utf8` |
 | 2 | **`.cmd` fehlt** | `pnpm install` → "not recognized" | **IMMER** `pnpm.cmd`, `npx.cmd`, `npm.cmd`, `biome.cmd` |
 | 3 | **Biome falsche Version** | `npx biome` → globale statt lokale v2 | **IMMER** `node_modules\.bin\biome.cmd` oder `pnpm.cmd biome` |
 | 4 | **Turbo OOM** | `turbo run typecheck` mit 14 Paketen → OutOfMemory | `--concurrency=2` in root `package.json` |
-| 5 | **Biome `css.linter.rules`** | Biome v2 akzeptiert KEIN `rules` unter `css.linter` | Nie `css.linter.rules` in `biome.json` einfügen |
+| 5 | **Biome `css.linter.rules`** | Biome v2 akzeptiert KEIN `rules` unter `css.linter` | Nie `css.linter.rules` in `biome.json` einfuegen |
 | 6 | **Git multi-line commit** | PowerShell `git commit -m "a\nb"` → alles in eine Zeile | `git commit -F D:\msg.txt` mit vorher `echo` oder WriteFile |
-| 7 | **PowerShell frische Session** | `cd` oder `$env:` in Shell-Call → nächster Call vergessen | Alles in EINEM Call mit `;` chainen |
+| 7 | **PowerShell frische Session** | `cd` oder `$env:` in Shell-Call → naechster Call vergisst | Alles in EINEM Call mit `;` chainen |
 | 8 | **Klammer-Verzeichnisse** | `mkdir [locale]` in CMD/PS → Fehler | Node.js `fs.mkdirSync` oder escaped `mkdir '\[locale\]'` |
 | 9 | **Context Compaction verliert Tests** | Lange Sessions → Tests verschwinden | Nach jedem Green-State committen |
-| 10 | **Git-Show mit `>`** | `git show c4b3103:path > path` → korrupte UTF-16 | `git show ... | Out-File -Encoding utf8` oder WriteFile |
+| 10 | **Git-Show mit `>`** | `git show c4b3103:path > path` → korrupte UTF-16 | `git show ... \| Out-File -Encoding utf8` oder WriteFile |
+| 11 | **Branch-Verwirrung** | `git checkout` in Pipe wechselt manchmal nicht | Nach checkout IMMER `git branch --show-current` pruefen |
+| 12 | **Leere Verzeichnisse** | `Get-ChildItem` zeigt leere Verzeichnisse nicht | `Test-Path` verwenden oder `Get-ChildItem -LiteralPath` |
+| 13 | **Vitest `@/` Alias** | `@/lib/...` funktioniert nicht in Tests | Relativen Pfad nutzen: `../../src/lib/...` |
+| 14 | **i18n Missing Keys** | `getTranslations` wirft wenn Key fehlt | Messages in de.json/en.json VOR Seiten-Erstellung pruefen |
+| 15 | **Platzhalter-Tests** | Datei existiert aber `expect(true).toBe(true)` | Immer Test-INHALT lesen, nie nur Existenz pruefen |
 
 ### 4.2 Verifizierte korrekte Befehle
 
@@ -161,9 +168,10 @@ node_modules\.bin\biome.cmd check --write .
 # Typecheck (mit OOM-Schutz)
 pnpm.cmd typecheck        # ruft turbo run typecheck --concurrency=2
 
-# Tests
-pnpm.cmd test             # apps/web: vitest
-pnpm.cmd test:ui          # mit Vitest UI
+# Tests (schnell, direkt im Package)
+cd apps/web; npx.cmd vitest run --passWithNoTests
+# oder mit Filter:
+pnpm.cmd --filter @elbtronika/web test -- --run
 
 # Git commit multi-line
 "feat: message
@@ -175,11 +183,20 @@ git commit -F D:\msg.txt
 # Git recovery (Tests aus alter Commit)
 git show c4b3103:path/to/file.ts | Out-File -Encoding utf8 path/to/file.ts
 
+# Git — Datei von anderem Branch holen
+git show <branch>:<path> | Out-File -Encoding utf8 <path>
+
 # Package install
 pnpm.cmd install
 
 # Turbo build
 pnpm.cmd build            # --concurrency=2 empfohlen bei OOM
+
+# Biome — nur geaenderte Dateien (schneller)
+node_modules\.bin\biome.cmd check apps/web/src/lib/env.ts apps/web/__tests__/...
+
+# Verzeichnis erstellen (vor WriteFile)
+New-Item -ItemType Directory -Path apps/web/app/[locale]/new-page -Force
 ```
 
 ---
@@ -189,44 +206,44 @@ pnpm.cmd build            # --concurrency=2 empfohlen bei OOM
 ### 5.1 Green-State Protocol (nach jeder Session)
 
 ```
-1. Tests passing?    → pnpm.cmd test
-2. Lint green?       → pnpm.cmd lint
+1. Tests passing?    → cd apps/web; npx.cmd vitest run --passWithNoTests
+2. Lint green?       → node_modules\.bin\biome.cmd check <geaenderte-files>
 3. Typecheck?        → pnpm.cmd typecheck
 4. Dann: COMMITEN!   → git commit -F D:\msg.txt
 5. Dann: PUSHEN!     → git push origin <branch>
 6. Dann: Run-Log     → memory/runs/<datum>_<agent>_<model>_Run-<nr>.md
 ```
 
-**Regel:** Nie eine Session beenden ohne commit. Context Compaction löscht Arbeit.
+**Regel:** Nie eine Session beenden ohne commit. Context Compaction loescht Arbeit.
 
 ### 5.2 Batch-Fix Protocol (TypeScript/Lint)
 
 ```
-1. ALLE Code-Änderungen für eine Phase machen
+1. ALLE Code-Aenderungen fuer eine Phase machen
 2. DANN einmal Typecheck/Lint laufen lassen
 3. DANN ALLE Fehler in EINEM Batch fixen (StrReplaceFile mit Array)
-4. NIE Fehler einzeln fixen während auf Ergebnis gewartet wird
+4. NIE Fehler einzeln fixen waehrend auf Ergebnis gewartet wird
 5. Phase-6 WIP Files = FORBIDDEN (nur dokumentieren, nicht fixen)
 ```
 
 ### 5.3 Parallelize Protocol
 
 ```
-Background: Typecheck läuft → Agent schreibt schon Dokumentation
-Background: Tests laufen    → Agent liest nächste Phase
+Background: Typecheck laeuft → Agent schreibt schon Dokumentation
+Background: Tests laufen    → Agent liest naechste Phase
 Background: pnpm install    → Agent editiert schon Code
 ```
 
-**Regel:** Nach jedem Background-Task-Start MUSS eine nächste Aktion bereitstehen.
+**Regel:** Nach jedem Background-Task-Start MUSS eine naechste Aktion bereitstehen.
 
 ### 5.4 Recovery Protocol (Tests/Files verloren)
 
 ```
-1. Git-History prüfen: git log --all --full-history -- path/to/file
+1. Git-History pruefen: git log --all --full-history -- path/to/file
 2. Letzter guter Commit finden: git show <commit>:path > path
 3. ABER: Out-File -Encoding utf8 verwenden (nicht `>`)
 4. Fehlende Verzeichnisse: New-Item -ItemType Directory -Path path
-5. Import-Abhängigkeiten checken: Was importierte die gelöschte Datei?
+5. Import-Abhaengigkeiten checken: Was importierte die geloeschte Datei?
 6. Fehlende Source-Module parallel recreaten
 ```
 
@@ -249,7 +266,7 @@ Background: pnpm install    → Agent editiert schon Code
 
 ---
 
-## 6. Memory-Disziplin
+## 6. Memory-Disciplin
 
 ### 6.1 Run-Log Format
 
@@ -272,8 +289,8 @@ Background: pnpm install    → Agent editiert schon Code
 **Inhalt:**
 - Was wurde erreicht?
 - Was wurde NICHT erreicht (und warum)?
-- Welche Dateien wurden geändert?
-- Nächste Schritte für den nächsten Agent?
+- Welche Dateien wurden geaendert?
+- Naechste Schritte fuer den naechsten Agent?
 - Bekannte Blocker?
 
 ### 6.3 OPSIDIAN_MEMORY.md
@@ -292,7 +309,7 @@ Background: pnpm install    → Agent editiert schon Code
 
 ### 7.1 Automatisch geladene Skills (System-Prompt)
 
-Diese Skills sind im System-Prompt verlinkt und stehen immer zur Verfügung:
+Diese Skills sind im System-Prompt verlinkt und stehen immer zur Verfuegung:
 
 | Skill | Pfad | Automatisch? |
 |-------|------|--------------|
@@ -328,17 +345,21 @@ Vor jeder Arbeit an:
 
 ## 9. Quick-Reference: Fatal → Fix
 
-| Situation | Sofort-Maßnahme |
+| Situation | Sofort-Massnahme |
 |-----------|-----------------|
 | Agent stoppt / wartet | `Mechanism Agent.md` lesen → Recovery Protocol |
 | Tests verschwunden | `git log --all --full-history -- path` → `git show commit:path \| Out-File -Encoding utf8 path` |
-| Lint failt alle Packages | `biome.json` auf `css.linter.rules` prüfen → ENTFERNEN |
+| Lint failt alle Packages | `biome.json` auf `css.linter.rules` pruefen → ENTFERNEN |
 | Turbo OOM | `--concurrency=2` in root `package.json` scripts.typecheck |
 | TypeScript Fehler-Kaskade | Batch-Fix Protocol anwenden, Phase-6 ignorieren |
-| PowerShell `>` für Code | STOP → WriteFile oder `Out-File -Encoding utf8` |
+| PowerShell `>` fuer Code | STOP → WriteFile oder `Out-File -Encoding utf8` |
 | `.cmd` vergessen | `pnpm` → `pnpm.cmd`, `npx` → `npx.cmd`, `biome` → `biome.cmd` |
 | Multi-line Commit in PS | `git commit -F D:\msg.txt` mit vorher `\| Out-File` |
 | Kein Plan vor Code | EnterPlanMode → explore → ExitPlanMode |
+| Branch-Verwirrung | `git branch --show-current` — Commit auf falschem Branch? → `git reset HEAD~1` + checkout + recommit |
+| Vitest `@/` failt | Relativen Pfad nutzen: `../../src/lib/...` |
+| i18n Key fehlt | `getTranslations` wirft → de.json/en.json um Key ergaenzen |
+| Platzhalter-Tests | `expect(true).toBe(true)` → echte Tests schreiben |
 
 ---
 
@@ -346,16 +367,17 @@ Vor jeder Arbeit an:
 
 | Connector | Status | Nutzung |
 |-----------|--------|---------|
-| Biome v2 (Lint) | ✅ Aktiv | `pnpm.cmd lint` |
-| Vitest (Tests) | ✅ Aktiv | `pnpm.cmd test` |
+| Biome v2 (Lint) | ✅ Aktiv | `pnpm.cmd lint` oder `node_modules\.bin\biome.cmd check <files>` |
+| Vitest (Tests) | ✅ Aktiv | `cd apps/web; npx vitest run --passWithNoTests` |
 | Turborepo | ✅ Aktiv | `pnpm.cmd typecheck`, `pnpm.cmd build` |
-| codeburn | ⏳ Installiert? | `npx codeburn` prüfen |
-| designlang | ⏳ Installiert? | `npx designlang` prüfen |
-| caveman | ⏳ Plugin? | `claude plugin list` prüfen |
-| Playwright | ⏳ Installiert? | `npx playwright --version` prüfen |
-| Supabase CLI | ⏳ Installiert? | `npx supabase --version` prüfen |
+| codeburn | ⏳ Installiert? | `npx codeburn` pruefen |
+| designlang | ⏳ Installiert? | `npx designlang` pruefen |
+| caveman | ⏳ Plugin? | `claude plugin list` pruefen |
+| Playwright | ⏳ Installiert? | `npx playwright --version` pruefen |
+| Supabase CLI | ⏳ Installiert? | `npx supabase --version` pruefen |
 
 ---
 
-*Dieses Protokoll lebt. Jede Session ergänzt es. Letzte Änderung: 2026-04-30*
-*Erstellt von: Kimi (System-Agent) | Session: Phase 18/19 Recovery*
+*Dieses Protokoll lebt. Jede Session ergaenzt es. Letzte Aenderung: 2026-04-30 (Gap-Fill Session)*
+*Erstellt von: Kimi (System-Agent) | Session: Phase 18/19/20 Gap-Fill*
+*Neue Lektionen: Branch-Verwirrung, Platzhalter-Tests, Vitest @/-Alias, i18n Missing Keys, Verzeichnis-Erstellung*

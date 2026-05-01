@@ -27,11 +27,16 @@
 
 ## Pre-Flight Protocol (2026-04-30)
 
-- [[PRE_FLIGHT_PROTOCOL]] — Agent-Operations-Manual: Tool-Matrix, Windows-Gotchas, Workflow-Protokolle, Memory-Disziplin
-- [[Run-01]] — 5-Zeilen-Run-Log dieser Session: `memory/runs/2026-04-30_Kimi_Run-01.md`
+- [[PRE_FLIGHT_PROTOCOL]] — Agent-Operations-Manual: Tool-Matrix, Windows-Gotchas (15 Patterns), Workflow-Protokolle, Memory-Disziplin
+- [[Run-01]] — Phase 18/19 Recovery: `memory/runs/2026-04-30_Kimi_Run-01.md`
+- [[Run-02]] — Codex 5.3 Doppler-Doku: `memory/runs/2026-04-30_Kimi_Run-02.md`
+- [[Run-03]] — Sonnet 4.6 Phase 18: `memory/runs/2026-04-30_Kimi_Run-03.md`
+- [[Run-04]] — GPT 5.4 + Gap-Fill: `memory/runs/2026-04-30_Kimi_Run-04.md`
+- [[Run-05]] — ULTRAPLAN Protocol v2: `memory/runs/2026-04-30_Kimi_Run-05.md`
 
 **Neue Protokolle etabliert:**
-1. `engineering-harness/PRE_FLIGHT_PROTOCOL.md` — komplettes Agent-Operations-Manual
+1. `engineering-harness/PRE_FLIGHT_PROTOCOL.md` — komplettes Agent-Operations-Manual (v2 mit 15 Patterns)
 2. `memory/runs/<datum>_<Agent>_<Model>_Run-<nr>.md` — 5-Zeilen-Run-Log pro Session
 3. Green-State-Regel: immer commiten nach tests+lint+typecheck green
 4. Memory-Disziplin: OPSIDIAN_MEMORY.md ist zentrale Index-Datei für alle Handoffs + Run-Logs
+5. **Gap-Fill-Inventur**: Nie annehmen dass etwas fertig ist nur weil Datei existiert — Inhalt prüfen!
