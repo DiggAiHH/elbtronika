@@ -7,9 +7,17 @@
  * Wave 2: Accepts canonical "server/tool" form or {server, tool} separately
  */
 
+import type { MCPServer } from "@elbtronika/mcp";
+import {
+  createAudioMCPServer,
+  createSanityMCPServer,
+  createStripeMCPServer,
+  createSupabaseMCPServer,
+} from "@elbtronika/mcp";
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { createClient } from "@/src/lib/supabase/server";
+<<<<<<< HEAD
 import { logAuditEvent } from "@/src/lib/mcp/audit";
 import {
   createSupabaseMCPServer,
@@ -18,27 +26,15 @@ import {
   createAudioMCPServer,
 } from "@elbtronika/mcp";
 import type { MCPServer } from "@elbtronika/mcp";
+=======
+>>>>>>> feature/phase-18-19-tests-and-prd-docs
 
 // Wave 0: Allowlist — only read/analyze tools from the Harness initial surface
 const ALLOWED_TOOLS: Record<string, readonly string[]> = {
-  supabase: [
-    "supabase_query",
-    "supabase_query_profiles",
-    "supabase_query_artworks",
-  ],
-  sanity: [
-    "sanity_fetch_document",
-    "sanity_fetch_artwork_by_slug",
-    "sanity_list_artworks",
-  ],
-  audio: [
-    "audio_analyze_track",
-    "audio_match_artwork_to_track",
-  ],
-  stripe: [
-    "stripe_list_transfers",
-    "stripe_get_account_balance",
-  ],
+  supabase: ["supabase_query", "supabase_query_profiles", "supabase_query_artworks"],
+  sanity: ["sanity_fetch_document", "sanity_fetch_artwork_by_slug", "sanity_list_artworks"],
+  audio: ["audio_analyze_track", "audio_match_artwork_to_track"],
+  stripe: ["stripe_list_transfers", "stripe_get_account_balance"],
 } as const;
 
 const InvokeRequestSchema = z.object({
@@ -54,10 +50,41 @@ const serverMap: Record<string, () => MCPServer> = {
   audio: createAudioMCPServer,
 };
 
+<<<<<<< HEAD
+=======
+// Wave 1: Structured audit — no secrets, tokens, or private data
+function logAuditEvent(event: {
+  actorId: string;
+  role: string;
+  server: string;
+  tool: string;
+  status: number;
+  durationMs?: number;
+  errorClass?: string;
+}) {
+  console.log(
+    JSON.stringify({
+      event: "mcp_invoke",
+      ts: new Date().toISOString(),
+      actorId: event.actorId,
+      role: event.role,
+      server: event.server,
+      tool: event.tool,
+      status: event.status,
+      durationMs: event.durationMs,
+      errorClass: event.errorClass,
+    }),
+  );
+}
+
+>>>>>>> feature/phase-18-19-tests-and-prd-docs
 export async function POST(request: NextRequest) {
   // Wave 0: Auth gate
   const supabase = await createClient();
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
   if (authError || !user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -98,13 +125,35 @@ export async function POST(request: NextRequest) {
   // Wave 0: Allowlist check — deny unlisted servers
   const allowedTools = ALLOWED_TOOLS[rawServer];
   if (!allowedTools) {
+<<<<<<< HEAD
     await logAuditEvent({ actorId: user.id, role: profile.role, server: rawServer, tool: rawTool, status: 404, errorClass: "server_not_found" });
+=======
+    logAuditEvent({
+      actorId: user.id,
+      role: profile.role,
+      server: rawServer,
+      tool: rawTool,
+      status: 404,
+      errorClass: "server_not_found",
+    });
+>>>>>>> feature/phase-18-19-tests-and-prd-docs
     return NextResponse.json({ error: `Server not found: ${rawServer}` }, { status: 404 });
   }
 
   // Wave 0: Allowlist check — deny unlisted or blocked tools
   if (!allowedTools.includes(rawTool)) {
+<<<<<<< HEAD
     await logAuditEvent({ actorId: user.id, role: profile.role, server: rawServer, tool: rawTool, status: 403, errorClass: "tool_not_allowed" });
+=======
+    logAuditEvent({
+      actorId: user.id,
+      role: profile.role,
+      server: rawServer,
+      tool: rawTool,
+      status: 403,
+      errorClass: "tool_not_allowed",
+    });
+>>>>>>> feature/phase-18-19-tests-and-prd-docs
     return NextResponse.json(
       { error: `Tool not allowed: ${rawServer}/${rawTool}. Use canonical form server/tool.` },
       { status: 403 },
@@ -129,17 +178,56 @@ export async function POST(request: NextRequest) {
 
     if (response && "error" in (response as Record<string, unknown>)) {
       const error = (response as { error?: { message: string } }).error;
+<<<<<<< HEAD
       await logAuditEvent({ actorId: user.id, role: profile.role, server: rawServer, tool: rawTool, status: 500, durationMs, errorClass: "tool_error" });
       return NextResponse.json({ error: error?.message ?? "Tool execution failed" }, { status: 500 });
     }
 
     const result = (response as { result?: unknown })?.result;
     await logAuditEvent({ actorId: user.id, role: profile.role, server: rawServer, tool: rawTool, status: 200, durationMs });
+=======
+      logAuditEvent({
+        actorId: user.id,
+        role: profile.role,
+        server: rawServer,
+        tool: rawTool,
+        status: 500,
+        durationMs,
+        errorClass: "tool_error",
+      });
+      return NextResponse.json(
+        { error: error?.message ?? "Tool execution failed" },
+        { status: 500 },
+      );
+    }
+
+    const result = (response as { result?: unknown })?.result;
+    logAuditEvent({
+      actorId: user.id,
+      role: profile.role,
+      server: rawServer,
+      tool: rawTool,
+      status: 200,
+      durationMs,
+    });
+>>>>>>> feature/phase-18-19-tests-and-prd-docs
     return NextResponse.json({ result }, { status: 200 });
   } catch (err) {
     const durationMs = Date.now() - startMs;
     const message = err instanceof Error ? err.message : String(err);
+<<<<<<< HEAD
     await logAuditEvent({ actorId: user.id, role: profile.role, server: rawServer, tool: rawTool, status: 500, durationMs, errorClass: "execution_exception" });
+=======
+    logAuditEvent({
+      actorId: user.id,
+      role: profile.role,
+      server: rawServer,
+      tool: rawTool,
+      status: 500,
+      durationMs,
+      errorClass: "execution_exception",
+    });
+>>>>>>> feature/phase-18-19-tests-and-prd-docs
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

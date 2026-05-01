@@ -4,19 +4,22 @@
  * Wave 0: Requires authenticated session + curator or admin role
  */
 
-import { NextResponse } from "next/server";
-import { createClient } from "@/src/lib/supabase/server";
 import {
-  createSupabaseMCPServer,
+  createAudioMCPServer,
   createSanityMCPServer,
   createStripeMCPServer,
-  createAudioMCPServer,
+  createSupabaseMCPServer,
 } from "@elbtronika/mcp";
+import { NextResponse } from "next/server";
+import { createClient } from "@/src/lib/supabase/server";
 
 export async function GET() {
   // Wave 0: Auth gate
   const supabase = await createClient();
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
   if (authError || !user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -53,7 +56,17 @@ export async function GET() {
         method: "tools/list",
       });
       if (response && "result" in (response as Record<string, unknown>)) {
-        const result = (response as { result?: { tools?: Array<{ name: string; description: string; inputSchema: Record<string, unknown> }> } }).result;
+        const result = (
+          response as {
+            result?: {
+              tools?: Array<{
+                name: string;
+                description: string;
+                inputSchema: Record<string, unknown>;
+              }>;
+            };
+          }
+        ).result;
         if (result?.tools) {
           for (const tool of result.tools) {
             allTools.push({

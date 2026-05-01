@@ -20,7 +20,7 @@ export class SkillRegistry {
   findByTrigger(goal: string): Skill[] {
     const lower = goal.toLowerCase();
     return Array.from(this.skills.values()).filter((s) =>
-      s.triggerPatterns.some((p) => lower.includes(p.toLowerCase()))
+      s.triggerPatterns.some((p) => lower.includes(p.toLowerCase())),
     );
   }
 
@@ -34,7 +34,7 @@ export class SkillRegistry {
     description: string,
     goalPattern: string,
     steps: string[],
-    toolsUsed: string[]
+    toolsUsed: string[],
   ): Skill {
     const skill: Skill = {
       id: `skill-${Date.now()}`,
@@ -87,7 +87,8 @@ export class SkillRegistry {
     this.register({
       id: "skill-onboard-artist",
       name: "onboard_artist",
-      description: "Guide a new artist through profile setup, Stripe Connect, and first artwork upload.",
+      description:
+        "Guide a new artist through profile setup, Stripe Connect, and first artwork upload.",
       triggerPatterns: ["onboard", "new artist", "register artist", "artist signup"],
       steps: [
         "Check if profile exists, create if not",

@@ -10,7 +10,13 @@ interface ArtworkItem {
   slug: { current: string };
   title: string;
   artist?: { _id: string; name: string; slug: { current: string } };
-  image?: { asset?: { url: string; metadata?: { dimensions?: { width: number; height: number }; lqip?: string } }; alt?: string };
+  image?: {
+    asset?: {
+      url: string;
+      metadata?: { dimensions?: { width: number; height: number }; lqip?: string };
+    };
+    alt?: string;
+  };
   medium?: string;
   year?: number;
   genreTags?: string[];
@@ -41,11 +47,7 @@ export function ShopGrid({ artworks, filters, locale }: Props) {
   });
 
   if (filtered.length === 0) {
-    return (
-      <p className="py-16 text-center text-[var(--color-text-secondary)]">
-        {t("noResults")}
-      </p>
-    );
+    return <p className="py-16 text-center text-[var(--color-text-secondary)]">{t("noResults")}</p>;
   }
 
   return (

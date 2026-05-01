@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+=======
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+>>>>>>> feature/phase-18-19-tests-and-prd-docs
 import { getEnv, getPublicEnv, resetEnv } from "@/src/lib/env";
 
 // Ensure required env vars are present for getEnv() validation

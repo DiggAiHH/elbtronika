@@ -3,11 +3,12 @@
  */
 
 import { MCPServer } from "../server";
-import type { ToolDefinition } from "../types";
 import { FetchDocumentSchema } from "../tools";
+import type { ToolDefinition } from "../types";
 
 function getSanityConfig() {
-  const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID ?? process.env.SANITY_PROJECT_ID ?? "demo";
+  const projectId =
+    process.env.NEXT_PUBLIC_SANITY_PROJECT_ID ?? process.env.SANITY_PROJECT_ID ?? "demo";
   const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET ?? "production";
   const token = process.env.SANITY_API_TOKEN;
   return { projectId, dataset, token };
@@ -86,7 +87,10 @@ const tools: ToolDefinition[] = [
     },
     handler: async (params) => {
       const roomSlug = String(params.roomSlug);
-      return sanityQuery(`*[_type == "room" && slug.current == $slug][0]{..., "artworks": artworks[]->{...}}`, { slug: roomSlug });
+      return sanityQuery(
+        `*[_type == "room" && slug.current == $slug][0]{..., "artworks": artworks[]->{...}}`,
+        { slug: roomSlug },
+      );
     },
   },
   {
@@ -100,7 +104,10 @@ const tools: ToolDefinition[] = [
     },
     handler: async (params) => {
       const limit = Number(params.limit ?? 20);
-      return sanityQuery(`*[_type == "artwork" && defined(slug.current)] | order(_createdAt desc) [0...$limit]`, { limit });
+      return sanityQuery(
+        `*[_type == "artwork" && defined(slug.current)] | order(_createdAt desc) [0...$limit]`,
+        { limit },
+      );
     },
   },
 ];

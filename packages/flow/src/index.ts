@@ -1,31 +1,30 @@
 // @elbtronika/flow — Music-Art Matching Engine
-export {
-  analyzeAudio,
-  estimateBpm,
-  estimateKey,
-  computeSpectralCentroid,
-  computeRms,
-  computeZcr,
-  generateMoodTags,
-} from "./audio";
-export type { AudioFeatures, AnalyzeOptions } from "./audio";
 
+export type { ArtFeatures, PixelData } from "./art";
 export {
   analyzeArt,
-  extractDominantColors,
   computeColorMetrics,
   detectColorHarmony,
   estimateComposition,
+  extractDominantColors,
   generateArtTags,
 } from "./art";
-export type { ArtFeatures, PixelData } from "./art";
-
+export type { AnalyzeOptions, AudioFeatures } from "./audio";
 export {
-  audioToEmbedding,
+  analyzeAudio,
+  computeRms,
+  computeSpectralCentroid,
+  computeZcr,
+  estimateBpm,
+  estimateKey,
+  generateMoodTags,
+} from "./audio";
+export type { MatchOptions, MatchResult } from "./match";
+export {
   artToEmbedding,
-  cosineSimilarity,
+  audioToEmbedding,
   calculateSimilarity,
+  cosineSimilarity,
   generateMatchReason,
   matchArtworks,
 } from "./match";
-export type { MatchResult, MatchOptions } from "./match";

@@ -3,11 +3,11 @@
  * POST /api/flow/match — Find artworks that match a DJ set
  */
 
+import type { ArtFeatures } from "@elbtronika/flow";
+import { matchArtworks } from "@elbtronika/flow";
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { createClient } from "@/src/lib/supabase/server";
-import { matchArtworks } from "@elbtronika/flow";
-import type { ArtFeatures } from "@elbtronika/flow";
 
 const MatchRequestSchema = z.object({
   setId: z.string().uuid(),
@@ -17,7 +17,10 @@ const MatchRequestSchema = z.object({
 
 export async function POST(request: NextRequest) {
   const supabase = await createClient();
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
 
   if (authError || !user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -124,13 +127,16 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    return NextResponse.json({
-      setId: body.setId,
-      matches,
-      totalAnalyzed: artworkInputs.length,
-      // Wave 5: callers can distinguish real analysis from simulated defaults
-      audioSource,
-    }, { status: 200 });
+    return NextResponse.json(
+      {
+        setId: body.setId,
+        matches,
+        totalAnalyzed: artworkInputs.length,
+        // Wave 5: callers can distinguish real analysis from simulated defaults
+        audioSource,
+      },
+      { status: 200 },
+    );
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     console.error("[flow/match] error:", message);

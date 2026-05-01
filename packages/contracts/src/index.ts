@@ -1,14 +1,11 @@
 // Barrel export – single import point for all contracts
 
-export * from "./schemas.js";
-export * from "./transformers.js";
-
 export * from "./schemas/artist.js";
 export * from "./schemas/artwork.js";
 export * from "./schemas/dj.js";
 export * from "./schemas/order.js";
 export * from "./schemas/user.js";
-
+export * from "./schemas.js";
 // Supabase database types (generated — do not edit by hand)
 export type {
   AiDecisionRow,
@@ -34,3 +31,4 @@ export type {
   TransactionStatus,
   WebhookEventRow,
 } from "./supabase/index.js";
+export * from "./transformers.js";

@@ -1,6 +1,12 @@
+<<<<<<< HEAD
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { WalkthroughTour, resetTour } from "@elbtronika/ui";
+=======
+import { resetTour, WalkthroughTour } from "@elbtronika/ui";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
+>>>>>>> feature/phase-18-19-tests-and-prd-docs
 
 describe("WalkthroughTour", () => {
   beforeEach(() => {

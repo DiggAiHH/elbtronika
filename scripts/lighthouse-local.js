@@ -9,19 +9,15 @@
  *   - App running on target URL
  */
 
-const { execSync } = require("child_process");
-const fs = require("fs");
-const path = require("path");
+const { execSync } = require("node:child_process");
+const fs = require("node:fs");
+const path = require("node:path");
 
-const TARGET = process.argv.find((a) => a.startsWith("--url="))?.split("=")[1] ?? "http://localhost:3000";
+const TARGET =
+  process.argv.find((a) => a.startsWith("--url="))?.split("=")[1] ?? "http://localhost:3000";
 const OUT_DIR = path.join(__dirname, "..", "lighthouse-reports");
 
-const URLS = [
-  `${TARGET}/`,
-  `${TARGET}/shop`,
-  `${TARGET}/gallery`,
-  `${TARGET}/dashboard/pm`,
-];
+const URLS = [`${TARGET}/`, `${TARGET}/shop`, `${TARGET}/gallery`, `${TARGET}/dashboard/pm`];
 
 if (!fs.existsSync(OUT_DIR)) {
   fs.mkdirSync(OUT_DIR, { recursive: true });
@@ -49,7 +45,7 @@ for (const url of URLS) {
         `--chrome-flags="--headless --no-sandbox" ` +
         `--preset=desktop ` +
         `--quiet`,
-      { stdio: "inherit", timeout: 120_000 }
+      { stdio: "inherit", timeout: 120_000 },
     );
 
     // Read JSON report for summary
@@ -67,12 +63,19 @@ for (const url of URLS) {
     console.log(`   ✅ Saved: ${outFile}\n`);
   } catch (err) {
     console.error(`   ❌ Failed: ${url} — ${err.message}\n`);
-    results.push({ url, performance: 0, accessibility: 0, bestPractices: 0, seo: 0, error: err.message });
+    results.push({
+      url,
+      performance: 0,
+      accessibility: 0,
+      bestPractices: 0,
+      seo: 0,
+      error: err.message,
+    });
   }
 }
 
 // Summary table
-console.log("\n" + "=".repeat(80));
+console.log(`\n${"=".repeat(80)}`);
 console.log("📊 LIGHTHOUSE FINAL SUMMARY");
 console.log("=".repeat(80));
 console.log(`${"URL".padEnd(35)} PERF  A11Y  BP    SEO`);

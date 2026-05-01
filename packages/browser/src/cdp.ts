@@ -18,7 +18,9 @@ type Page = {
   title(): Promise<string>;
   url(): string;
   $$eval(selector: string, fn: (els: Element[]) => unknown[]): Promise<unknown[]>;
-  locator(selector: string): { all(): Promise<Array<{ click(): Promise<void>; fill(text: string): Promise<void> }>> };
+  locator(selector: string): {
+    all(): Promise<Array<{ click(): Promise<void>; fill(text: string): Promise<void> }>>;
+  };
   waitForLoadState(state?: string): Promise<void>;
   screenshot(opts?: unknown): Promise<Buffer>;
   evaluate<T>(script: string | (() => T)): Promise<T>;
@@ -43,7 +45,9 @@ export class CDPBridge {
   async connect(): Promise<void> {
     const { chromium } = await import("playwright");
 
-    const launchOpts: { headless: boolean; slowMo?: number } = { headless: this.options.headless ?? true };
+    const launchOpts: { headless: boolean; slowMo?: number } = {
+      headless: this.options.headless ?? true,
+    };
     if (this.options.slowMo) launchOpts.slowMo = this.options.slowMo;
     this.browser = await chromium.launch(launchOpts);
 
@@ -81,14 +85,16 @@ export class CDPBridge {
       const text = await page.evaluate(() => document.body.innerText);
       return text.slice(0, 8000);
     }
-    const elements = await page.$$eval("a, button, input, select, textarea, [role='button']", (els) =>
-      els.map((el, i) => {
-        const tag = el.tagName.toLowerCase();
-        const text = el.textContent?.slice(0, 50) ?? "";
-        const type = (el as HTMLInputElement).type ?? "";
-        const name = (el as HTMLInputElement).name ?? "";
-        return `@e${i}: <${tag}${type ? ` type="${type}"` : ""}${name ? ` name="${name}"` : ""}> ${text}`;
-      })
+    const elements = await page.$$eval(
+      "a, button, input, select, textarea, [role='button']",
+      (els) =>
+        els.map((el, i) => {
+          const tag = el.tagName.toLowerCase();
+          const text = el.textContent?.slice(0, 50) ?? "";
+          const type = (el as HTMLInputElement).type ?? "";
+          const name = (el as HTMLInputElement).name ?? "";
+          return `@e${i}: <${tag}${type ? ` type="${type}"` : ""}${name ? ` name="${name}"` : ""}> ${text}`;
+        }),
     );
     return (elements as string[]).join("\n").slice(0, 8000);
   }
@@ -96,11 +102,13 @@ export class CDPBridge {
   async click(ref: string): Promise<void> {
     const page = this.getPage();
     const index = Number.parseInt(ref.replace("@e", ""), 10);
-    const elements = await page.locator("a, button, input, select, textarea, [role='button']").all();
+    const elements = await page
+      .locator("a, button, input, select, textarea, [role='button']")
+      .all();
     if (index < 0 || index >= elements.length) {
       throw new Error(`Element ref ${ref} not found. Only ${elements.length} elements available.`);
     }
-    await elements[index]!.click();
+    await elements[index]?.click();
     await page.waitForLoadState("networkidle");
   }
 
@@ -111,7 +119,7 @@ export class CDPBridge {
     if (index < 0 || index >= elements.length) {
       throw new Error(`Input ref ${ref} not found.`);
     }
-    await elements[index]!.fill(text);
+    await elements[index]?.fill(text);
   }
 
   async screenshot(path?: string): Promise<Buffer> {

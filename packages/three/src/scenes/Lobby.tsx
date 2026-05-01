@@ -1,5 +1,6 @@
 "use client";
 
+import { Html } from "@react-three/drei";
 /**
  * Lobby scene – the entry point to the 3D gallery.
  *
@@ -7,7 +8,6 @@
  * Contains a central portal leading to Room1.
  */
 import { useEffect } from "react";
-import { Html } from "@react-three/drei";
 import { useThreeStore } from "../store";
 
 export function LobbyScene() {
@@ -38,10 +38,7 @@ export function LobbyScene() {
       <pointLight position={[-3, 2, 2]} intensity={0.8} color="#f720b8" />
 
       {/* Portal marker – click enters Room1 */}
-      <mesh
-        position={[0, 1.5, -5]}
-        onClick={() => setCurrentRoom("room-1")}
-      >
+      <mesh position={[0, 1.5, -5]} onClick={() => setCurrentRoom("room-1")}>
         <planeGeometry args={[2.5, 3.5]} />
         <meshStandardMaterial
           color="#00f5d4"

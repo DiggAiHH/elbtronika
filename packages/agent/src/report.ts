@@ -193,21 +193,28 @@ export function generateHTMLReport(report: BenchmarkReport): string {
       </tr>
     </thead>
     <tbody>
-      ${taskTrends.map((t) => {
-        const run = runs.find((r) => r.taskId.replace("task-", "") === t.id && r.runNumber === 1);
-        const skills = run?.skillsUsed?.join(", ") ?? "—";
-        const diffClass = run?.difficulty === "easy" ? "badge-easy" : run?.difficulty === "medium" ? "badge-medium" : "badge-hard";
-        return `<tr>
+      ${taskTrends
+        .map((t) => {
+          const run = runs.find((r) => r.taskId.replace("task-", "") === t.id && r.runNumber === 1);
+          const skills = run?.skillsUsed?.join(", ") ?? "—";
+          const diffClass =
+            run?.difficulty === "easy"
+              ? "badge-easy"
+              : run?.difficulty === "medium"
+                ? "badge-medium"
+                : "badge-hard";
+          return `<tr>
           <td><strong>${t.id}</strong></td>
           <td>${run?.taskType ?? "—"}</td>
           <td><span class="badge ${diffClass}">${run?.difficulty ?? "—"}</span></td>
           <td>${t.run1}%</td>
           <td>${t.run2}%</td>
           <td>${t.run3}%</td>
-          <td class="trend-${t.trend === 'improving' ? 'up' : t.trend === 'degrading' ? 'down' : 'stable'}">${t.trendIcon} ${t.trend}</td>
+          <td class="trend-${t.trend === "improving" ? "up" : t.trend === "degrading" ? "down" : "stable"}">${t.trendIcon} ${t.trend}</td>
           <td>${skills}</td>
         </tr>`;
-      }).join("")}
+        })
+        .join("")}
     </tbody>
   </table>
 
@@ -310,16 +317,18 @@ export function generateHTMLReport(report: BenchmarkReport): string {
 }
 
 export function generateMarkdownTable(report: BenchmarkReport): string {
-  const rows = report.summary.improvementByTask.map((t) => {
-    const task = report.runs.find((r) => r.taskId === t.taskId && r.runNumber === 1);
-    const run1 = Math.round(t.run1 * 100);
-    const run2 = Math.round(t.run2 * 100);
-    const run3 = Math.round(t.run3 * 100);
-    const delta = run3 - run1;
-    const deltaStr = delta > 0 ? `+${delta}%` : `${delta}%`;
-    const trend = delta > 0 ? "📈" : delta < 0 ? "📉" : "➡️";
-    return `| ${task?.taskId.replace("task-", "")} | ${task?.taskType} | ${task?.difficulty} | ${run1}% | ${run2}% | ${run3}% | ${trend} ${deltaStr} |`;
-  }).join("\n");
+  const rows = report.summary.improvementByTask
+    .map((t) => {
+      const task = report.runs.find((r) => r.taskId === t.taskId && r.runNumber === 1);
+      const run1 = Math.round(t.run1 * 100);
+      const run2 = Math.round(t.run2 * 100);
+      const run3 = Math.round(t.run3 * 100);
+      const delta = run3 - run1;
+      const deltaStr = delta > 0 ? `+${delta}%` : `${delta}%`;
+      const trend = delta > 0 ? "📈" : delta < 0 ? "📉" : "➡️";
+      return `| ${task?.taskId.replace("task-", "")} | ${task?.taskType} | ${task?.difficulty} | ${run1}% | ${run2}% | ${run3}% | ${trend} ${deltaStr} |`;
+    })
+    .join("\n");
 
   return `## Hermes Agent Benchmark Results
 

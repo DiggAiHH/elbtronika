@@ -3,7 +3,7 @@
  * Complements lighthouserc.js CI runs with per-page checks.
  */
 
-import { test, expect } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
 test.describe("Lighthouse Budget", () => {
   test("shop page has acceptable LCP", async ({ page }) => {

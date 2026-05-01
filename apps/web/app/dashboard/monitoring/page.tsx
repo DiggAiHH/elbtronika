@@ -36,9 +36,21 @@ export default function MonitoringDashboard() {
         const healthJson = await res.json();
 
         const checks: HealthCheck[] = [
-          { name: "Application", status: healthJson.status === "ok" ? "ok" : "fail", lastChecked: healthJson.timestamp },
-          { name: "Supabase", status: healthJson.checks?.supabase ?? "unknown", lastChecked: healthJson.timestamp },
-          { name: "Sanity", status: healthJson.checks?.sanity ?? "unknown", lastChecked: healthJson.timestamp },
+          {
+            name: "Application",
+            status: healthJson.status === "ok" ? "ok" : "fail",
+            lastChecked: healthJson.timestamp,
+          },
+          {
+            name: "Supabase",
+            status: healthJson.checks?.supabase ?? "unknown",
+            lastChecked: healthJson.timestamp,
+          },
+          {
+            name: "Sanity",
+            status: healthJson.checks?.sanity ?? "unknown",
+            lastChecked: healthJson.timestamp,
+          },
         ];
 
         setData({
@@ -123,7 +135,9 @@ export default function MonitoringDashboard() {
                   <StatusBadge status={check.status} />
                 </div>
                 <div className="text-sm text-neutral-400">
-                  {check.lastChecked ? new Date(check.lastChecked).toLocaleTimeString("de-DE") : "—"}
+                  {check.lastChecked
+                    ? new Date(check.lastChecked).toLocaleTimeString("de-DE")
+                    : "—"}
                 </div>
               </div>
             ))}
@@ -162,7 +176,9 @@ export default function MonitoringDashboard() {
                   >
                     {item.done ? "✓" : "○"}
                   </div>
-                  <span className={item.done ? "text-neutral-300 line-through" : "text-neutral-100"}>
+                  <span
+                    className={item.done ? "text-neutral-300 line-through" : "text-neutral-100"}
+                  >
                     {item.label}
                   </span>
                 </div>
@@ -197,23 +213,40 @@ function StatusBadge({ status }: { status: string }) {
     unknown: "bg-amber-600/20 text-amber-400 border-amber-700",
   };
   return (
-    <span className={`px-2 py-0.5 rounded text-xs font-medium border ${colors[status as keyof typeof colors] ?? colors.unknown}`}>
+    <span
+      className={`px-2 py-0.5 rounded text-xs font-medium border ${colors[status as keyof typeof colors] ?? colors.unknown}`}
+    >
       {status.toUpperCase()}
     </span>
   );
 }
 
-function VitalCard({ name, value, unit, target }: { name: string; value: number; unit: string; target: number }) {
+function VitalCard({
+  name,
+  value,
+  unit,
+  target,
+}: {
+  name: string;
+  value: number;
+  unit: string;
+  target: number;
+}) {
   const ok = value <= target && value > 0;
   const na = value === 0;
 
   return (
     <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-4">
       <div className="text-sm text-neutral-400 mb-1">{name}</div>
-      <div className={`text-2xl font-bold ${na ? "text-neutral-500" : ok ? "text-emerald-400" : "text-red-400"}`}>
+      <div
+        className={`text-2xl font-bold ${na ? "text-neutral-500" : ok ? "text-emerald-400" : "text-red-400"}`}
+      >
         {na ? "—" : `${value}${unit}`}
       </div>
-      <div className="text-xs text-neutral-500 mt-1">Target: ≤ {target}{unit}</div>
+      <div className="text-xs text-neutral-500 mt-1">
+        Target: ≤ {target}
+        {unit}
+      </div>
     </div>
   );
 }

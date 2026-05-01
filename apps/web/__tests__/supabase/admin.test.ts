@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import { describe, it, expect, afterEach, vi } from "vitest";
+=======
+import { afterEach, describe, expect, it, vi } from "vitest";
+>>>>>>> feature/phase-18-19-tests-and-prd-docs
 
 // We need to test that createAdminClient throws meaningful errors when env vars are missing.
 // The module imports createClient from @supabase/supabase-js — mock it so tests are pure.

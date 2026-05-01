@@ -15,11 +15,7 @@
           "l": 0
         },
         "count": 1269,
-        "contexts": [
-          "text",
-          "border",
-          "background"
-        ]
+        "contexts": ["text", "border", "background"]
       },
       {
         "hex": "#ffffff",
@@ -35,11 +31,7 @@
           "l": 100
         },
         "count": 112,
-        "contexts": [
-          "text",
-          "border",
-          "background"
-        ]
+        "contexts": ["text", "border", "background"]
       },
       {
         "hex": "#0f863e",
@@ -55,10 +47,7 @@
           "l": 29
         },
         "count": 28,
-        "contexts": [
-          "text",
-          "border"
-        ]
+        "contexts": ["text", "border"]
       },
       {
         "hex": "#f2f2f2",
@@ -74,9 +63,7 @@
           "l": 95
         },
         "count": 19,
-        "contexts": [
-          "background"
-        ]
+        "contexts": ["background"]
       },
       {
         "hex": "#c6248b",
@@ -92,10 +79,7 @@
           "l": 46
         },
         "count": 2,
-        "contexts": [
-          "text",
-          "border"
-        ]
+        "contexts": ["text", "border"]
       },
       {
         "hex": "#2a2a2a",
@@ -111,9 +95,7 @@
           "l": 16
         },
         "count": 2,
-        "contexts": [
-          "border"
-        ]
+        "contexts": ["border"]
       },
       {
         "hex": "#1a1a1a",
@@ -129,9 +111,7 @@
           "l": 10
         },
         "count": 1,
-        "contexts": [
-          "background"
-        ]
+        "contexts": ["background"]
       }
     ]
   },
@@ -246,22 +226,10 @@
     },
     "keyframes": [],
     "specificity": {
-      "max": [
-        1,
-        5,
-        5
-      ],
-      "average": [
-        0.08,
-        0.76,
-        0.5
-      ],
+      "max": [1, 5, 5],
+      "average": [0.08, 0.76, 0.5],
       "count": 137
     },
-    "issues": [
-      "26 !important rules",
-      "139 duplicate declarations",
-      "52% unused CSS"
-    ]
+    "issues": ["26 !important rules", "139 duplicate declarations", "52% unused CSS"]
   }
 }

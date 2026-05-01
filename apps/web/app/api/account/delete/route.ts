@@ -37,10 +37,7 @@ export async function POST(_request: NextRequest) {
 
   if (orderError) {
     console.error("[account/delete] order anonymization failed:", orderError.message);
-    return NextResponse.json(
-      { error: "Failed to anonymize orders" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: "Failed to anonymize orders" }, { status: 500 });
   }
 
   // Step 2: Delete soft-deletable data (idempotent — delete on non-existing row is fine)
@@ -80,10 +77,7 @@ export async function POST(_request: NextRequest) {
       );
     }
     console.error("[account/delete] auth deletion failed:", authDeleteError.message);
-    return NextResponse.json(
-      { error: "Failed to delete auth user" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: "Failed to delete auth user" }, { status: 500 });
   }
 
   return NextResponse.json(

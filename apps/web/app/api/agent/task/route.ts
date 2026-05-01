@@ -8,11 +8,16 @@
  *         DB status instead of fire-and-forget with no observable state.
  */
 
+import { HermesAgent, MCPClient } from "@elbtronika/agent";
+import {
+  createAudioMCPServer,
+  createSanityMCPServer,
+  createStripeMCPServer,
+  createSupabaseMCPServer,
+} from "@elbtronika/mcp";
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { createClient } from "@/src/lib/supabase/server";
-import { HermesAgent, MCPClient } from "@elbtronika/agent";
-import { createSupabaseMCPServer, createSanityMCPServer, createStripeMCPServer, createAudioMCPServer } from "@elbtronika/mcp";
 
 const CreateTaskSchema = z.object({
   type: z.enum(["curate", "onboard", "test", "analyze", "research", "custom"]),
@@ -34,14 +39,21 @@ function createAgent(): HermesAgent {
 // POST /api/agent/task
 export async function POST(request: NextRequest) {
   const supabase = await createClient();
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
 
   if (authError || !user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   // Role check — agent tasks for curators+ only
-  const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
   if (!profile || !["curator", "admin"].includes(profile.role)) {
     return NextResponse.json({ error: "Forbidden: curators and admins only" }, { status: 403 });
   }
@@ -63,10 +75,13 @@ export async function POST(request: NextRequest) {
     .maybeSingle();
 
   if (existing) {
-    return NextResponse.json({
-      task: existing,
-      message: "A task with this goal is already pending or running",
-    }, { status: 200 });
+    return NextResponse.json(
+      {
+        task: existing,
+        message: "A task with this goal is already pending or running",
+      },
+      { status: 200 },
+    );
   }
 
   // Create in-memory task to get a plan from the agent
@@ -126,29 +141,39 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  return NextResponse.json({
-    task: {
-      id: dbTask.id,
-      type: dbTask.type,
-      status: dbTask.status,
-      goal: dbTask.goal,
-      plan: dbTask.plan,
-      createdAt: dbTask.created_at,
+  return NextResponse.json(
+    {
+      task: {
+        id: dbTask.id,
+        type: dbTask.type,
+        status: dbTask.status,
+        goal: dbTask.goal,
+        plan: dbTask.plan,
+        createdAt: dbTask.created_at,
+      },
     },
-  }, { status: 201 });
+    { status: 201 },
+  );
 }
 
 // GET /api/agent/task
 export async function GET() {
   const supabase = await createClient();
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
 
   if (authError || !user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   // Role check
-  const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
   if (!profile || !["curator", "admin"].includes(profile.role)) {
     return NextResponse.json({ error: "Forbidden: curators and admins only" }, { status: 403 });
   }
@@ -166,5 +191,3 @@ export async function GET() {
 
   return NextResponse.json({ tasks: tasks ?? [] }, { status: 200 });
 }
-
-

@@ -1,5 +1,5 @@
-import { describe, it, expect } from "vitest";
-import { logDecision, createMemoryAuditStore, hashPrompt } from "./audit";
+import { describe, expect, it } from "vitest";
+import { createMemoryAuditStore, hashPrompt, logDecision } from "./audit";
 
 describe("hashPrompt", () => {
   it("returns a 32-char hex string", () => {

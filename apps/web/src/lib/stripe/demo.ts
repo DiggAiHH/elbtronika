@@ -18,8 +18,13 @@ export const DEMO_CONNECTED_ACCOUNTS: Record<string, string> = {
   "sasha-wren": "acct_demo_sasha_wren_005",
   // DJ personas (for split payments)
   "lior-k": "acct_demo_lior_k_006",
+<<<<<<< HEAD
   "nightform": "acct_demo_nightform_007",
   "velvetrace": "acct_demo_velvetrace_008",
+=======
+  nightform: "acct_demo_nightform_007",
+  velvetrace: "acct_demo_velvetrace_008",
+>>>>>>> feature/phase-18-19-tests-and-prd-docs
 };
 
 /**
@@ -41,11 +46,17 @@ export function getDemoDjAccountId(slug: string): string {
  * Wraps a real checkout session creation, injecting demo account IDs.
  * In live mode, this function is a no-op passthrough.
  */
+<<<<<<< HEAD
 export function withDemoAccounts<T extends { artistStripeAccountId: string; djStripeAccountId?: string }>(
   params: T,
   artistSlug: string,
   djSlug?: string,
 ): T {
+=======
+export function withDemoAccounts<
+  T extends { artistStripeAccountId: string; djStripeAccountId?: string },
+>(params: T, artistSlug: string, djSlug?: string): T {
+>>>>>>> feature/phase-18-19-tests-and-prd-docs
   const env = getEnv();
   if (env.ELT_MODE !== "demo") return params;
 

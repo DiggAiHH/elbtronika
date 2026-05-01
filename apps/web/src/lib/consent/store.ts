@@ -6,11 +6,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-export type ConsentCategory =
-  | "essential"
-  | "analytics"
-  | "spatial_tracking"
-  | "marketing";
+export type ConsentCategory = "essential" | "analytics" | "spatial_tracking" | "marketing";
 
 export interface ConsentState {
   // Consent choices (null = not yet decided)
@@ -86,8 +82,6 @@ export function hasConsent(category: ConsentCategory): boolean {
 export function isEssentialOnly(): boolean {
   const { choices } = useConsentStore.getState();
   return (
-    choices.analytics === false &&
-    choices.spatial_tracking === false &&
-    choices.marketing === false
+    choices.analytics === false && choices.spatial_tracking === false && choices.marketing === false
   );
 }

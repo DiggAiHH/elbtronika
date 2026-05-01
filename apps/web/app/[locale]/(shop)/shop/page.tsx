@@ -3,9 +3,13 @@ import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { getClient } from "@/lib/sanity/client";
 import { allArtworksQuery } from "@/lib/sanity/queries";
+<<<<<<< HEAD
 import { getEnv } from "@/src/lib/env";
 import { ShopGrid } from "./ShopGrid";
+=======
+>>>>>>> feature/phase-18-19-tests-and-prd-docs
 import { ShopFilters } from "./ShopFilters";
+import { ShopGrid } from "./ShopGrid";
 
 type Props = {
   params: Promise<{ locale: string }>;

@@ -1,25 +1,14 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import {
-  generate,
-  generateJson,
-  stream,
-  AIClientError,
-  setLogHook,
-  resetClient,
-} from "./client";
 import Anthropic from "@anthropic-ai/sdk";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { z } from "zod";
+import { AIClientError, generate, generateJson, resetClient, setLogHook, stream } from "./client";
 
 // Mock Anthropic SDK with proper constructor and APIError class
 vi.mock("@anthropic-ai/sdk", () => {
   class MockAPIError extends Error {
     status: number | undefined;
     headers: Record<string, string> | undefined;
-    constructor(
-      message: string,
-      status?: number,
-      headers?: Record<string, string>,
-    ) {
+    constructor(message: string, status?: number, headers?: Record<string, string>) {
       super(message);
       this.status = status;
       this.headers = headers;
@@ -82,10 +71,7 @@ describe("generate", () => {
     );
 
     await expect(
-      generate(
-        { system: "Test", messages: [{ role: "user", content: "Hi" }] },
-        { timeoutMs: 5 },
-      ),
+      generate({ system: "Test", messages: [{ role: "user", content: "Hi" }] }, { timeoutMs: 5 }),
     ).rejects.toThrow(AIClientError);
   });
 
@@ -98,12 +84,10 @@ describe("generate", () => {
       headers: { "retry-after": "0" },
     });
 
-    mockCreate
-      .mockRejectedValueOnce(apiError)
-      .mockResolvedValueOnce({
-        content: [{ type: "text", text: "Success after retry" }],
-        usage: { input_tokens: 10, output_tokens: 5 },
-      });
+    mockCreate.mockRejectedValueOnce(apiError).mockResolvedValueOnce({
+      content: [{ type: "text", text: "Success after retry" }],
+      usage: { input_tokens: 10, output_tokens: 5 },
+    });
 
     const response = await generate({
       system: "Test",
@@ -198,10 +182,7 @@ describe("generateJson", () => {
     const schema = z.object({ value: z.number() });
 
     await expect(
-      generateJson(
-        { system: "Test", messages: [{ role: "user", content: "Hi" }] },
-        schema,
-      ),
+      generateJson({ system: "Test", messages: [{ role: "user", content: "Hi" }] }, schema),
     ).rejects.toThrow(AIClientError);
   });
 });

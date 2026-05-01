@@ -1,5 +1,8 @@
 "use client";
 
+import type { ArtworkMeshProps } from "@elbtronika/three";
+import { Room1Scene, useThreeStore } from "@elbtronika/three";
+import type { ComponentType } from "react";
 /**
  * GallerySceneInjector – pushes Room1 scene + mode into ThreeStore on mount.
  *
@@ -7,9 +10,6 @@
  * Three.js canvas. It has no visible UI itself.
  */
 import { useEffect, useMemo } from "react";
-import type { ComponentType } from "react";
-import { useThreeStore, Room1Scene } from "@elbtronika/three";
-import type { ArtworkMeshProps } from "@elbtronika/three";
 
 interface SanityArtwork {
   _id: string;
@@ -30,19 +30,18 @@ export default function GallerySceneInjector({ artworks }: Props) {
   const setActiveScene = useThreeStore((s) => s.setActiveScene);
 
   // Map Sanity artworks to ArtworkMesh props
-  const meshArtworks: Array<Omit<ArtworkMeshProps, "position" | "rotationY"> | null> =
-    useMemo(
-      () =>
-        artworks.map((aw) => ({
-          artworkId: aw._id,
-          slug: aw.slug?.current ?? aw._id,
-          title: aw.title ?? "Untitled",
-          imageUrl: aw.imageUrl ?? "/images/placeholder-artwork.svg",
-          width: 1.8,
-          height: 2.5,
-        })),
-      [artworks],
-    );
+  const meshArtworks: Array<Omit<ArtworkMeshProps, "position" | "rotationY"> | null> = useMemo(
+    () =>
+      artworks.map((aw) => ({
+        artworkId: aw._id,
+        slug: aw.slug?.current ?? aw._id,
+        title: aw.title ?? "Untitled",
+        imageUrl: aw.imageUrl ?? "/images/placeholder-artwork.svg",
+        width: 1.8,
+        height: 2.5,
+      })),
+    [artworks],
+  );
 
   // Create a stable wrapper component that captures artwork data in closure.
   const SceneWrapper = useMemo<ComponentType<unknown>>(() => {

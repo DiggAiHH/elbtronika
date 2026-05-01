@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = (globalThis as any).__audioMocks;
 
@@ -29,11 +29,7 @@ describe("SpatialAudioEngine", () => {
   it("uses setTargetAtTime for listener position", () => {
     engine.setListenerPosition(1, 2, 3);
 
-    expect(mocks.setTargetAtTime).toHaveBeenCalledWith(
-      1,
-      expect.any(Number),
-      0.01,
-    );
+    expect(mocks.setTargetAtTime).toHaveBeenCalledWith(1, expect.any(Number), 0.01);
   });
 
   it("uses setTargetAtTime for source position", () => {
@@ -41,26 +37,14 @@ describe("SpatialAudioEngine", () => {
     engine.addSource("track-1", audioEl);
     engine.setSourcePosition("track-1", 10, 20, 30);
 
-    expect(mocks.setTargetAtTime).toHaveBeenCalledWith(
-      10,
-      expect.any(Number),
-      0.01,
-    );
+    expect(mocks.setTargetAtTime).toHaveBeenCalledWith(10, expect.any(Number), 0.01);
   });
 
   it("sets listener orientation with setTargetAtTime", () => {
     engine.setListenerOrientation(0, 0, -1, 0, 1, 0);
 
-    expect(mocks.setTargetAtTime).toHaveBeenCalledWith(
-      -1,
-      expect.any(Number),
-      0.01,
-    );
-    expect(mocks.setTargetAtTime).toHaveBeenCalledWith(
-      1,
-      expect.any(Number),
-      0.01,
-    );
+    expect(mocks.setTargetAtTime).toHaveBeenCalledWith(-1, expect.any(Number), 0.01);
+    expect(mocks.setTargetAtTime).toHaveBeenCalledWith(1, expect.any(Number), 0.01);
   });
 
   it("disposes all sources", () => {

@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { getClient } from "@/lib/sanity/client";
-import { djBySlugQuery, allArtworksQuery } from "@/lib/sanity/queries";
+import { allArtworksQuery, djBySlugQuery } from "@/lib/sanity/queries";
 
 type Props = {
   params: Promise<{ locale: string; slug: string }>;
@@ -35,7 +35,14 @@ export default async function DjProfilePage({ params }: Props) {
   if (!dj) notFound();
 
   // Artworks that feature this DJ
-  const djWorks = (allArtworks as Array<{ _id: string; slug: { current: string }; title: string; image?: { asset?: { url: string; metadata?: { lqip?: string } }; alt?: string } }>).filter(
+  const djWorks = (
+    allArtworks as Array<{
+      _id: string;
+      slug: { current: string };
+      title: string;
+      image?: { asset?: { url: string; metadata?: { lqip?: string } }; alt?: string };
+    }>
+  ).filter(
     (_a) => false, // DJ link not in allArtworksQuery – would need extended query in Phase 8
   );
 
@@ -65,7 +72,10 @@ export default async function DjProfilePage({ params }: Props) {
             {dj.genreTags && dj.genreTags.length > 0 && (
               <div className="mt-2 flex flex-wrap gap-2">
                 {(dj.genreTags as string[]).map((tag) => (
-                  <span key={tag} className="rounded-full border border-[var(--color-border)] px-3 py-1 text-xs text-[var(--color-text-muted)]">
+                  <span
+                    key={tag}
+                    className="rounded-full border border-[var(--color-border)] px-3 py-1 text-xs text-[var(--color-text-muted)]"
+                  >
                     {tag}
                   </span>
                 ))}

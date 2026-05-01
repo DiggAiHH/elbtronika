@@ -3,6 +3,7 @@
 // ── Form Controls ──────────────────────────────────────────────────────────
 export { Button, type ButtonProps, buttonVariants } from "./components/button";
 export { Checkbox, type CheckboxProps } from "./components/checkbox";
+export { DemoBanner, type DemoBannerProps } from "./components/demo-banner";
 // ── Overlay & Feedback ─────────────────────────────────────────────────────
 export {
   Dialog,
@@ -41,7 +42,6 @@ export {
   ToastTitle,
   ToastViewport,
 } from "./components/toast";
-
 // ── Typography ─────────────────────────────────────────────────────────────
 export {
   Caption,
@@ -53,4 +53,10 @@ export {
   Text,
   type TextProps,
 } from "./components/typography";
+export {
+  resetTour,
+  type TourStep,
+  WalkthroughTour,
+  type WalkthroughTourProps,
+} from "./components/walkthrough-tour";
 export { cn } from "./lib/cn";

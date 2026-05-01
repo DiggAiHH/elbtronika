@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import { describe, it, expect } from "vitest";
+=======
+import { describe, expect, it } from "vitest";
+>>>>>>> feature/phase-18-19-tests-and-prd-docs
 
 /**
  * Landing Hero Section Tests

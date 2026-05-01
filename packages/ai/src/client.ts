@@ -12,7 +12,7 @@
 
 import Anthropic from "@anthropic-ai/sdk";
 import type { z } from "zod";
-import type { AIPrompt, AIResponse, AIModel } from "./types";
+import type { AIModel, AIPrompt, AIResponse } from "./types";
 
 const DEFAULT_MODEL: AIModel = "claude-sonnet-4-20250514";
 const OPUS_MODEL: AIModel = "claude-opus-4-20250514";
@@ -65,7 +65,6 @@ function mapModel(model: AIModel): string {
   switch (model) {
     case "claude-opus-4-20250514":
       return "claude-opus-4-20250514";
-    case "claude-sonnet-4-20250514":
     default:
       return "claude-sonnet-4-20250514";
   }
@@ -119,10 +118,7 @@ export interface GenerateOptions {
   timeoutMs?: number;
 }
 
-export async function generate(
-  prompt: AIPrompt,
-  opts: GenerateOptions = {},
-): Promise<AIResponse> {
+export async function generate(prompt: AIPrompt, opts: GenerateOptions = {}): Promise<AIResponse> {
   const client = getClient();
   const model = mapModel(prompt.model ?? DEFAULT_MODEL);
   const maxTokens = prompt.maxTokens ?? DEFAULT_MAX_TOKENS;
@@ -302,18 +298,10 @@ export async function generateJson<T>(
       try {
         parsed = JSON.parse(match[1]!);
       } catch {
-        throw new AIClientError(
-          "AI response contained invalid JSON",
-          "invalid_json",
-          false,
-        );
+        throw new AIClientError("AI response contained invalid JSON", "invalid_json", false);
       }
     } else {
-      throw new AIClientError(
-        "AI response did not contain valid JSON",
-        "invalid_json",
-        false,
-      );
+      throw new AIClientError("AI response did not contain valid JSON", "invalid_json", false);
     }
   }
 
@@ -329,4 +317,4 @@ export async function generateJson<T>(
   return { response, data: parseResult.data };
 }
 
-export { DEFAULT_MODEL, OPUS_MODEL, DEFAULT_MAX_TOKENS };
+export { DEFAULT_MAX_TOKENS, DEFAULT_MODEL, OPUS_MODEL };

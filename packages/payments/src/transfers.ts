@@ -11,10 +11,7 @@ const ARTIST_SHARE = 0.6;
 const DJ_SHARE = 0.2;
 const CURRENCY = "eur" as const;
 
-export function computeRevenueSplit(
-  totalCents: number,
-  hasDj: boolean,
-): RevenueSplit {
+export function computeRevenueSplit(totalCents: number, hasDj: boolean): RevenueSplit {
   const artistCents = Math.floor(totalCents * ARTIST_SHARE);
   const djCents = hasDj ? Math.floor(totalCents * DJ_SHARE) : 0;
   // Platform gets the remainder to avoid rounding errors
@@ -142,22 +139,16 @@ export async function createCheckoutSession(
       metadata: {
         artwork_id: params.artworkId,
         artist_account: params.artistStripeAccountId,
-        ...(params.djStripeAccountId
-          ? { dj_account: params.djStripeAccountId }
-          : {}),
+        ...(params.djStripeAccountId ? { dj_account: params.djStripeAccountId } : {}),
       },
     },
     metadata: {
       artwork_id: params.artworkId,
       artist_account: params.artistStripeAccountId,
-      ...(params.djStripeAccountId
-        ? { dj_account: params.djStripeAccountId }
-        : {}),
+      ...(params.djStripeAccountId ? { dj_account: params.djStripeAccountId } : {}),
     },
     // Platform fee for Stripe Connect
-    ...(params.platformFeeCents > 0
-      ? { application_fee_amount: params.platformFeeCents }
-      : {}),
+    ...(params.platformFeeCents > 0 ? { application_fee_amount: params.platformFeeCents } : {}),
     // Link Stripe session to internal order
     client_reference_id: params.orderId,
     ...(params.buyerEmail ? { customer_email: params.buyerEmail } : {}),

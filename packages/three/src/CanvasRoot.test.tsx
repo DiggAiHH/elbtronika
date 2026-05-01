@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeAll } from "vitest";
 import { render } from "@testing-library/react";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 import { CanvasRoot } from "./CanvasRoot";
 
 // Mock window.matchMedia
@@ -21,7 +21,9 @@ beforeAll(() => {
 
 // Mock R3F Canvas
 vi.mock("@react-three/fiber", () => ({
-  Canvas: ({ children }: { children: React.ReactNode }) => <div data-testid="canvas">{children}</div>,
+  Canvas: ({ children }: { children: React.ReactNode }) => (
+    <div data-testid="canvas">{children}</div>
+  ),
 }));
 
 // Mock Drei
@@ -33,8 +35,7 @@ vi.mock("@react-three/drei", () => ({
 
 // Mock store
 vi.mock("./store", () => ({
-  useThreeStore: (selector: (s: { mode: string }) => string) =>
-    selector({ mode: "classic" }),
+  useThreeStore: (selector: (s: { mode: string }) => string) => selector({ mode: "classic" }),
 }));
 
 // Mock feature detection

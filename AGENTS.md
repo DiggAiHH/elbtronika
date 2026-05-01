@@ -2,7 +2,7 @@
 
 > **For AI coding agents.** Read this first before touching any code.
 > Project language: **Code in English, docs/comments bilingual (EN/DE).**
-> Last updated: 2026-04-29
+> Last updated: 2026-04-30
 
 ---
 
@@ -15,7 +15,19 @@
 
 Revenue model: 60/20/20 split (Artist / DJ / Platform).
 
+<<<<<<< HEAD
 The project is a **pnpm monorepo** managed with Turborepo. It is built by a solo developer (Lou) with AI pair-programming. Development is phase-driven (Phase 0–19). Phases 0–5 are complete on `main`. Phases 6–19 are complete on `feature/phase-11-ai` (tag `v0.13.0-demo`).
+=======
+The project runs in three runtime modes controlled by the Doppler variable `ELT_MODE`:
+
+| Mode | ENV | Use-Case | Data | Stripe |
+|------|-----|----------|------|--------|
+| **Demo** | `demo` | Pitch to investors, internal tests | Demo personas (5 Artists, 3 DJs, 8 Artworks) | Test-Mode + Mock-Connected-Accounts |
+| **Staging** | `staging` | QA, smoke-tests before live | Mix of demo + real artists | Test-Mode + real Connected-Accounts |
+| **Live** | `live` | Public launch | Only real artists, real sales | Live-Mode |
+
+The project is a **pnpm monorepo** managed with Turborepo. It is built by a solo developer (Lou) with AI pair-programming. Development is phase-driven (Phase 0–19). As of 2026-04-30, Phases 1–17 are complete on `main`. Phase 16 (Launch) is ready. Phases 18–19 are in planning.
+>>>>>>> feature/phase-18-19-tests-and-prd-docs
 
 ---
 
@@ -25,26 +37,42 @@ The project is a **pnpm monorepo** managed with Turborepo. It is built by a solo
 Elbtonika/
 ├── apps/
 │   ├── web/                 # Next.js 15 App Router (main frontend)
-│   └── cms/                 # Sanity Studio v3 (headless CMS)
+│   └── cms/                 # Sanity Studio v4 (headless CMS)
 ├── packages/
-│   ├── ui/                  # Shared component library (@elbtronika/ui)
-│   ├── contracts/           # Zod schemas + Supabase types (@elbtronika/contracts)
+│   ├── ui/                  # Shared component library (@elbtronika/ui) — Radix + CVA
+│   ├── contracts/           # Zod schemas + Supabase generated types (@elbtronika/contracts)
 │   ├── three/               # R3F v9 3D canvas system (@elbtronika/three)
-│   ├── config/              # Shared tsconfig / biome config
-│   └── sanity-studio/       # Shared Sanity Studio utilities
+│   ├── audio/               # Spatial audio engine with HLS.js (@elbtronika/audio)
+│   ├── ai/                  # Claude API client, prompts, rate-limiting, audit (@elbtronika/ai)
+│   ├── agent/               # Hermes agent runtime, planner, memory, skills (@elbtronika/agent)
+│   ├── flow/                # Audio-visual flow analysis and art-matching (@elbtronika/flow)
+│   ├── mcp/                 # Model Context Protocol servers and tools (@elbtronika/mcp)
+│   ├── payments/            # Stripe Connect client, schemas, transfers, webhooks (@elbtronika/payments)
+│   ├── browser/             # Playwright-based browser harness and CDP tools (@elbtronika/browser)
+│   ├── config/              # Shared tsconfig / biome config (@elbtronika/config)
+│   └── sanity-studio/       # Shared Sanity Studio schemas and utilities
 ├── supabase/
 │   └── migrations/          # Versioned SQL migrations + seed.sql
-├── docs/adr/                # Architecture Decision Records (0001–0007)
-├── engineering-harness/     # Tooling docs, scripts, MCP configs
+├── docs/
+│   ├── adr/                 # Architecture Decision Records (0001–0022)
+│   ├── adrs/                # Additional ADRs (MCP, Hermes, music-art matching)
+│   ├── architecture/        # Architecture docs (CSP, caching, monitoring, DSGVO)
+│   ├── development/         # Setup guides
+│   ├── operations/          # Deploy runbooks
+│   ├── performance/         # Baseline reports
+│   ├── plans/               # Optimization plans and TODOs
+│   └── runbooks/            # Operational runbooks (Doppler, live-switch, pitch)
+├── engineering-harness/     # Tooling docs, scripts, MCP configs, trust harness
 ├── memory/                  # Project context, run logs, glossary
 ├── design-extract-output/   # Design tokens from reference URLs
-├── .github/workflows/ci.yml # GitHub Actions CI/CD
-├── netlify.toml             # Netlify deploy config
+├── .github/workflows/       # GitHub Actions CI/CD (ci, lighthouse, prod-deploy, security, staging, zap)
+├── netlify.toml             # Netlify deploy config + edge functions
 ├── doppler.yaml             # Doppler secrets manager config
 ├── turbo.json               # Turborepo pipeline
 ├── pnpm-workspace.yaml      # Workspace definition
 ├── tsconfig.base.json       # Root TypeScript strict config
 ├── biome.json               # Linting & formatting (Biome v2)
+├── lighthouserc.js          # Lighthouse CI budget gates
 └── package.json             # Root scripts & dev deps
 ```
 
@@ -54,7 +82,7 @@ Elbtonika/
 
 | Layer | Technology | Version |
 |-------|-----------|---------|
-| **Frontend** | Next.js (App Router) | 15.3.0 |
+| **Frontend** | Next.js (App Router) | 15.5.15 |
 | **React** | React | 19.1.0 |
 | **Styling** | Tailwind CSS | v4.1+ (`@theme {}` based, no `tailwind.config.js`) |
 | **UI Primitives** | Radix UI + CVA | latest |
@@ -62,18 +90,20 @@ Elbtonika/
 | **State (global)** | Zustand | v5 |
 | **State (async)** | TanStack Query | v5 |
 | **Forms** | React Hook Form + Zod | latest |
-| **i18n** | next-intl | v3 (German default `de`, English `en`) |
+| **i18n** | next-intl | v4 (German default `de`, English `en`) |
 | **Backend** | Supabase (Postgres 16 + RLS) | EU-Frankfurt |
-| **CMS** | Sanity | v3.88+ (Studio v4 in web app) |
+| **CMS** | Sanity | v4.0.0+ (Studio embedded in web app) |
 | **Payments** | Stripe Connect | v22+ (test keys only until KYC complete) |
 | **Storage** | Cloudflare R2 | Zero-egress, CDN `cdn.elbtronika.art` |
 | **Hosting** | Netlify + Edge Functions | Deno runtime |
 | **Package Manager** | pnpm | 10.0.0 |
-| **Build** | Turborepo | v2.3+ |
+| **Build** | Turborepo | v2.5.0 |
 | **Lint/Format** | Biome | v2.4.13 |
-| **Unit Tests** | Vitest | v3 (jsdom) |
+| **Unit Tests** | Vitest | v4 (jsdom) |
 | **E2E Tests** | Playwright | v1.59+ |
 | **Storybook** | Storybook 10 + Vite 8 | a11y addon |
+| **AI** | Anthropic Claude SDK | v0.39+ |
+| **Audio** | HLS.js | v1.6+ |
 
 **Node.js requirement:** `>=22.0.0`
 
@@ -104,7 +134,7 @@ pnpm format              # biome format --write .
 pnpm check               # biome check --write .
 
 # Testing
-pnpm test                # unit tests (vitest)
+pnpm test                # unit tests (vitest across all packages)
 pnpm --filter @elbtronika/web test:e2e   # Playwright e2e
 
 # Clean
@@ -114,16 +144,17 @@ pnpm clean               # turbo run clean + rm -rf node_modules
 pnpm --filter @elbtronika/web dev
 pnpm --filter @elbtronika/cms dev
 pnpm --filter @elbtronika/ui storybook
+pnpm --filter @elbtronika/web lighthouse   # Lighthouse CI
 ```
 
 ### Turborepo Pipeline (`turbo.json`)
 
 ```
-build      → dependsOn [^build], outputs [.next/**, dist/**]
+build      → dependsOn [^build], inputs [$TURBO_DEFAULT$, .env*], outputs [.next/**, !.next/cache/**, dist/**]
 dev        → cache: false, persistent: true
 lint       → dependsOn [^build]
-typecheck  → dependsOn [^build]
-test       → dependsOn [^build], outputs [coverage/**]
+typecheck  → dependsOn [^build], env [NODE_OPTIONS]
+test       → dependsOn [^build], inputs [$TURBO_DEFAULT$, .env.test*], outputs [coverage/**]
 clean      → cache: false
 ```
 
@@ -188,17 +219,17 @@ Pre-commit hook runs `biome check --write --no-errors-on-unmatched` on staged fi
 
 ### Unit Tests (Vitest)
 
-Config: `apps/web/vitest.config.ts`
-- Environment: `jsdom`
+Config per package: `vitest.config.ts`
+- Environment: `jsdom` (web/ui/three/audio), `node` (contracts/ai/payments/flow/mcp/agent/browser)
 - Globals: enabled
-- Coverage: v8 provider, includes `src/**/*.{ts,tsx}` and `app/**/*.{ts,tsx}`
+- Coverage: v8 provider (where configured)
 - Excludes: `node_modules`, `e2e/`, `*.spec.ts`
 
 ```bash
-# Run unit tests
+# Run all unit tests
 pnpm test
 
-# Watch mode
+# Watch mode (web)
 pnpm --filter @elbtronika/web test:watch
 
 # With UI
@@ -237,8 +268,11 @@ All Supabase tables have RLS enabled. Default deny-all with explicit policies:
 - `profiles`: owner read/update + admin
 - `artworks`: public read when published, artist own write
 - `orders`: owner read only
-- `transactions`, `webhook_events`, `consent_log`: service_role only
+- `transactions`, `webhook_events`: service_role only
+- `consent_log`: service_role insert, owner read
 - `audit_events`: admin only
+- `ai_decisions`: service_role insert, owner read
+- `agent_tasks`: service_role + owner scoped
 
 **Never use service-role keys in client components.** `createAdminClient()` is restricted to Route Handlers and Server Actions.
 
@@ -249,26 +283,38 @@ CSP headers set in `next.config.ts`:
 default-src 'self'
 script-src 'self' 'unsafe-eval' 'unsafe-inline'
 style-src 'self' 'unsafe-inline'
-img-src 'self' data: https://cdn.elbtronika.art https://*.sanity.io
+img-src 'self' data: blob: https://cdn.elbtronika.art https://*.sanity.io
 media-src 'self' https://cdn.elbtronika.art
-connect-src 'self' https://*.supabase.co https://api.stripe.com
+connect-src 'self' https://*.supabase.co https://api.stripe.com https://api.anthropic.com
 font-src 'self'
 frame-ancestors 'none'
+base-uri 'self'
+form-action 'self'
 ```
 
-### Security Headers (Netlify)
+### Security Headers (Netlify + Next.js)
 
 ```
 X-Frame-Options: DENY
 X-Content-Type-Options: nosniff
 Referrer-Policy: strict-origin-when-cross-origin
-Permissions-Policy: camera=(), microphone=(), geolocation=()
+Permissions-Policy: camera=(), microphone=(), geolocation=(), interest-cohort=()
+Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
 ```
 
 ### Webhook Security
 
 - Sanity → Supabase sync: HMAC-SHA256 verified, timestamp checked (±5min window)
 - Stripe webhooks: idempotent handlers, signature verified
+
+### Hermes Trust Boundaries
+
+All MCP invocations are authenticated, audited, and role-gated:
+- `/api/mcp/invoke` requires authenticated session + role gate
+- Every invocation logs actorId, role, server, tool, status, duration to structured audit log
+- Tool allowlist enforced before invocation
+- Idempotency check: same goal returns existing task
+- Atomic claim lock via `run_id` in `agent_tasks` table
 
 ### Environment Variables
 
@@ -278,8 +324,9 @@ Key env vars (see `.env.example`):
 - `SUPABASE_SERVICE_ROLE_KEY`
 - `STRIPE_SECRET_KEY` / `STRIPE_WEBHOOK_SECRET` / `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
 - `SANITY_API_TOKEN` / `SANITY_API_READ_TOKEN`
-- `CLOUDFLARE_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`
+- `CLOUDFLARE_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`
 - `ANTHROPIC_API_KEY`
+- `SENTRY_DSN` / `NEXT_PUBLIC_SENTRY_DSN`
 
 ---
 
@@ -291,11 +338,11 @@ Key env vars (see `.env.example`):
 - **Build command:** `pnpm build`
 - **Publish dir:** `apps/web/.next`
 - **Plugin:** `@netlify/plugin-nextjs`
-- **Edge Functions:** Deno runtime (`api/proxy/*`)
+- **Edge Functions:** Deno runtime (`/api/proxy/*`, `/edge/ab-test`, `/edge/geo-locale`)
 - **Node version:** 22
 - **Preview deploys:** auto for all PRs
 
-### CI/CD Pipeline (GitHub Actions)
+### CI/CD Pipelines (GitHub Actions)
 
 `.github/workflows/ci.yml`:
 1. `install` — pnpm install --frozen-lockfile
@@ -303,7 +350,21 @@ Key env vars (see `.env.example`):
 3. `lint` — `pnpm lint`
 4. `test` — `pnpm test` + coverage artifact upload
 5. `build` — `pnpm build` (needs typecheck + lint + test)
-6. `deploy` — Netlify deploy (prod for main, preview for PRs)
+6. `security` — `pnpm audit --audit-level high`
+
+`.github/workflows/production-deploy.yml`:
+- Manual confirmation required (`DEPLOY`)
+- Pre-deploy checks: typecheck, lint, test, audit
+- Build with Doppler secrets (`DOPPLER_TOKEN_PRD`)
+- Deploy to Netlify production
+- Post-deploy validation: health endpoint, key pages, security headers
+- Auto-create GitHub Release
+
+Additional workflows:
+- `lighthouse.yml` — Lighthouse CI on PRs
+- `staging-deploy.yml` — Staging deployment
+- `security.yml` — Security scanning
+- `zap-scan.yml` — OWASP ZAP scanning
 
 Build uses dummy Supabase values; real secrets injected by Doppler at runtime.
 
@@ -318,30 +379,60 @@ app/
 ├── [locale]/                    # i18n route segment (de | en)
 │   ├── (auth)/login/page.tsx
 │   ├── (checkout)/checkout/page.tsx
-│   ├── (immersive)/gallery/page.tsx    # 3D gallery
+│   ├── (immersive)/gallery/page.tsx       # 3D gallery
 │   ├── (marketing)/about/page.tsx
 │   ├── (profile)/artist/[slug]/page.tsx
 │   ├── (profile)/dj/[slug]/page.tsx
 │   ├── (shop)/                  # shop route group
 │   │   ├── shop/page.tsx
 │   │   ├── shop/artwork/[slug]/page.tsx
-│   │   ├── artwork/[slug]/page.tsx     # legacy redirect
-│   │   └── components/          # CartDrawer, AddToCartButton, etc.
+│   │   ├── artwork/[slug]/page.tsx        # legacy redirect
+│   │   ├── components/          # CartDrawer, AddToCartButton, etc.
+│   │   ├── error.tsx
+│   │   ├── layout.tsx
+│   │   ├── loading.tsx
+│   │   └── MoodRecommender.tsx
+│   ├── artist-onboarding/stripe/page.tsx
+│   ├── canvas/error.tsx
+│   ├── components/              # Navbar, Footer, ConsentBanner, WebVitals
 │   ├── dashboard/
 │   │   ├── layout.tsx           # auth guard
 │   │   ├── page.tsx
-│   │   └── artist/
-│   │       ├── page.tsx
-│   │       └── new/page.tsx     # artwork creation form
-│   ├── artist-onboarding/stripe/page.tsx
-│   ├── profile/setup/page.tsx
-│   ├── layout.tsx               # locale layout + CanvasRoot + GalleryHUD
-│   └── page.tsx                 # homepage
+│   │   ├── artist/
+│   │   │   ├── page.tsx
+│   │   │   └── new/page.tsx     # artwork creation form
+│   │   ├── pm/
+│   │   │   ├── layout.tsx
+│   │   │   └── page.tsx
+│   │   ├── error.tsx
+│   │   └── monitoring/page.tsx
+│   ├── error.tsx
+│   ├── layout.tsx               # locale layout + CanvasRoot + providers
+│   ├── loading.tsx
+│   ├── not-found.tsx
+│   ├── page.tsx                 # homepage
+│   └── profile/setup/page.tsx
 ├── api/
+│   ├── account/data/route.ts
+│   ├── account/delete/route.ts
+│   ├── agent/task/route.ts
+│   ├── ai/describe/route.ts
+│   ├── ai/explain/route.ts
+│   ├── ai/override/route.ts
+│   ├── ai/recommend/route.ts
+│   ├── analytics/vitals/route.ts
 │   ├── assets/upload/route.ts   # R2 presigned PUT URLs
+│   ├── checkout/session/route.ts
+│   ├── consent/route.ts
+│   ├── flow/analyze/route.ts
+│   ├── flow/match/route.ts
 │   ├── health/route.ts
+│   ├── mcp/invoke/route.ts
+│   ├── mcp/tools/route.ts
 │   ├── stripe/connect/route.ts  # Express account creation
 │   ├── stripe/webhook/route.ts
+│   ├── user/data/route.ts
+│   ├── user/delete/route.ts
 │   └── webhooks/sanity/route.ts # Sanity→Supabase sync
 ├── layout.tsx                   # root shell (minimal)
 └── globals.css
@@ -365,6 +456,8 @@ app/
 - Post-processing: `@react-three/postprocessing` v3 selective bloom
 - HUD: DOM overlay (`GalleryHUD`), NOT R3F — for a11y + CSS control
 - Store: Zustand with mutable Map mutations for per-frame data (no setState in useFrame)
+- Performance: `AdaptiveDpr` + `PerformanceMonitor` for automatic quality scaling
+- `frameloop: "demand"` in classic mode, `"always"` in immersive mode
 
 ---
 
@@ -372,14 +465,14 @@ app/
 
 ### Dual-Layer Content Strategy
 
-- **Sanity CMS** (`apps/cms/schemas/`): editorial content, rooms, artworks, artists, DJs, sets
+- **Sanity CMS** (`apps/cms/schemas/`, `packages/sanity-studio/schemas/`): editorial content, rooms, artworks, artists, DJs, sets, stories, exhibitions
 - **Supabase** (`supabase/migrations/`): transactional data, auth, orders, profiles, RLS
 
 **Sync:** Sanity webhooks push to Supabase via `api/webhooks/sanity` (HMAC verified).
 
 ### Key Tables
 
-`profiles`, `artists`, `djs`, `rooms`, `sets`, `artworks`, `orders`, `transactions`, `consent_log`, `audit_events`, `webhook_events`, `ai_decisions`
+`profiles`, `artists`, `djs`, `rooms`, `sets`, `artworks`, `orders`, `transactions`, `consent_log`, `audit_events`, `webhook_events`, `ai_decisions`, `agent_tasks`
 
 ### Shared Types
 
@@ -389,23 +482,54 @@ app/
 
 ---
 
+## Performance & Monitoring
+
+### Bundle Budgets (`apps/web/bundlesize.config.json`)
+
+- `main-*.js`: max 200kb
+- `pages/_app-*.js`: max 150kb
+- `framework-*.js`: max 50kb
+- `*three*`: max 500kb
+
+### Lighthouse CI Budgets (`lighthouserc.js`)
+
+- LCP < 2.0s, CLS < 0.05, TBT < 200ms
+- Performance >= 90, Accessibility >= 95, Best Practices >= 95, SEO = 100
+- Document size < 50kb, Scripts < 500kb, Images < 1.5MB
+
+### Cache Headers (Next.js)
+
+- `/_next/static/*`: `public, max-age=31536000, immutable`
+- `/images/*`: `public, max-age=86400, must-revalidate`
+- `*.glb`, `*.ktx2`: `public, max-age=31536000, immutable`
+- `/api/health`: `public, max-age=10, stale-while-revalidate=30`
+- `/api/*`: `private, no-store`
+
+---
+
 ## Known Issues & Constraints
 
 | ID | Issue | Phase |
 |----|-------|-------|
 | I-001 | `GallerySceneInjector.tsx` is MVP stub — scene injection not fully wired | 7 |
-| I-002 | `DevStats` in `CanvasRoot.tsx` uses `require()` in JSX body | 7 |
-| I-003 | Peer dep warnings: `@emnapi/core` + `@emnapi/runtime` (via `@sanity/cli`) | infra |
-| I-004 | `packages/three/src/index.ts` `.js`-suffix vs `moduleResolution` mismatch | 7 |
-| I-005 | `/images/placeholder-artwork.jpg` is 1x1 stub | 7 |
-| I-006 | Supabase local migration blocked: no Docker Desktop in environment | 3/14 |
+| I-002 | `/images/placeholder-artwork.jpg` is 1x1 stub | 7 |
+| I-003 | Supabase local migration blocked: no Docker Desktop in environment | 3/14 |
+| I-004 | Audit events currently go to console.log only — DB-backed `mcp_audit_log` table planned | 17 |
+| I-005 | `agent_tasks` and `orders_session_id` migrations must be manually applied to Supabase | 17 |
 
 ### Windows-Specific Tooling Rules
 
+<<<<<<< HEAD
 - **Shell:** PowerShell works fine — always use `.cmd` suffix: `pnpm.cmd`, `npx.cmd`
 - **Git commit:** Direct `git commit -m "msg"` works; for multiline use `git commit -F file.txt`
 - **Biome:** Use `pnpm lint` or `node_modules\.bin\biome`, never `npx biome` (wrong version)
 - **Bracket dirs:** `[locale]` directories → create via Node.js `fs.mkdirSync`, not shell
+=======
+- **Shell:** Always `cmd`, never PowerShell (blocks pnpm.ps1)
+- **Git commit:** Write message to file first, then `git commit -F D:\msg.txt`
+- **Biome:** Use `node_modules\.bin\biome` or `pnpm lint`, never `npx biome`
+- **Bracket dirs:** `[locale]` directories — create via Node.js `fs.mkdirSync`, not shell
+>>>>>>> feature/phase-18-19-tests-and-prd-docs
 
 ---
 
@@ -413,9 +537,18 @@ app/
 
 - **Status:** `STATUS.md` — live project status, branch states, WIP lists
 - **Tasks:** `TASKS.md` — active and upcoming work items
+- **README:** `README.md` — modes, quick start, troubleshooting, monorepo structure
+- **Setup:** `SETUP.md` — local environment setup instructions
 - **CLAUDE.md:** Project context, phase status, glossary, stack
+<<<<<<< HEAD
 - **Agent Protocol:** `engineering-harness/PRE_FLIGHT_PROTOCOL.md` — mandatory pre-flight checklist, tool matrix, Windows survival guide, memory discipline, merge protocol, error registry
 - **Architecture Plans:** `ELBTRONIKA_Architekturplan_v1.md`, `ELBTRONIKA_Architekturplan_v1.1.md`
 - **ADRs:** `docs/adr/0001-monorepo-tooling.md` through `0007-immersive-architektur.md`
 - **Setup:** `SETUP.md` — local environment setup instructions
 - **Harness:** `engineering-harness/HARNESS.md` — token efficiency tools
+=======
+- **Agent Protocol:** `docs/agent-preflight-protocol.md` — detailed tool rules
+- **Architecture Plans:** `ELBTRONIKA_Architekturplan_v1.md` through `v1.3.md`
+- **ADRs:** `docs/adr/0001-monorepo-tooling.md` through `0022-modes-and-prd-doppler.md`
+- **Trust Harness:** `engineering-harness/HERMES_TRUST_HARNESS.md` — trust boundary specification
+>>>>>>> feature/phase-18-19-tests-and-prd-docs

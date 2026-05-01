@@ -2,9 +2,7 @@
   "collections": [
     {
       "name": "Brand",
-      "modes": [
-        "light"
-      ],
+      "modes": ["light"],
       "variables": [
         {
           "name": "color/primary",
@@ -262,9 +260,7 @@
     },
     {
       "name": "Typography",
-      "modes": [
-        "default"
-      ],
+      "modes": ["default"],
       "variables": [
         {
           "name": "font/size/28",
@@ -417,9 +413,7 @@
     },
     {
       "name": "Spacing",
-      "modes": [
-        "default"
-      ],
+      "modes": ["default"],
       "variables": [
         {
           "name": "spacing/3",

@@ -3,13 +3,14 @@
  */
 
 import { MCPServer } from "../server";
-import type { ToolDefinition } from "../types";
 import { AnalyzeTrackSchema, MatchArtworkSchema } from "../tools";
+import type { ToolDefinition } from "../types";
 
 const tools: ToolDefinition[] = [
   {
     name: "audio_analyze_track",
-    description: "Analyze an audio track and extract features (BPM, key, mood tags). Returns structured analysis.",
+    description:
+      "Analyze an audio track and extract features (BPM, key, mood tags). Returns structured analysis.",
     schema: {
       type: "object",
       properties: {
@@ -99,7 +100,8 @@ const tools: ToolDefinition[] = [
   },
   {
     name: "audio_match_artwork_to_track",
-    description: "Find artworks that match a DJ set/track based on audio features. Returns ranked matches with similarity scores.",
+    description:
+      "Find artworks that match a DJ set/track based on audio features. Returns ranked matches with similarity scores.",
     schema: {
       type: "object",
       properties: {

@@ -1,6 +1,12 @@
+<<<<<<< HEAD
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { DemoBanner } from "@elbtronika/ui";
+=======
+import { DemoBanner } from "@elbtronika/ui";
+import { render, screen } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
+>>>>>>> feature/phase-18-19-tests-and-prd-docs
 
 describe("DemoBanner", () => {
   it("renders null in live mode", () => {
@@ -33,7 +39,11 @@ describe("DemoBanner", () => {
     render(<DemoBanner mode="demo" />);
     const banner = screen.getByTestId("demo-banner");
     expect(banner.getAttribute("title")).toBe(
+<<<<<<< HEAD
       "This is a fully-functional pitch demo. Real launch coming soon."
+=======
+      "This is a fully-functional pitch demo. Real launch coming soon.",
+>>>>>>> feature/phase-18-19-tests-and-prd-docs
     );
   });
 });

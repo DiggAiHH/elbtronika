@@ -7,7 +7,7 @@
  * Pure HTMLAudio with Play/Pause and a progress bar.
  */
 
-import { useRef, useState, useEffect, useCallback } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface Props {
   artworkId: string;
@@ -61,9 +61,7 @@ export function ArtworkAudioPlayer({ artworkId, previewUrl }: Props) {
         aria-label="No audio preview available"
         data-artwork-id={artworkId}
       >
-        <p className="text-xs text-[var(--color-text-muted)]">
-          No audio preview available
-        </p>
+        <p className="text-xs text-[var(--color-text-muted)]">No audio preview available</p>
       </div>
     );
   }

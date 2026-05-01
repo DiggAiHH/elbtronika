@@ -1,8 +1,16 @@
+<<<<<<< HEAD
 import { describe, it, expect } from "vitest";
 import {
   getDemoArtistAccountId,
   getDemoDjAccountId,
   DEMO_CONNECTED_ACCOUNTS,
+=======
+import { describe, expect, it } from "vitest";
+import {
+  DEMO_CONNECTED_ACCOUNTS,
+  getDemoArtistAccountId,
+  getDemoDjAccountId,
+>>>>>>> feature/phase-18-19-tests-and-prd-docs
 } from "@/src/lib/stripe/demo";
 
 describe("Stripe Demo Layer", () => {

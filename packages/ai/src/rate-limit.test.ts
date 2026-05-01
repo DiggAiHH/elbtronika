@@ -1,6 +1,6 @@
-import { describe, it, expect } from "vitest";
-import { checkRateLimit, createMemoryStore, ROLE_LIMITS } from "./rate-limit";
+import { describe, expect, it } from "vitest";
 import type { RateLimitContext } from "./rate-limit";
+import { checkRateLimit, createMemoryStore, ROLE_LIMITS } from "./rate-limit";
 
 describe("ROLE_LIMITS", () => {
   it("has sensible defaults", () => {

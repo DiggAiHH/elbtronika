@@ -36,17 +36,17 @@ git clone https://github.com/DiggAiHH/elbtronika.git
 cd elbtronika
 
 # 2. Dependencies installieren
-pnpm install
+pnpm.cmd install
 
 # 3. Doppler konfigurieren
 doppler login
 doppler setup --project elbtronika --config dev
 
 # 4. Lokale Supabase starten (optional)
-pnpm supabase start
+pnpm.cmd supabase start
 
 # 5. Dev-Server starten
-pnpm dev
+pnpm.cmd dev
 ```
 
 Öffne [http://localhost:3000](http://localhost:3000).
@@ -57,21 +57,27 @@ pnpm dev
 
 ```bash
 # Unit + Integration (Vitest)
-pnpm --filter @elbtronika/web test
+pnpm.cmd --filter @elbtronika/web test
 
 # E2E (Playwright)
-pnpm --filter @elbtronika/web test:e2e
+pnpm.cmd --filter @elbtronika/web test:e2e
 
 # Type-Check
-pnpm --filter @elbtronika/web typecheck
-pnpm --filter @elbtronika/contracts typecheck
+pnpm.cmd --filter @elbtronika/web typecheck
+pnpm.cmd --filter @elbtronika/contracts typecheck
 
 # Lint + Format (Biome)
-pnpm lint
-pnpm format
+pnpm.cmd lint
+pnpm.cmd format
 
 # Lighthouse CI
-pnpm --filter @elbtronika/web lighthouse
+pnpm.cmd --filter @elbtronika/web lighthouse
+
+# Doppler prd ENV validation
+# Bash (Linux/macOS/CI):
+doppler run --config prd -- bash scripts/validate-doppler-prd.sh
+# PowerShell (Windows):
+doppler run --config prd -- pwsh scripts/validate-doppler-prd.ps1
 ```
 
 ---
@@ -131,7 +137,7 @@ Alle Feature-Branches gegen `feature/phase-11-ai`. Final-Merge nach Lee-OK.
 
 ## Docs
 
-- [Architekturplan v1.2](ELBTRONIKA_Architekturplan_v1.2.md)
+- [Architekturplan v1.3](ELBTRONIKA_Architekturplan_v1.3.md)
 - [Trust Harness](engineering-harness/HERMES_TRUST_HARNESS.md)
 - [Doppler prd Setup](docs/runbooks/doppler-prd-setup.md)
 - [Live-Switch Choreografie](docs/runbooks/live-switch-post-lee-ok.md)

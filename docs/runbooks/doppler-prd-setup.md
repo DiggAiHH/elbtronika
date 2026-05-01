@@ -135,95 +135,20 @@ doppler secrets get SUPABASE_SERVICE_ROLE_KEY --plain | wc -c  # sollte > 50 sei
 
 ### 4.2 PowerShell Validation-Skript (Windows — Lou's Haupt-OS)
 
-Speichere als `scripts/validate-doppler-prd.ps1` und führe aus:
+Das Skript liegt unter `scripts/validate-doppler-prd.ps1`. Ausführung:
 
 ```powershell
-# validate-doppler-prd.ps1
-$required = @(
-  "ELT_MODE",
-  "NEXT_PUBLIC_SUPABASE_URL",
-  "NEXT_PUBLIC_SUPABASE_ANON_KEY",
-  "SUPABASE_SERVICE_ROLE_KEY",
-  "STRIPE_SECRET_KEY",
-  "STRIPE_PUBLISHABLE_KEY",
-  "STRIPE_WEBHOOK_SECRET",
-  "STRIPE_CONNECT_REDIRECT_URL",
-  "NEXT_PUBLIC_SANITY_PROJECT_ID",
-  "NEXT_PUBLIC_SANITY_DATASET",
-  "SANITY_API_READ_TOKEN",
-  "SANITY_WEBHOOK_SECRET",
-  "CLOUDFLARE_R2_ACCOUNT_ID",
-  "CLOUDFLARE_R2_ACCESS_KEY_ID",
-  "CLOUDFLARE_R2_SECRET_ACCESS_KEY",
-  "CLOUDFLARE_R2_BUCKET",
-  "CLOUDFLARE_R2_PUBLIC_URL",
-  "ANTHROPIC_API_KEY",
-  "RESEND_API_KEY",
-  "SENTRY_DSN",
-  "NEXT_PUBLIC_SITE_URL",
-  "MCP_AUDIT_DB"
-)
-
-$missing = @()
-foreach ($var in $required) {
-  $val = [System.Environment]::GetEnvironmentVariable($var)
-  if (-not $val) {
-    # Try Doppler CLI
-    $val = doppler secrets get $var --plain 2>$null
-  }
-  if (-not $val) {
-    $missing += $var
-  } else {
-    Write-Host "  ✓ $var" -ForegroundColor Green
-  }
-}
-
-if ($missing.Count -gt 0) {
-  Write-Host "`nMissing variables:" -ForegroundColor Red
-  $missing | ForEach-Object { Write-Host "  ✗ $_" -ForegroundColor Red }
-  exit 1
-} else {
-  Write-Host "`nAll 22 variables present. Doppler prd is ready." -ForegroundColor Green
-}
+# Doppler injiziert die Vars, dann prüft das Skript sie
+doppler run --config prd -- pwsh scripts/validate-doppler-prd.ps1
 ```
 
 ### 4.3 Bash Validation-Skript (Linux/macOS/CI)
 
+Das Skript liegt unter `scripts/validate-doppler-prd.sh`. Ausführung:
+
 ```bash
-#!/usr/bin/env bash
-# scripts/validate-doppler-prd.sh
-set -euo pipefail
-
-REQUIRED=(
-  ELT_MODE NEXT_PUBLIC_SUPABASE_URL NEXT_PUBLIC_SUPABASE_ANON_KEY
-  SUPABASE_SERVICE_ROLE_KEY STRIPE_SECRET_KEY STRIPE_PUBLISHABLE_KEY
-  STRIPE_WEBHOOK_SECRET STRIPE_CONNECT_REDIRECT_URL
-  NEXT_PUBLIC_SANITY_PROJECT_ID NEXT_PUBLIC_SANITY_DATASET
-  SANITY_API_READ_TOKEN SANITY_WEBHOOK_SECRET
-  CLOUDFLARE_R2_ACCOUNT_ID CLOUDFLARE_R2_ACCESS_KEY_ID
-  CLOUDFLARE_R2_SECRET_ACCESS_KEY CLOUDFLARE_R2_BUCKET
-  CLOUDFLARE_R2_PUBLIC_URL ANTHROPIC_API_KEY RESEND_API_KEY
-  SENTRY_DSN NEXT_PUBLIC_SITE_URL MCP_AUDIT_DB
-)
-
-MISSING=0
-for var in "${REQUIRED[@]}"; do
-  if ! doppler secrets get "$var" --plain >/dev/null 2>&1; then
-    echo "  ✗ $var"
-    MISSING=$((MISSING + 1))
-  else
-    echo "  ✓ $var"
-  fi
-done
-
-if [ "$MISSING" -gt 0 ]; then
-  echo ""
-  echo "$MISSING variable(s) missing in Doppler prd."
-  exit 1
-else
-  echo ""
-  echo "All ${#REQUIRED[@]} variables present. Doppler prd is ready."
-fi
+# Doppler injiziert die Vars, dann prüft das Skript sie
+doppler run --config prd -- bash scripts/validate-doppler-prd.sh
 ```
 
 ---

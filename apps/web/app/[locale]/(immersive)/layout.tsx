@@ -1,16 +1,10 @@
 "use client";
 
-import type { ReactNode } from "react";
-import { AudioUnlockOverlay } from "@elbtronika/audio";
-import { NowPlayingHUD } from "@elbtronika/audio";
-import { useModeTransitionAudio } from "@elbtronika/audio";
+import { AudioUnlockOverlay, NowPlayingHUD, useModeTransitionAudio } from "@elbtronika/audio";
 import { ModeToggle, TransitionOverlay, useThreeStore } from "@elbtronika/three";
+import type { ReactNode } from "react";
 
-export default function ImmersiveLayout({
-  children,
-}: {
-  children: ReactNode;
-}) {
+export default function ImmersiveLayout({ children }: { children: ReactNode }) {
   const mode = useThreeStore((s) => s.mode);
   useModeTransitionAudio(mode);
 

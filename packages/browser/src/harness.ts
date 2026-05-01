@@ -71,7 +71,7 @@ export class BrowserHarness {
           step.output = `Clicked ${ref}`;
         } else if (lower.startsWith("type ")) {
           const match = instruction.match(/type\s+(@e\d+)\s+"(.+)"/i);
-          if (match && match[1] && match[2]) {
+          if (match?.[1] && match[2]) {
             await this.cdp.type(match[1], match[2]);
             step.input = match[2];
             step.output = `Typed into ${match[1]}`;
@@ -146,7 +146,7 @@ export class BrowserHarness {
         code += `  await page.locator('[data-testid="${ref}"]').click();\n`;
       } else if (lower.startsWith("type ")) {
         const match = step.action.match(/type\s+(@e\d+)\s+"(.+)"/i);
-        if (match && match[1] && match[2]) {
+        if (match?.[1] && match[2]) {
           code += `  // TODO: replace ${match[1]} with proper selector\n`;
           code += `  await page.locator('input').nth(${match[1].replace("@e", "")}).fill("${match[2]}");\n`;
         }

@@ -1,7 +1,7 @@
 "use client";
 
-import { useCartStore } from "@/src/lib/cart/store";
 import { useTranslations } from "next-intl";
+import { useCartStore } from "@/src/lib/cart/store";
 
 export function CartOpenButton() {
   const t = useTranslations("cart");

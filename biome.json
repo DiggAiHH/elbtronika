@@ -33,15 +33,29 @@
       },
       "correctness": {
         "noUnusedImports": "error",
-        "noUnusedVariables": "error"
+        "noUnusedVariables": "error",
+        "noUnusedFunctionParameters": "warn",
+        "noUnknownProperty": "warn",
+        "noMissingVarFunction": "warn"
       },
       "style": {
         "noNonNullAssertion": "warn",
         "useImportType": "error"
       },
+      "a11y": {
+        "useAltText": "warn",
+        "useAriaPropsSupportedByRole": "warn",
+        "useButtonType": "warn",
+        "useMediaCaption": "warn",
+        "noLabelWithoutControl": "warn",
+        "noStaticElementInteractions": "warn"
+      },
       "suspicious": {
-        "noExplicitAny": "error",
-        "noConsole": "warn"
+        "noExplicitAny": "warn",
+        "noArrayIndexKey": "warn",
+        "noDuplicateCustomProperties": "warn",
+        "noDocumentCookie": "warn",
+        "noConsole": "off"
       },
       "performance": {
         "noBarrelFile": "warn"

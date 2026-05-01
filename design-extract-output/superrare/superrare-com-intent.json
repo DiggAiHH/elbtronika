@@ -139,12 +139,7 @@
         "cardCount": 100,
         "slots": {
           "heading": "Featured",
-          "subheadings": [
-            "Panorama Tableau",
-            "Auctions",
-            "Human After All by Elnaz Mansouri",
-            ""
-          ],
+          "subheadings": ["Panorama Tableau", "Auctions", "Human After All by Elnaz Mansouri", ""],
           "ctaCount": 15,
           "lede": "Panorama by Yigit Duman"
         },
@@ -231,9 +226,7 @@
         "cardCount": 31,
         "slots": {
           "heading": "Human After All by Elnaz Mansouri",
-          "subheadings": [
-            ""
-          ],
+          "subheadings": [""],
           "ctaCount": 4,
           "lede": "Human After All by Elnaz Mansouri\nIn a world of glitches, I find myself\nelnaz555\nPlace a Bid\nReserve\n0.110Ξ ($254)\nInner Garden\nelnaz555\nabracadabra\nMake an Offer"
         },

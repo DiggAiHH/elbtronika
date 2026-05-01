@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
 import { Button } from "@elbtronika/ui";
+import { useEffect } from "react";
 
 interface ErrorProps {
   error: Error & { digest?: string };
@@ -26,7 +26,7 @@ export default function CanvasErrorBoundary({ error, reset }: ErrorProps) {
         <Button onClick={reset} variant="primary" size="sm">
           Retry Gallery
         </Button>
-        <Button onClick={() => window.location.href = "/shop"} variant="secondary" size="sm">
+        <Button onClick={() => (window.location.href = "/shop")} variant="secondary" size="sm">
           Browse Shop
         </Button>
       </div>

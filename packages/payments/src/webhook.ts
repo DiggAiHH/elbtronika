@@ -127,9 +127,7 @@ export async function handleAccountUpdated(
   if (!userId || !role) return null;
 
   const payoutEnabled =
-    acc.payouts_enabled === true &&
-    acc.charges_enabled === true &&
-    acc.details_submitted === true;
+    acc.payouts_enabled === true && acc.charges_enabled === true && acc.details_submitted === true;
 
   return { userId, role, payoutEnabled };
 }
