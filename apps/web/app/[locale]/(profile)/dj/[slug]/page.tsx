@@ -68,7 +68,7 @@ export default async function DjProfilePage({ params }: Props) {
             </div>
           )}
           <div>
-            <h1 className="text-3xl font-bold text-[var(--color-text-primary)]">{dj.name}</h1>
+            <h1 className="text-3xl font-semibold text-[var(--color-text-primary)]">{dj.name}</h1>
             {dj.genreTags && dj.genreTags.length > 0 && (
               <div className="mt-2 flex flex-wrap gap-2">
                 {(dj.genreTags as string[]).map((tag) => (

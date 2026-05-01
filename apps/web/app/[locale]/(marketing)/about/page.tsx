@@ -16,7 +16,7 @@ export default async function AboutPage() {
           <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full bg-[#00f5d4]/[0.03] blur-[120px]" />
         </div>
         <div className="relative z-10 max-w-3xl mx-auto">
-          <h1 className="text-5xl md:text-7xl font-bold mb-6">
+          <h1 className="text-5xl md:text-7xl font-semibold mb-6">
             <span className="text-white">Our</span> <span className="gradient-text">Vision</span>
           </h1>
           <p className="text-lg text-white/50 leading-relaxed">
@@ -31,7 +31,7 @@ export default async function AboutPage() {
       <section className="py-24 px-6 border-y border-white/[0.04]">
         <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
           <div>
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">
+            <h2 className="text-3xl md:text-4xl font-semibold mb-6">
               <span className="text-white">Music</span> <span className="gradient-text">× Art</span>
             </h2>
             <p className="text-white/40 leading-relaxed mb-4">
@@ -67,7 +67,7 @@ export default async function AboutPage() {
       {/* Values */}
       <section className="py-32 px-6">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-16">
+          <h2 className="text-3xl md:text-4xl font-semibold mb-16">
             <span className="text-white">Core</span> <span className="gradient-text">Values</span>
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">

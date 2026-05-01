@@ -66,7 +66,9 @@ export default async function ArtistProfilePage({ params }: Props) {
             </div>
           )}
           <div>
-            <h1 className="text-3xl font-bold text-[var(--color-text-primary)]">{artist.name}</h1>
+            <h1 className="text-3xl font-semibold text-[var(--color-text-primary)]">
+              {artist.name}
+            </h1>
             {artist.genreTags && artist.genreTags.length > 0 && (
               <div className="mt-2 flex flex-wrap gap-2">
                 {(artist.genreTags as string[]).map((tag) => (
