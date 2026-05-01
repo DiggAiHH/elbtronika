@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { getClient } from "@/src/lib/sanity/client";
 import { allArtworksQuery } from "@/src/lib/sanity/queries";
+import GalleryEntryOverlay from "./GalleryEntryOverlay";
 import GallerySceneInjector from "./GallerySceneInjector";
 
 export const dynamic = "force-dynamic";
@@ -52,15 +53,13 @@ export default async function GalleryPage({ params }: GalleryPageProps) {
   } catch (err) {
     console.warn("[gallery] sanity fetch failed; using empty fallback", err);
   }
-  const roomArtworks: GalleryArtwork[] = (artworks ?? [])
-    .slice(0, 3)
-    .map((aw) => ({
-      _id: aw._id,
-      ...(aw.title ? { title: aw.title } : {}),
-      ...(aw.slug ? { slug: aw.slug } : {}),
-      ...(aw.image?.asset?.url ? { imageUrl: aw.image.asset.url } : {}),
-      ...(aw.artist?._id ? { artistId: aw.artist._id } : {}),
-    }));
+  const roomArtworks: GalleryArtwork[] = (artworks ?? []).slice(0, 3).map((aw) => ({
+    _id: aw._id,
+    ...(aw.title ? { title: aw.title } : {}),
+    ...(aw.slug ? { slug: aw.slug } : {}),
+    ...(aw.image?.asset?.url ? { imageUrl: aw.image.asset.url } : {}),
+    ...(aw.artist?._id ? { artistId: aw.artist._id } : {}),
+  }));
 
   return (
     <>
@@ -74,6 +73,8 @@ export default async function GalleryPage({ params }: GalleryPageProps) {
       <Suspense fallback={null}>
         <GallerySceneInjector artworks={roomArtworks} locale={locale} />
       </Suspense>
+
+      <GalleryEntryOverlay locale={locale} />
 
       {/* Tall scroll container drives Three.js spline via window.scrollY */}
       <div

@@ -45,9 +45,12 @@ export default async function PitchPage({ params }: Props) {
     <main className="min-h-screen bg-[var(--color-background)]">
       <InvestorWelcomeModal locale={locale} />
       {/* Header */}
-      <div className="border-b border-[var(--color-border)] px-4 py-8 sm:px-6 lg:px-8">
+      <div className="border-b border-[var(--color-border)] px-4 py-10 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-6xl">
-          <h1 className="text-3xl font-bold text-[var(--color-text-primary)]">{t("title")}</h1>
+          <p className="mb-3 text-xs font-medium uppercase tracking-[0.22em] text-[var(--color-text-muted)]">
+            Investor Access
+          </p>
+          <h1 className="text-3xl font-semibold text-[var(--color-text-primary)]">{t("title")}</h1>
           <p className="mt-2 text-[var(--color-text-secondary)]">{t("subtitle")}</p>
         </div>
       </div>
@@ -55,7 +58,7 @@ export default async function PitchPage({ params }: Props) {
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Sales Volume Chart (Mock) */}
-          <section className="p-6 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)]">
+          <section className="p-6 rounded-[20px] border border-[var(--color-border)] bg-[var(--color-surface)]">
             <h2 className="text-lg font-semibold text-[var(--color-text-primary)] mb-4">
               {t("salesTitle")}
             </h2>
@@ -86,7 +89,7 @@ export default async function PitchPage({ params }: Props) {
           </section>
 
           {/* Artist Pipeline */}
-          <section className="p-6 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)]">
+          <section className="p-6 rounded-[20px] border border-[var(--color-border)] bg-[var(--color-surface)]">
             <h2 className="text-lg font-semibold text-[var(--color-text-primary)] mb-4">
               {t("pipelineTitle")}
             </h2>
@@ -125,7 +128,7 @@ export default async function PitchPage({ params }: Props) {
           </section>
 
           {/* AI Curation Cost */}
-          <section className="p-6 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)]">
+          <section className="p-6 rounded-[20px] border border-[var(--color-border)] bg-[var(--color-surface)]">
             <h2 className="text-lg font-semibold text-[var(--color-text-primary)] mb-4">
               {t("aiCostTitle")}
             </h2>
@@ -143,7 +146,7 @@ export default async function PitchPage({ params }: Props) {
           </section>
 
           {/* Audit Log Sample */}
-          <section className="p-6 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)]">
+          <section className="p-6 rounded-[20px] border border-[var(--color-border)] bg-[var(--color-surface)]">
             <h2 className="text-lg font-semibold text-[var(--color-text-primary)] mb-4">
               {t("auditTitle")}
             </h2>
@@ -156,6 +159,7 @@ export default async function PitchPage({ params }: Props) {
                 { tool: "supabase_query_profiles", status: "denied", time: "3ms" },
               ].map((log, i) => (
                 <div
+                  // biome-ignore lint/suspicious/noArrayIndexKey: static audit log mock
                   key={i}
                   className="flex items-center justify-between text-xs py-1 px-2 rounded bg-[var(--color-background)]"
                 >
@@ -179,14 +183,14 @@ export default async function PitchPage({ params }: Props) {
         </div>
 
         {/* Test Checkout CTA */}
-        <div className="mt-8 p-6 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-center">
+        <div className="mt-8 p-6 rounded-[20px] border border-[var(--color-border)] bg-[var(--color-surface)] text-center">
           <h2 className="text-lg font-semibold text-[var(--color-text-primary)] mb-2">
             {t("testCheckoutTitle")}
           </h2>
           <p className="text-sm text-[var(--color-text-secondary)] mb-4">{t("testCheckoutText")}</p>
           <a
             href={`/${locale}/shop`}
-            className="inline-block px-6 py-3 rounded-lg bg-[var(--color-primary)] text-[var(--color-background)] font-medium hover:opacity-90 transition-opacity"
+            className="inline-flex items-center px-6 py-3 rounded-full bg-[var(--color-primary)] text-[var(--color-background)] font-medium hover:opacity-90 transition-opacity"
           >
             {t("testCheckoutCta")}
           </a>
