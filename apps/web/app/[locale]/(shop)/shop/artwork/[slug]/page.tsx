@@ -288,24 +288,51 @@ export default async function ArtworkDetailPage({ params }: Props) {
                 <p className="text-xs uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
                   {locale === "de" ? "DJ-Set" : "DJ Set"}
                 </p>
-                <p className="mt-2 text-sm text-[var(--color-text-secondary)]">
+                {commerceDj ? (
+                  <Link
+                    href={`/${locale}/dj/${commerceDj.slug}`}
+                    className="mt-2 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-primary)] hover:underline"
+                  >
+                    <span className="inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-primary)]" />
+                    {commerceDj.name}
+                  </Link>
+                ) : null}
+                <p className="mt-1.5 text-sm text-[var(--color-text-secondary)]">
                   {commerceSet?.title ??
                     (locale === "de" ? "Noch kein Set verknuepft" : "No set linked yet")}
                 </p>
-                {commerceDj && (
-                  <Link
-                    href={`/${locale}/dj/${commerceDj.slug}`}
-                    className="mt-2 inline-flex text-sm text-[var(--color-primary)] hover:underline"
-                  >
-                    {locale === "de" ? `Set von ${commerceDj.name}` : `Set by ${commerceDj.name}`}
-                  </Link>
-                )}
               </div>
               {commerceSet?.hls_url && (
                 <audio className="w-full" controls preload="none" src={commerceSet.hls_url}>
                   <track kind="captions" />
                 </audio>
               )}
+            </div>
+
+            {/* Trust mini-strip */}
+            <div className="rounded-2xl border border-[var(--color-border)] bg-black/10 px-4 py-3">
+              <p className="mb-2 text-xs uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
+                {locale === "de" ? "Ihre Sicherheit" : "Your Assurance"}
+              </p>
+              <div className="flex flex-col gap-1.5">
+                {[
+                  locale === "de"
+                    ? "Blockchain-verifizierte Provenienz"
+                    : "Blockchain-verified provenance",
+                  locale === "de"
+                    ? "Limitierte Edition — nummeriert"
+                    : "Limited edition — numbered",
+                  locale === "de" ? "Sicherer Checkout" : "Secure checkout",
+                ].map((item) => (
+                  <div
+                    key={item}
+                    className="flex items-center gap-2 text-xs text-[var(--color-text-secondary)]"
+                  >
+                    <span className="shrink-0 text-[var(--color-primary)]">✓</span>
+                    {item}
+                  </div>
+                ))}
+              </div>
             </div>
 
             <div className="flex flex-wrap gap-3">

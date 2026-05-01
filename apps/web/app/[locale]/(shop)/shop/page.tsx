@@ -51,12 +51,15 @@ export default async function ShopPage({ params, searchParams }: Props) {
   return (
     <main className="min-h-screen bg-[var(--color-background)]">
       {/* Header */}
-      <div className="border-b border-[var(--color-border)] px-4 py-8 sm:px-6 lg:px-8">
+      <div className="border-b border-[var(--color-border)] px-4 py-10 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
-          <h1 className="text-4xl font-bold text-[var(--color-text-primary)] sm:text-5xl">
+          <p className="mb-3 text-xs font-medium uppercase tracking-[0.22em] text-[var(--color-text-muted)]">
+            Curated Commerce
+          </p>
+          <h1 className="text-4xl font-semibold text-[var(--color-text-primary)] sm:text-5xl">
             {t("heading")}
           </h1>
-          <p className="mt-2 text-[var(--color-text-secondary)]">{t("subheading")}</p>
+          <p className="mt-3 max-w-xl text-[var(--color-text-secondary)]">{t("subheading")}</p>
         </div>
       </div>
 
