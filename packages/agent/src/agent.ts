@@ -75,7 +75,18 @@ export class HermesAgent {
 
       // Plan
       const relevantSkills = this.skills.findByTrigger(task.goal);
-      const plan = this.planner.planRuleBased(task, relevantSkills);
+        // Use LLM planning for novel tasks (no matching skill), rule-based for known skills
+        let plan: import("./planner").PlanResult;
+        if (relevantSkills.length > 0) {
+          plan = this.planner.planRuleBased(task, relevantSkills);
+        } else {
+          const availableTools = await this.mcp.discoverTools().then(
+            (tools) => tools.map((t) => t.name),
+            () => [] as string[],
+          );
+          const memSnapshot = this.memory.getWorkingMemory(taskId)?.observations.join("\n") ?? "";
+          plan = await this.planner.planWithLLM(task, availableTools, memSnapshot);
+        }
       task.plan = plan.steps;
       this.memory.updateWorkingMemory(taskId, { plan: plan.steps });
 

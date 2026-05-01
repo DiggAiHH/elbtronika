@@ -4,6 +4,14 @@
  */
 
 import type { AgentTask, Skill } from "./types";
+import { generateJson } from "@elbtronika/ai";
+import { z } from "zod";
+
+const PlanSchema = z.object({
+  steps: z.array(z.string().min(1)).min(2).max(10),
+  requiredTools: z.array(z.string()),
+  estimatedDurationMs: z.number().int().positive(),
+});
 
 export interface PlanResult {
   steps: string[];
@@ -47,24 +55,50 @@ export class Planner {
     availableTools: string[],
     _memoryContext: string,
   ): Promise<PlanResult> {
-    // This would call @elbtronika/ai generate() with a planning prompt
-    // For now, return a structured placeholder that the agent loop uses
-    // Placeholder: in production this would call generateJson() with:
-    // system: `You are a planning agent... Available tools: ${availableTools.join(", ")}`
-    // prompt: `${memoryContext}\n\nGoal: ${task.goal}`
-    const steps = [
-      `Understand: ${task.goal}`,
-      "Query relevant data sources",
-      "Analyze and process information",
-      "Execute decision or action",
-      "Validate and confirm outcome",
-    ];
+      const toolList =
+        availableTools.length > 0 ? availableTools.slice(0, 20).join(", ") : "no tools registered";
 
-    return {
-      steps,
-      estimatedDurationMs: steps.length * 10000,
-      requiredTools: availableTools.slice(0, 3),
-    };
+      try {
+        const { data } = await generateJson(
+          {
+            system: `You are HERMES — the planning agent for ELBTRONIKA, an art-tech platform.
+  Decompose the user's goal into 3-7 concrete, sequential steps.
+  Each step must be an actionable instruction (not a question).
+  Only reference tools from the available list when needed.
+  Respond ONLY with valid JSON — no markdown, no prose outside the JSON object.`,
+            messages: [
+              {
+                role: "user",
+                content: `Available tools: ${toolList}\n\nMemory context:\n${_memoryContext}\n\nGoal: ${task.goal}\n\nRespond with:\n{\n  "steps": ["step 1", "step 2", ...],\n  "requiredTools": ["tool_name"],\n  "estimatedDurationMs": 30000\n}`,
+              },
+            ],
+            model: "claude-sonnet-4-20250514",
+            maxTokens: 512,
+            temperature: 0.3,
+          },
+          PlanSchema,
+        );
+
+        return {
+          steps: data.steps,
+          estimatedDurationMs: data.estimatedDurationMs,
+          requiredTools: data.requiredTools,
+        };
+      } catch {
+        // Gracefully fall back if LLM unavailable (no API key in test/CI environments)
+        const fallbackSteps = [
+          `Understand goal: ${task.goal}`,
+          "Query relevant data sources",
+          "Analyze and process information",
+          "Execute primary action",
+          "Validate and confirm outcome",
+        ];
+        return {
+          steps: fallbackSteps,
+          estimatedDurationMs: fallbackSteps.length * 10000,
+          requiredTools: availableTools.slice(0, 3),
+        };
+      }
   }
 
   /** Replan when a step fails */

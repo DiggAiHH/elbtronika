@@ -31,7 +31,9 @@ describe("MCPServer", () => {
     const resp = response as Record<string, unknown>;
     if ("result" in resp) {
       const result = resp.result as { content: Array<{ text: string }> };
-      const parsed = JSON.parse(result.content[0]?.text);
+      const rawText = result.content[0]?.text;
+      if (!rawText) throw new Error("no content text");
+      const parsed = JSON.parse(rawText);
       expect(parsed.echoed).toBe("hello");
     }
   });
