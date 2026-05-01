@@ -212,6 +212,18 @@ Pre-commit hook runs `biome check --write --no-errors-on-unmatched` on staged fi
 
 ## Testing Instructions
 
+### Current Verified Baseline (2026-05-01)
+
+Latest consolidated verification state:
+- Backend tests: 120 passed, 11 skipped, 0 failed
+- Frontend tests: 29 passed, 0 failed
+- TypeScript: `tsc --noEmit` clean (0 errors)
+- Build: production build successful
+
+Recent failure recovery highlights:
+- Backend: 8 prior failures resolved (lazy schema loading, ONNX batch-size mock behavior, async timing-attack tests)
+- Frontend: 17 prior failures resolved (vitest setup storage reset, walkthrough dialog semantics, debounce mock stabilization, QueryClient test wrappers, accessibility label wiring, AbortError typing)
+
 ### Unit Tests (Vitest)
 
 Config per package: `vitest.config.ts`

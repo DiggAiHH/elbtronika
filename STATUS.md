@@ -75,6 +75,23 @@
 - `packages/audio/src/engine/SpatialAudioEngine.ts`
   - `dispose()` iteriert über Key-Snapshot statt mutierender Live-Map.
 
+### Finale Test- und Build-Baseline
+
+| Schicht | Status | Details |
+|---|---|---|
+| Backend | ✅ | 120 passed, 11 skipped (vorher 8 Failures behoben) |
+| Frontend | ✅ | 29 passed, 0 failed (vorher 17 Failures behoben) |
+| TypeScript | ✅ | `tsc --noEmit` clean (0 errors) |
+| Build | ✅ | Produktions-Build erfolgreich |
+
+Fix-Cluster aus dem Abschlusslauf:
+- Backend: `test_lazy_schema_loading.py`, `test_onnx_session_optimization.py`, `test_security_timing_attack.py`
+- Frontend: `vitest.setup.ts`, `Walkthrough.tsx`, `FreeTextField.test.tsx`, `DecisionForm.test.tsx`, `AuthGate.tsx`, `AuthGate.test.tsx`, `Walkthrough.test.tsx`
+
+Dokument-Artefakte für Handover und Audit-Trail:
+- `memory/runs/2026-05-01_handoff_opus47_post_audit_fixes.md`
+- `memory/runs/2026-05-01_kimi_post_audit_test_fixes.md`
+
 ### Projektstand nach heutigem Lauf
 - Typprüfung in den betroffenen Paketen ist grün.
 - Zielgerichtete Regressionstests für Press/Supabase sind grün.
