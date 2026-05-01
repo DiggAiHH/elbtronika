@@ -1,52 +1,38 @@
-<<<<<<< HEAD
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { render, screen, fireEvent } from "@testing-library/react";
+import { InvestorWelcomeModal } from "@/app/[locale]/pitch/InvestorWelcomeModal";
+
+// Mock next/link
+vi.mock("next/link", () => ({ default: ({ children, href }: { children: React.ReactNode; href: string }) => <a href={href}>{children}</a> }));
 
 describe("Pitch Dashboard", () => {
   it("requires investor role", () => {
     // Server-side gating is tested via E2E or integration tests
     expect(true).toBe(true);
-=======
-import { describe, expect, it } from "vitest";
-
-describe("Pitch Dashboard", () => {
-  it("has all required mock data structures", () => {
-    const salesData = [
-      { month: "Jan", value: 12 },
-      { month: "Feb", value: 19 },
-    ];
-    expect(salesData).toHaveLength(2);
-    expect(salesData[0]).toHaveProperty("month");
-    expect(salesData[0]).toHaveProperty("value");
-  });
-
-  it("artist pipeline has correct stages", () => {
-    const pipeline = [
-      { name: "Mira Volk", status: "live", stage: 100 },
-      { name: "Kenji Aoki", status: "live", stage: 100 },
-      { name: "Helena Moraes", status: "onboarding", stage: 75 },
-    ];
-    const liveArtists = pipeline.filter((a) => a.status === "live");
-    expect(liveArtists).toHaveLength(2);
-    expect(liveArtists.every((a) => a.stage === 100)).toBe(true);
-  });
-
-  it("calculates bar width correctly", () => {
-    const value = 42;
-    const max = 50;
-    const width = (value / max) * 100;
-    expect(width).toBe(84);
-  });
-
-  it("audit log has required fields", () => {
-    const log = { tool: "supabase_query", status: "ok", time: "12ms" };
-    expect(log).toHaveProperty("tool");
-    expect(log).toHaveProperty("status");
-    expect(log).toHaveProperty("time");
-  });
-
-  it("test card hint contains 4242", () => {
-    const hint = "Test card: 4242 4242 4242 4242 — any future date, any CVC.";
-    expect(hint).toContain("4242");
->>>>>>> feature/phase-18-19-tests-and-prd-docs
   });
 });
+
+describe("InvestorWelcomeModal", () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
+  it("shows on first visit", () => {
+    render(<InvestorWelcomeModal locale="en" />);
+    expect(screen.getByTestId("investor-welcome-modal")).toBeTruthy();
+  });
+
+  it("does not show when already welcomed", () => {
+    localStorage.setItem("elt-investor-welcomed", "true");
+    render(<InvestorWelcomeModal locale="en" />);
+    expect(screen.queryByTestId("investor-welcome-modal")).toBeNull();
+  });
+
+  it("dismisses and sets localStorage on Explore Freely click", () => {
+    render(<InvestorWelcomeModal locale="en" />);
+    fireEvent.click(screen.getByText("Explore Freely"));
+    expect(screen.queryByTestId("investor-welcome-modal")).toBeNull();
+    expect(localStorage.getItem("elt-investor-welcomed")).toBe("true");
+  });
+});
+
