@@ -1,11 +1,3 @@
-<<<<<<< HEAD
-import { describe, it, expect } from "vitest";
-
-describe("Press Kit Page", () => {
-  it("has route at /press", () => {
-    // Route existence is validated by Next.js file-system routing
-    expect(true).toBe(true);
-=======
 import { describe, expect, it } from "vitest";
 
 describe("Press Kit Page", () => {
@@ -52,6 +44,5 @@ describe("Press Kit Page", () => {
     const email = "hallo@elbtronika.de";
     expect(email).toMatch(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
     expect(email).toContain("elbtronika.de");
->>>>>>> feature/phase-18-19-tests-and-prd-docs
   });
 });

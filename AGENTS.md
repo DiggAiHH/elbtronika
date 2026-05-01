@@ -15,9 +15,6 @@
 
 Revenue model: 60/20/20 split (Artist / DJ / Platform).
 
-<<<<<<< HEAD
-The project is a **pnpm monorepo** managed with Turborepo. It is built by a solo developer (Lou) with AI pair-programming. Development is phase-driven (Phase 0–19). Phases 0–5 are complete on `main`. Phases 6–19 are complete on `feature/phase-11-ai` (tag `v0.13.0-demo`).
-=======
 The project runs in three runtime modes controlled by the Doppler variable `ELT_MODE`:
 
 | Mode | ENV | Use-Case | Data | Stripe |
@@ -27,7 +24,6 @@ The project runs in three runtime modes controlled by the Doppler variable `ELT_
 | **Live** | `live` | Public launch | Only real artists, real sales | Live-Mode |
 
 The project is a **pnpm monorepo** managed with Turborepo. It is built by a solo developer (Lou) with AI pair-programming. Development is phase-driven (Phase 0–19). As of 2026-04-30, Phases 1–17 are complete on `main`. Phase 16 (Launch) is ready. Phases 18–19 are in planning.
->>>>>>> feature/phase-18-19-tests-and-prd-docs
 
 ---
 
@@ -144,7 +140,6 @@ pnpm clean               # turbo run clean + rm -rf node_modules
 pnpm --filter @elbtronika/web dev
 pnpm --filter @elbtronika/cms dev
 pnpm --filter @elbtronika/ui storybook
-pnpm --filter @elbtronika/web lighthouse   # Lighthouse CI
 ```
 
 ### Turborepo Pipeline (`turbo.json`)
@@ -519,17 +514,10 @@ app/
 
 ### Windows-Specific Tooling Rules
 
-<<<<<<< HEAD
-- **Shell:** PowerShell works fine — always use `.cmd` suffix: `pnpm.cmd`, `npx.cmd`
-- **Git commit:** Direct `git commit -m "msg"` works; for multiline use `git commit -F file.txt`
-- **Biome:** Use `pnpm lint` or `node_modules\.bin\biome`, never `npx biome` (wrong version)
-- **Bracket dirs:** `[locale]` directories → create via Node.js `fs.mkdirSync`, not shell
-=======
 - **Shell:** Always `cmd`, never PowerShell (blocks pnpm.ps1)
 - **Git commit:** Write message to file first, then `git commit -F D:\msg.txt`
 - **Biome:** Use `node_modules\.bin\biome` or `pnpm lint`, never `npx biome`
 - **Bracket dirs:** `[locale]` directories — create via Node.js `fs.mkdirSync`, not shell
->>>>>>> feature/phase-18-19-tests-and-prd-docs
 
 ---
 
@@ -540,15 +528,7 @@ app/
 - **README:** `README.md` — modes, quick start, troubleshooting, monorepo structure
 - **Setup:** `SETUP.md` — local environment setup instructions
 - **CLAUDE.md:** Project context, phase status, glossary, stack
-<<<<<<< HEAD
-- **Agent Protocol:** `engineering-harness/PRE_FLIGHT_PROTOCOL.md` — mandatory pre-flight checklist, tool matrix, Windows survival guide, memory discipline, merge protocol, error registry
-- **Architecture Plans:** `ELBTRONIKA_Architekturplan_v1.md`, `ELBTRONIKA_Architekturplan_v1.1.md`
-- **ADRs:** `docs/adr/0001-monorepo-tooling.md` through `0007-immersive-architektur.md`
-- **Setup:** `SETUP.md` — local environment setup instructions
-- **Harness:** `engineering-harness/HARNESS.md` — token efficiency tools
-=======
 - **Agent Protocol:** `docs/agent-preflight-protocol.md` — detailed tool rules
 - **Architecture Plans:** `ELBTRONIKA_Architekturplan_v1.md` through `v1.3.md`
 - **ADRs:** `docs/adr/0001-monorepo-tooling.md` through `0022-modes-and-prd-doppler.md`
 - **Trust Harness:** `engineering-harness/HERMES_TRUST_HARNESS.md` — trust boundary specification
->>>>>>> feature/phase-18-19-tests-and-prd-docs

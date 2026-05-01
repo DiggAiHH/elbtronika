@@ -45,6 +45,7 @@
 ## Plan-Updates
 
 - **v1.4** (2026-04-30) — Opus 4.7: Phase 20 Sequenzierung, GPT-Drift-Dokumentation, Merge-Map, Agent-Prompts
+- 2026-04-30 — `ELBTRONIKA_Architekturplan_v1.4.md` — Opus 4.7 Plan-Update post-GapFill
 - **v1.3** → Audit-Trail (abgelöst durch v1.4)
 - **v1.2** → Audit-Trail
 - **v1.1** → Audit-Trail

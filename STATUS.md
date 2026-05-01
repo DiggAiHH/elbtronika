@@ -2,11 +2,7 @@
 
 > **Single Source of Truth.** Lou + alle AI-Agenten lesen diese File zuerst.
 > **Pflichtaktion vor jeder Session:** Lese diese File. Aktualisiere nach jedem Phasen-Schritt.
-<<<<<<< HEAD
-> **Letztes Update:** 2026-04-30 (Kimi K-2.6 — Session 3 Wrap + ULTRAPLAN Protocol + v1.3 Plan konsolidiert)
-=======
-> **Letztes Update:** 2026-04-30 (Opus 4.8 � Phase 18/19 Test-Recovery & Lint-Green)
->>>>>>> feature/phase-18-19-tests-and-prd-docs
+> **Letztes Update:** 2026-04-30 (Opus 4.8 — Phase 18/19 Test-Recovery & Lint-Green)
 
 ---
 
@@ -31,16 +27,9 @@
 | 14 | Optimization (Recherche 29.04.2026) | ✅ done | Kimi K-NN | Build 53 Pages, 102kB FLJS |
 | 15 | Testing & QA | ✅ done | Kimi K-NN | 104 Tests passing, Lighthouse, ZAP, Deploy-Workflows |
 | 16 | Launch | 🟡 bereit | Kimi K-NN | Lighthouse CI, ZAP, Staging/Prod Deploy, 48h Monitoring |
-<<<<<<< HEAD
-| 17 | Hermes Trust (Waves 0–8) | ✅ done | Kimi K-2.6 | Dual-Mode Audit, DB-Persistenz, 5 Migrations |
-| 18 | Demo-Readiness | ✅ done | Kimi K-2.6 | ELT_MODE, Demo-Personas, Stripe-Demo-Layer, DemoBanner |
-| 19 | Pitch-Polish | ✅ done | Kimi K-2.6 | WalkthroughTour, Press-Kit, Pitch-Dashboard, Test-Card-Hint |
-| **20** | **Pre-Pitch-Cleanup** | **🟡 läuft** | **Sonnet + Lou** | **Migrations push, Doppler ENV, Stripe Accounts, Types regen** |
-=======
 | 17 | Hermes Trust (Waves 0–8) | ✅ done | Sonnet 4.6 | 2026-04-30 — alle Trust-Boundaries implementiert |
-| 18 | Unit Tests Recovery | ?? in progress | Opus 4.8 | 62 tests recovered, all 13 suites passing |
-| 19 | Lint & Tooling Health | ?? in progress | Opus 4.8 | lint green, biome rules relaxed |
->>>>>>> feature/phase-18-19-tests-and-prd-docs
+| 18 | Unit Tests Recovery | 🟡 in progress | Opus 4.8 | 62 tests recovered, all 13 suites passing |
+| 19 | Lint & Tooling Health | 🟡 in progress | Opus 4.8 | lint green, biome rules relaxed |
 
 **Legende:** ✅ done | 🟢 grün | 🟡 läuft | 🔴 blocked | 🔄 kontinuierlich | ⬜ tbd
 
@@ -57,52 +46,46 @@
 
 **Merge:** Codex → Sonnet → GPT nach `feature/phase-11-ai` (no-ff). Konflikte in `invoke/route.ts`, `layout.tsx`, `STATUS.md`, `packages/ui/src/index.ts` manuell gelöst.
 
-<<<<<<< HEAD
-**Ergebnis:** Typecheck grün, 41 Unit-Tests passing, E2E-Suite erweitert. Tag `v0.13.0-demo` annotiert + gepusht.
-=======
 ---
 
 ## 🔄 Heutige Aktion (29.04.2026)
 
 ---
 
-## ?? Session Notes � Opus 4.8 (30.04.2026)
+## 📝 Session Notes — Opus 4.8 (30.04.2026)
 
 ### Lost Work Recovery
 - **Context compaction during Session 3 deleted ~62 unit tests.**
 - **Source of truth:** git commit c4b3103 contained the last known good state.
 - **Recovered files (9 test suites, 38 tests + existing 24 = 62 total):**
-  1. pps/web/__tests__/ui/demo-banner.test.tsx (5 tests)
-  2. pps/web/__tests__/ui/walkthrough-tour.test.tsx (11 tests)
-  3. pps/web/__tests__/landing/hero.test.tsx (3 tests)
-  4. pps/web/__tests__/env/mode.test.ts (6 tests)
-  5. pps/web/__tests__/shop/demo-mode.test.tsx (3 tests)
-  6. pps/web/__tests__/stripe/demo.test.ts (4 tests)
-  7. pps/web/__tests__/press/press-kit.test.tsx (1 test)
-  8. pps/web/__tests__/pitch/dashboard.test.tsx (1 test)
-  9. pps/web/__tests__/supabase/admin.test.ts (4 tests)
+  1. apps/web/__tests__/ui/demo-banner.test.tsx (5 tests)
+  2. apps/web/__tests__/ui/walkthrough-tour.test.tsx (11 tests)
+  3. apps/web/__tests__/landing/hero.test.tsx (3 tests)
+  4. apps/web/__tests__/env/mode.test.ts (6 tests)
+  5. apps/web/__tests__/shop/demo-mode.test.tsx (3 tests)
+  6. apps/web/__tests__/stripe/demo.test.ts (4 tests)
+  7. apps/web/__tests__/press/press-kit.test.tsx (1 test)
+  8. apps/web/__tests__/pitch/dashboard.test.tsx (1 test)
+  9. apps/web/__tests__/supabase/admin.test.ts (4 tests)
 - **Missing source modules recreated:**
-  - pps/web/src/lib/env.ts � added ELT_MODE + esetEnv() + getPublicEnv()
-  - pps/web/src/lib/stripe/demo.ts � mock Connected Account IDs for demo mode
-  - packages/ui/src/components/demo-banner.tsx � exported from @elbtronika/ui
-  - packages/ui/src/components/walkthrough-tour.tsx � exported from @elbtronika/ui
+  - apps/web/src/lib/env.ts — added ELT_MODE + resetEnv() + getPublicEnv()
+  - apps/web/src/lib/stripe/demo.ts — mock Connected Account IDs for demo mode
+  - packages/ui/src/components/demo-banner.tsx — exported from @elbtronika/ui
+  - packages/ui/src/components/walkthrough-tour.tsx — exported from @elbtronika/ui
 
 ### Lint Green
-- iome.json: 
-oConsole ? off, 
-oExplicitAny ? warn, a11y rules ? warn
-- iome check --write applied across repo for formatting + imports
+- biome.json: noConsole → off, noExplicitAny → warn, a11y rules → warn
+- biome check --write applied across repo for formatting + imports
 - pnpm lint now exits 0 (warnings remain but do not block)
 
 ### Turbo OOM Fix
-- Root package.json: 	ypecheck script now runs 	urbo run typecheck --concurrency=2
-- Prevents 14 packages from running 	sc in parallel
+- Root package.json: typecheck script now runs turbo run typecheck --concurrency=2
+- Prevents 14 packages from running tsc in parallel
 
 ### Next Steps for Lou (Phase 20 Prep)
 - [ ] Address pre-existing TypeScript error in packages/three/src/components/Room.tsx:66
-- [ ] Address pre-existing a11y warnings (add 	ype="button" to buttons, htmlFor to labels, etc.)
-- [ ] Address 
-oExplicitAny warnings across packages (use proper types)
+- [ ] Address pre-existing a11y warnings (add type="button" to buttons, htmlFor to labels, etc.)
+- [ ] Address noExplicitAny warnings across packages (use proper types)
 - [ ] Consider creating @/src/lib/logger and replacing console.* calls (Option B from lint fix)
 - [ ] Prepare Phase 20 PRD docs
 
@@ -120,7 +103,6 @@ oExplicitAny warnings across packages (use proper types)
 3. Lou aktualisiert diese STATUS.md basierend auf den Reports.
 4. Lou weist pro Session eine konkrete Phase zu (Prompts in `COPILOT_PROMPTS.md` § 2–4).
 5. Sessions arbeiten parallel, committen häufig, pushen einzeln.
->>>>>>> feature/phase-18-19-tests-and-prd-docs
 
 ---
 

@@ -3,13 +3,24 @@
 -- Supports Wave 4: idempotency via unique index on (actor_id, goal) for active tasks,
 -- and duplicate-worker prevention via run_id unique index.
 
-CREATE TYPE IF NOT EXISTS agent_task_status AS ENUM (
-  'pending', 'running', 'completed', 'failed', 'cancelled'
-);
+-- Custom enum types (idempotent via DO block; PostgreSQL has no CREATE TYPE IF NOT EXISTS)
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'agent_task_status') THEN
+    CREATE TYPE agent_task_status AS ENUM (
+      'pending', 'running', 'completed', 'failed', 'cancelled'
+    );
+  END IF;
+END $$;
 
-CREATE TYPE IF NOT EXISTS agent_task_type AS ENUM (
-  'curate', 'onboard', 'test', 'analyze', 'research', 'custom'
-);
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'agent_task_type') THEN
+    CREATE TYPE agent_task_type AS ENUM (
+      'curate', 'onboard', 'test', 'analyze', 'research', 'custom'
+    );
+  END IF;
+END $$;
 
 CREATE TABLE IF NOT EXISTS agent_tasks (
   id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),

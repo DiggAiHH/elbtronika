@@ -4,17 +4,14 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import "@/app/globals.css";
+import { DemoBanner } from "@elbtronika/ui";
 import dynamic from "next/dynamic";
-import { ConsentBanner } from "./components/ConsentBanner";
-import Footer from "./components/Footer";
-<<<<<<< HEAD
 import { EnvProvider } from "@/src/components/providers/EnvProvider";
 import { getEnv } from "@/src/lib/env";
-import { DemoBanner } from "@elbtronika/ui";
-=======
+import { ConsentBanner } from "./components/ConsentBanner";
+import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import { WebVitals } from "./components/WebVitals";
->>>>>>> feature/phase-18-19-tests-and-prd-docs
 
 const CanvasRoot = dynamic(
   () => import("@elbtronika/three").then((m) => ({ default: m.CanvasRoot })),
@@ -32,7 +29,7 @@ const GalleryHUD = dynamic(
 
 const WalkthroughTour = dynamic(
   () => import("@elbtronika/ui").then((m) => ({ default: m.WalkthroughTour })),
-  { ssr: false }
+  { ssr: false },
 );
 
 type Props = {
@@ -84,29 +81,17 @@ export default async function LocaleLayout({ children, params }: Props) {
     <html lang={locale} className="dark">
       <body className="min-h-dvh flex flex-col">
         <NextIntlClientProvider locale={locale} messages={messages}>
-<<<<<<< HEAD
           <EnvProvider mode={ELT_MODE}>
             <CanvasRoot />
             <GalleryHUD />
             <Navbar />
-            <main className="flex-1">
-              {children}
-            </main>
+            <main className="flex-1">{children}</main>
             <Footer />
             <ConsentBanner locale={locale as "de" | "en"} />
             <WebVitals />
             <DemoBanner mode={ELT_MODE} />
             <WalkthroughTour locale={locale} />
           </EnvProvider>
-=======
-          <CanvasRoot />
-          <GalleryHUD />
-          <Navbar />
-          <main className="flex-1">{children}</main>
-          <Footer />
-          <ConsentBanner locale={locale as "de" | "en"} />
-          <WebVitals />
->>>>>>> feature/phase-18-19-tests-and-prd-docs
         </NextIntlClientProvider>
       </body>
     </html>
