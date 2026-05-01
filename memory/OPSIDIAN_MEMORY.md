@@ -52,6 +52,27 @@
 - **Neue Dateien:** `supabase/config.toml` (CLI-Config), `supabase/smoke-test-audit.sql` (DB-Validation)
 - **43 Tests green:** env (6), pitch (4), press (5), supabase/admin (2), demo-banner (5), walkthrough-tour (11), stripe/demo (4), shop/demo-mode (3), landing/hero (3)
 
+## Pre-Flight Protocol v3.0 (2026-04-30)
+
+- **Datei:** `engineering-harness/PRE_FLIGHT_PROTOCOL.md` — vollstaendiges Agent-Operations-Manual
+- **Neu:** 20 Fatal Error Patterns (statt 15), Windows-Gotchas, Monorepo-Spezifika, Verification Ladder
+- **Neu:** Tool-Matrix mit Entscheidungsbaum, Per-Tool Best Practices
+- **Neu:** Supabase/PostgreSQL Patterns (CREATE TYPE idempotent), Doppler ENV Management
+- **Neu:** Memory-Disziplin mit Run-Log-Format und Handoff-Struktur
+- **Neu:** Background Tasks, Approval-Workflow, Known Issues
+
+## Run-Logs (vollstaendig)
+
+| Run | Datei | Agent | Model | Focus |
+|-----|-------|-------|-------|-------|
+| Run-01 | `memory/runs/2026-04-30_Kimi_Run-01.md` | Kimi | System | Phase 18/19 Recovery |
+| Run-02 | `memory/runs/2026-04-30_Kimi_Run-02.md` | Kimi | Codex 5.3 | Doppler PRD Docs |
+| Run-03 | `memory/runs/2026-04-30_Kimi_Run-03.md` | Kimi | Sonnet 4.6 | Phase 18 Demo Readiness |
+| Run-04 | `memory/runs/2026-04-30_Kimi_Run-04.md` | Kimi | GPT 5.4 | Phase 19 Pitch Polish |
+| Run-05 | `memory/runs/2026-04-30_Kimi_Run-05.md` | Kimi | System | ULTRAPLAN Protocol v2 |
+| Opus-01 | `memory/runs/2026-04-30_Opus_47-Run01.md` | Opus | 4.7 | Plan v1.4 Update |
+| Run-06 | `memory/runs/2026-04-30_Kimi_GapFill-MergeFix_Run-06.md` | Kimi | System | Phase 20.B Sonnet Finalize + Protocol v3.0 |
+
 ## Plan-Updates
 
 - **v1.4** (2026-04-30) — Opus 4.7: Phase 20 Sequenzierung, GPT-Drift-Dokumentation, Merge-Map, Agent-Prompts
