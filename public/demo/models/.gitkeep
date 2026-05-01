@@ -1,0 +1,14 @@
+# Demo 3D Models
+
+This directory contains placeholder stubs for demo 3D models (.glb format).
+In production, these would be Low-Poly cubes or Drei-Drei examples.
+
+Expected files (6 total):
+- resonance-7.glb
+- ink-protocol.glb
+- circuit-garden.glb
+- frequency-memory.glb
+- sub-bass-cathedral.glb
+- velvet-decay.glb
+
+Note: 447-am.jpg and ghost-machine.jpg are 2D-only artworks without 3D models.
