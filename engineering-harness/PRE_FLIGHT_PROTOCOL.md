@@ -1,9 +1,24 @@
-# Pre-Flight Protocol — Agent Operations Manual v3.0
+# Pre-Flight Protocol — Agent Operations Manual v3.1
 
 > **Jeder Agent liest dies vor dem ersten Tool-Call.**
 > Dies ist die verdichtete Betriebsanleitung fuer alle Tools, Skills und Workflows auf diesem Windows-System.
-> Gueltig ab: 2026-04-30 | Autor: Kimi (System-Agent) | Letzte Session: Phase 20.B Sonnet Finalize
+> Gueltig ab: 2026-05-01 | Autor: Kimi (System-Agent) | Letzte Session: ULTRAPLAN v5 Alignment
 > **Regel:** Wenn ein Tool unerwartet fehlschlaegt → zuerst dieses Protokoll konsultieren, dann dem User melden.
+
+### ULTRAPLAN Cross-Reference (Mandatory)
+
+Vor jedem substantiellen Task zusaetzlich lesen:
+
+1. `engineering-harness/ULTRAPLAN_AGENT_PREFLIGHT.md` (Execution Contract + Done Definition)
+2. `engineering-harness/COPILOT_AGENT_PREFLIGHT.md` (VS Code Tool Routing)
+3. `engineering-harness/HERMES_TRUST_HARNESS.md` (nur bei Trust-Boundary Tasks)
+
+Prioritaetsreihenfolge bei Konflikten:
+
+1. User request + repository reality
+2. Hermes Trust Harness (bei sensiblen Bereichen)
+3. ULTRAPLAN v5
+4. Dieses Pre-Flight Manual
 
 ---
 

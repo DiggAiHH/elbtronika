@@ -93,9 +93,19 @@
 
 ## Plan-Updates
 
-- **v1.4** (2026-04-30) — Opus 4.7: Phase 20 Sequenzierung, GPT-Drift-Dokumentation, Merge-Map, Agent-Prompts
-- 2026-04-30 — `ELBTRONIKA_Architekturplan_v1.4.md` — Opus 4.7 Plan-Update post-GapFill
-- **v1.3** → Audit-Trail (abgelöst durch v1.4)
-- **v1.2** → Audit-Trail
-- **v1.1** → Audit-Trail
-- **v1.0** → Audit-Trail
+
+## Harness Update (2026-05-01)
+
+- ULTRAPLAN upgraded to v5 in `engineering-harness/ULTRAPLAN_AGENT_PREFLIGHT.md`
+- PRE_FLIGHT cross-references added in `engineering-harness/PRE_FLIGHT_PROTOCOL.md`
+- Copilot reference file added: `.github/copilot-instructions.md`
+- Chromium smoke test added: `apps/web/e2e/chromium-ultraplan-smoke.spec.ts`
+- Run log: `memory/runs/2026-05-01_Copilot_GPT53-Run01.md`
+
+## Systematic Re-Execution (2026-05-01)
+
+- External ULTRAPLAN lessons were harnessed into `engineering-harness/ULTRAPLAN_AGENT_PREFLIGHT.md`
+- Landing first production slice delivered in `apps/web/app/[locale]/page.tsx` and `apps/web/app/globals.css`
+- Chromium smoke test executed successfully after robustness fix in `apps/web/e2e/chromium-ultraplan-smoke.spec.ts`
+- Todo snapshot saved and completed in `docs/plans/todo-systematic-execution-2026-05-01.md`
+- Run log: `memory/runs/2026-05-01_Copilot_GPT53-Run02_ultraplan_harness_and_landing_slice.md`

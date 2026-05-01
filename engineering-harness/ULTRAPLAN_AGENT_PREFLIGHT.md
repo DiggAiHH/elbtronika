@@ -1,151 +1,258 @@
-# ULTRAPLAN Agent Pre-Flight Protocol
+# ULTRAPLAN Agent Pre-Flight Protocol v5
 
-> Current harness layer for Codex, Claude, Kimi, Sonnet, GPT, and future code agents.
-> Read this before the first meaningful tool call. It captures what worked on this Windows cowork machine.
+> Harness The Whole Knowledge.
+> This is the execution protocol for Codex, Claude, Sonnet, GPT, and future agents working in this repo.
+> Read this before the first meaningful tool call.
 
-## 0. First 90 Seconds
+## -1. Agent Quickstart (5 Minutes)
 
-1. `cd D:\Elbtronika\Elbtonika`.
-2. Run `git status --short` and `git branch --show-current`.
-3. Read the active handoff, `STATUS.md`, `CLAUDE.md`, and `engineering-harness/PRE_FLIGHT_PROTOCOL.md`.
-4. If the task touches auth, MCP, checkout, privacy, account deletion, Supabase writes, Stripe, or public readiness claims, also read `engineering-harness/HERMES_TRUST_HARNESS.md`.
-5. Before editing, identify exact files, active branch, verification command, and run-log name.
+If you are a fresh agent instance, do this in order:
 
-## 1. Tool Call Rules
+1. Read this file fully.
+2. Check stop rules in section 15.
+3. Run hard preflight in section 1.
+4. Confirm branch, working tree, and remote safety.
+5. Pick verification command before first edit.
+6. Ensure one run-log will be written for this prompt cycle.
 
-Use local context first:
+## 0. Mission
 
-- Known file contents: read the file directly with shell `Get-Content -Raw`.
-- Unknown locations: use `rg` or `rg --files`; fall back only if `rg` is missing.
-- Several independent reads: call them in parallel with `multi_tool_use.parallel`.
-- Manual edits: use `apply_patch`; do not write code files with PowerShell redirection.
-- Large mechanical formatting: run the repo tool, for example `node_modules\.bin\biome.cmd check --write <files>`.
-- Browser/UI verification: use the Playwright skill when screenshots, responsive behavior, forms, or real browser checks matter.
-- Internet/web: browse only for current external facts, official docs, or direct source attribution.
-- Image assets: use the imagegen skill/tool only when a bitmap visual asset is actually needed.
+Deliver correct code and true documentation with the least risk, fastest safe path, and complete traceability.
 
-Use subagents only when explicitly allowed by the user or when the environment request names parallel agents. Good delegation targets are independent read-only exploration, isolated file ownership, or verification that can run while local work continues. Never send the immediate blocking task away if the next step depends on it.
+Success requires all of the following:
 
-## 2. Skill And Plugin Routing
+1. Correct branch and workspace state.
+2. Correct file targets and verification command before edits.
+3. Correct trust boundary handling for sensitive work.
+4. Correct handoff and memory updates when done.
 
-Load only the needed skill file, not the whole skill library.
+If one of these is unknown, stop and resolve it first.
 
-| Work type | Skill/plugin |
+## 1. Hard Preflight (First 120 Seconds)
+
+1. `cd D:\Elbtronika\Elbtonika`
+2. `git branch --show-current`
+3. `git status --short`
+4. Read `AGENTS.md` and `CLAUDE.md`.
+5. Read `memory/OPSIDIAN_MEMORY.md` and latest handoff.
+6. Read the last 3 run logs in `memory/runs/`.
+7. Read `engineering-harness/PRE_FLIGHT_PROTOCOL.md` for system constraints.
+8. Read `engineering-harness/COPILOT_AGENT_PREFLIGHT.md` for VS Code tool routing.
+9. If scope includes auth, payments, deletion, MCP side effects, or public readiness claims, read `engineering-harness/HERMES_TRUST_HARNESS.md`.
+
+Before any push-related work, run a targeted secret scan:
+
+```powershell
+rg -n "api[_-]?key|token|secret|BEGIN (RSA|OPENSSH) PRIVATE KEY|github_pat_" -g "!**/.git/**" -g "!**/node_modules/**" .
+```
+
+Do not edit until all 7 checks are done.
+
+## 2. Execution Contract
+
+Before first edit, state these internally and act accordingly:
+
+1. Exact files to change.
+2. Exact verification command.
+3. Expected output signal for success.
+4. Expected artifacts to update (docs, run log, handoff).
+
+If any element is missing, do not start implementation.
+
+## 3. Tool Priority (Local First)
+
+Always prefer the cheapest reliable source of truth.
+
+1. Read known file paths directly.
+2. Use `rg`/search for unknown file locations.
+3. Parallelize independent reads.
+4. Use `apply_patch` for manual file edits.
+5. Use formatter/linter tooling only on changed files during iteration.
+6. Use browser automation only when runtime behavior must be proven.
+
+Never use PowerShell redirection (`>`, `>>`) for source files.
+
+## 3.1 Tool-Call Sequence (Default)
+
+Use this order unless there is a clear reason not to:
+
+1. Scope search (`search_subagent` or local search).
+2. Direct file reads (`read_file`) for exact context.
+3. Task tracking for multi-step work.
+4. Edits via `apply_patch` (preferred) or `create_file` for new files.
+5. Runtime verification via terminal/tests.
+6. Error check and changed-files review before handoff.
+
+## 3.2 Connector Activation Strategy
+
+Activate the minimal tool surface first:
+
+1. Local repo tools first.
+2. GitHub/PR connectors only when local context is insufficient.
+3. Browser automation only for real UI/runtime proof.
+4. External docs lookup only when API behavior is uncertain.
+
+## 4. Subagent Policy
+
+Use subagents for real decomposition, not ceremony.
+
+Use subagents when:
+
+1. Exploration spans many modules.
+2. Workstreams are independent and can run in parallel.
+3. You need read-only mapping while local edits continue.
+
+Do not delegate the immediate blocking step that depends on local context.
+
+## 5. Model and Skill Routing
+
+Use the minimum skill required.
+
+| Task type | Preferred route |
 | --- | --- |
-| Code review | `code-review`; findings first with file/line references |
-| Explicit comprehensive PR review | `comprehensive-review`; costly, only when named |
+| Focused code review | `code-review` |
+| Explicit full PR review | `comprehensive-review` (only when explicitly requested) |
 | Review with named model | `cross-review` |
-| New or changed repo agent docs | `init` |
-| UI, dashboard, landing page, mockup | `frontend-design`; then verify with browser when practical |
-| Browser automation, screenshots, flows | `playwright` |
-| New or modified Codex skills | `skill-creator` |
-| Install skills | `skill-installer` |
-| GitHub PR/issue/CI/publish work | GitHub plugin skills: `github:*` |
-| Azure/OpenAI Foundry deployment/capacity | `microsoft-foundry` or its deploy/capacity subskills |
-| OpenAI product/API docs | `openai-docs`; official OpenAI sources only |
+| Browser behavior, screenshots, forms | `playwright` |
+| UI design generation | `frontend-design` |
+| Repo exploration | `research` or `Explore` agent |
+| Planning before implementation | `plan` |
 
-Avoid skill overuse. A skill is a sharp tool, not a ceremony. If the task is a small local edit and no skill trigger applies, work directly.
+If no skill trigger applies, work directly in repo files.
 
-## 3. Commands That Work Best Here
+## 6. Windows Guardrails
 
-Always use Windows-safe commands:
+Required command style on this machine:
 
 ```powershell
 pnpm.cmd install
-pnpm.cmd --filter @elbtronika/web test
-pnpm.cmd --filter @elbtronika/web test -- --run
-pnpm.cmd --filter @elbtronika/web test:e2e
-pnpm.cmd typecheck
 pnpm.cmd lint
+pnpm.cmd typecheck
+pnpm.cmd --filter @elbtronika/web test -- --run
 node_modules\.bin\biome.cmd check <changed-files>
-node_modules\.bin\biome.cmd check --write <changed-files>
 git branch --show-current
 git status --short
-git commit -F D:\msg.txt
 ```
 
-Observed best settings:
+Mandatory constraints:
 
-- Root `typecheck` uses `turbo run typecheck --concurrency=2` to avoid OOM.
-- Prefer targeted Biome on changed files during iteration; full `pnpm.cmd lint` is a final gate.
-- Prefer package-filtered tests over whole monorepo tests unless shared contracts changed.
-- After checkout, immediately verify branch with `git branch --show-current`.
-- For multiline commits, write a UTF-8 message file and use `git commit -F`.
+1. Use `.cmd` launchers for package tooling.
+2. Keep Turborepo typecheck/build at `--concurrency=2` if OOM appears.
+3. Re-check branch immediately after checkout operations.
+4. Use UTF-8 safe file writes only.
 
-## 4. Things To Avoid
+## 7. Anti-Pattern Register
 
-- Do not use `pnpm`, `npm`, `npx`, or `biome` without `.cmd` on this Windows setup.
-- Do not use PowerShell `>` or `echo` to create code files; it can create UTF-16/BOM damage.
-- Do not assume a file or directory existing means the feature is implemented.
-- Do not count `expect(true).toBe(true)` as a test.
-- Do not use `@/` imports inside Vitest tests unless the local test config proves the alias works.
-- Do not add `css.linter.rules` to Biome v2 config.
-- Do not run destructive git commands or revert user work.
-- Do not make production/payment/deletion side effects without explicit human approval.
-- Do not let docs claim live readiness unless current runtime evidence proves it.
+Stop and correct immediately if you detect any of these:
 
-## 5. Implementation Loop
+1. Editing before preflight was completed.
+2. Assuming a feature is done because a file exists.
+3. Placeholder tests treated as verification.
+4. Runtime claims without runtime evidence.
+5. Destructive git commands without explicit approval.
+6. Trust-boundary operations without negative-path checks.
 
-1. Inspect: read the specific files and nearest tests before editing.
-2. Plan briefly: name the smallest safe slice and its verification.
-3. Edit: use `apply_patch` for hand changes.
-4. Verify locally: run the narrowest command that proves the change.
-5. Broaden verification if shared behavior changed.
-6. Update docs/memory only when they match runtime truth.
-7. Commit after a green state when the session produced durable work.
-8. Write the 5-line run log before handoff.
+## 8. Verification Gates
 
-## 6. Memory Discipline
+Run the narrowest valid gate first, then expand only if needed.
 
-Every meaningful prompt/session gets a five-line run log:
+Gate A (local scope): changed tests or targeted checks.
+Gate B (package scope): package lint/typecheck/test.
+Gate C (cross-package): monorepo-level checks when interfaces changed.
 
-`memory/runs/YYYY-MM-DD_Agentname_Model-RunNN.md`
+A task is not done until at least one relevant gate is green and evidence is recorded.
 
-Agentname is the active coding agent, model is the actual model family/version when known, and RunNN is the next run for that agent/model or a comparison run when the work spans agents.
+## 9. Trust Boundary Mode
 
-Exact format:
+Enable this mode for Hermes/MCP/auth/payments/deletion/public-readiness tasks.
+
+Requirements:
+
+1. Add one negative-path verification (denied action, role mismatch, invalid token, etc.).
+2. Keep writes scoped and explicit.
+3. Never log secrets, tokens, or private keys.
+4. Mark simulated outputs as simulated.
+5. Do not claim production readiness without direct proof.
+
+## 10. Documentation Truth Rule
+
+Documentation updates are allowed only when they reflect current verified behavior.
+
+If verification failed or was not run:
+
+1. Document limitations explicitly.
+2. Do not promote readiness states.
+3. Include exact blocker and next command.
+
+## 11. Session Memory Discipline
+
+Every meaningful run produces one five-line run log in `memory/runs/`.
+
+One prompt cycle equals one run-log. No exceptions.
+
+Naming convention:
+
+`memory/runs/YYYY-MM-DD_Agent_Model-RunNN_topic.md`
+
+Template:
 
 ```markdown
 - **Datum:** YYYY-MM-DD
 - **Agent/Model:** Agentname / Model
-- **Task:** One line describing the prompt
-- **Outcome:** One line describing what changed or what was decided
-- **Lesson:** One line capturing the reusable harness lesson
+- **Task:** One-line objective
+- **Outcome:** One-line result
+- **Lesson:** One-line reusable lesson
 ```
 
-Keep it to exactly five bullets. Longer context belongs in `memory/handoffs/`.
+Keep exactly five bullets. Put details in handoff files, not in the run log.
 
-## 7. Session Handoff Rules
+## 12. Handoff Minimum
 
-Use handoffs when work spans agents or branches:
+If work spans sessions or agents, handoff must include:
 
-- Path: `memory/handoffs/AGENT_SESSION_HANDOFF.md`.
-- Include branch, HEAD, tests/lint/typecheck status, changed files, open blockers, and exact next commands.
-- Update `memory/OPSIDIAN_MEMORY.md` with links to new handoffs and run logs.
-- If branch confusion happened, record both the intended and actual branch.
+1. Branch + HEAD.
+2. Changed files.
+3. Verification executed and status.
+4. Open blockers.
+5. Next command to run.
 
-## 8. Trust Boundary Add-On
+Then update `memory/OPSIDIAN_MEMORY.md` with links to the new run/handoff artifacts.
 
-For Hermes, MCP, checkout, privacy, account deletion, Supabase writes, Stripe, or live claims:
+## 13. Quick Recovery Table
 
-- Start with `HERMES_TRUST_HARNESS.md`.
-- Add at least one negative test for role/auth/denial behavior.
-- Audit denied and successful tool calls without logging secrets.
-- Label simulated/demo outputs as simulated.
-- Prefer read-only until writes are scoped and approved.
-
-## 9. Quick Recovery
-
-| Symptom | Action |
+| Symptom | Immediate action |
 | --- | --- |
-| Tests disappeared | `git log --all --full-history -- <path>` then recover with UTF-8 safe output |
-| Wrong branch | Stop, record current branch, inspect commits, then move/cherry-pick intentionally |
-| Turbo OOM | Ensure `--concurrency=2` is used |
-| i18n runtime error | Add keys to both `apps/web/messages/de.json` and `apps/web/messages/en.json` before page code |
-| Empty page directory | Use `Test-Path` and inspect contents; do not trust `Get-ChildItem` alone |
-| Lint too slow | Run `node_modules\.bin\biome.cmd check <changed-files>` |
-| Placeholder test | Replace with behavior assertions before calling the work done |
+| Branch mismatch | Check `git branch --show-current`, then stop and realign |
+| OOM during typecheck | Use concurrency 2 and narrow scope |
+| i18n key failures | Add keys in both locale message files before rerun |
+| Merge marker parse errors | Search for conflict markers and resolve all |
+| Empty directory confusion | Use `Test-Path` and explicit file reads |
 
-## 10. Done Means
+## 14. Done Definition
 
-Done means the code, docs, memory, and verification agree. The next agent should be able to read the active handoff plus this protocol and continue without rediscovering Windows command quirks, branch state, or test reality.
+Done means all four are true:
+
+1. Code changes are applied.
+2. Relevant verification passed or failure was documented precisely.
+3. Docs and protocol references are updated to match reality.
+4. Memory artifacts (run log/handoff/index) are updated when required.
+
+If any item is false, task state is in-progress, not done.
+
+## 15. Stop Rules
+
+Stop and ask the user immediately if any of the following occurs:
+
+1. Required credentials/tokens are missing for the requested operation.
+2. Remote/branch state is unsafe or ambiguous.
+3. You detect unrelated workspace mutations that may invalidate planned edits.
+4. A requested operation would require destructive git commands.
+5. A trust-boundary task cannot be verified safely with available tooling.
+
+## 16. Anomaly Register Rule
+
+If you hit a recurring environment or tooling failure pattern:
+
+1. Record the symptom and workaround in a run-log lesson line.
+2. Add or update a concise note in harness docs on next edit pass.
+3. Do not hide flaky behavior behind optimistic status messages.
