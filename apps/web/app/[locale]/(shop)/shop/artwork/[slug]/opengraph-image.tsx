@@ -48,7 +48,7 @@ export default async function OpenGraphImage({ params }: Props) {
   const artistName = artwork?.artist?.name ?? fallbackLabel(locale, "artist");
   const roomTitle = artwork?.featuredInRoom?.title ?? fallbackLabel(locale, "room");
   const description = portableTextToPlainText(artwork?.description)?.slice(0, 180);
-  const price = formatArtworkPrice(locale, commerce.data?.price_eur ?? null);
+  const price = formatArtworkPrice(commerce.data?.price_eur ?? null, locale);
 
   return new ImageResponse(
     <div

@@ -16,6 +16,7 @@ import {
 } from "@elbtronika/mcp";
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { logAuditEvent } from "@/src/lib/mcp/audit";
 import { createClient } from "@/src/lib/supabase/server";
 
 // Wave 0: Allowlist — only read/analyze tools from the Harness initial surface
@@ -38,31 +39,6 @@ const serverMap: Record<string, () => MCPServer> = {
   stripe: createStripeMCPServer,
   audio: createAudioMCPServer,
 };
-
-// Wave 1: Structured audit — no secrets, tokens, or private data
-function logAuditEvent(event: {
-  actorId: string;
-  role: string;
-  server: string;
-  tool: string;
-  status: number;
-  durationMs?: number;
-  errorClass?: string;
-}) {
-  console.log(
-    JSON.stringify({
-      event: "mcp_invoke",
-      ts: new Date().toISOString(),
-      actorId: event.actorId,
-      role: event.role,
-      server: event.server,
-      tool: event.tool,
-      status: event.status,
-      durationMs: event.durationMs,
-      errorClass: event.errorClass,
-    }),
-  );
-}
 
 export async function POST(request: NextRequest) {
   // Wave 0: Auth gate
@@ -141,7 +117,14 @@ export async function POST(request: NextRequest) {
   try {
     const serverFactory = serverMap[rawServer];
     if (!serverFactory) {
-      await logAuditEvent({ actorId: user.id, role: profile.role, server: rawServer, tool: rawTool, status: 404, errorClass: "server_not_found" });
+      await logAuditEvent({
+        actorId: user.id,
+        role: profile.role,
+        server: rawServer,
+        tool: rawTool,
+        status: 404,
+        errorClass: "server_not_found",
+      });
       return NextResponse.json({ error: `Server not found: ${rawServer}` }, { status: 404 });
     }
     const server = serverFactory();

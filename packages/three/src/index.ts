@@ -7,7 +7,6 @@ export { GalleryHUD } from "./components/HUD";
 export { ModeToggle } from "./components/ModeToggle";
 export { GalleryRoom } from "./components/Room";
 export { TransitionOverlay } from "./components/TransitionOverlay";
-export { ScrollSpline } from "./controls/ScrollSpline";
 export { detectWebGPU, getWebGPUCookie, setWebGPUCookie } from "./lib/feature-detection";
 export { LobbyScene } from "./scenes/Lobby";
 export { Room1Scene } from "./scenes/Room1";

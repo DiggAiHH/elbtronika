@@ -18,9 +18,9 @@ const envSchema = z.object({
   NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(20),
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(20).optional(),
 
-  // Stripe
-  STRIPE_SECRET_KEY: z.string().startsWith("sk_"),
-  STRIPE_WEBHOOK_SECRET: z.string().startsWith("whsec_"),
+  // Stripe (optional in demo mode — validated at runtime in payment routes)
+  STRIPE_SECRET_KEY: z.string().startsWith("sk_").optional(),
+  STRIPE_WEBHOOK_SECRET: z.string().startsWith("whsec_").optional(),
   STRIPE_PUBLISHABLE_KEY: z.string().startsWith("pk_").optional(),
   STRIPE_CONNECT_REDIRECT_URL: z.string().url().optional(),
 

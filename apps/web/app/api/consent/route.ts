@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 const ConsentSchema = z.object({
-  necessary: z.boolean(),
+  necessary: z.literal(true),
   analytics: z.boolean(),
   marketing: z.boolean(),
   timestamp: z.string().datetime(),

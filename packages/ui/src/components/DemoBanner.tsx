@@ -2,7 +2,7 @@
 
 type ElbMode = "demo" | "staging" | "live";
 
-interface DemoBannerProps {
+export interface DemoBannerProps {
   mode: ElbMode;
   version?: string;
 }

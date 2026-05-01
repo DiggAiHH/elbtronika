@@ -19,10 +19,19 @@ export function WebVitals() {
       // Wave 6: Only report if user has granted analytics consent
       let analyticsConsented = false;
       try {
+        // Try Zustand store format first (elt-consent)
         const stored = localStorage.getItem("elt-consent");
         if (stored) {
           const parsed = JSON.parse(stored) as { state?: { choices?: { analytics?: boolean } } };
           analyticsConsented = parsed?.state?.choices?.analytics === true;
+        }
+        // Fallback: ConsentBanner format (elbtronika-consent)
+        if (!analyticsConsented) {
+          const bannerStored = localStorage.getItem("elbtronika-consent");
+          if (bannerStored) {
+            const bannerParsed = JSON.parse(bannerStored) as { analytics?: boolean };
+            analyticsConsented = bannerParsed?.analytics === true;
+          }
         }
       } catch {
         // localStorage not available — skip reporting

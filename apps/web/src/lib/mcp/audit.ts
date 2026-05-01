@@ -8,17 +8,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { logger } from "@/src/lib/logger";
 
-export interface AuditEvent {
-  actorId: string;
-  role: string;
-  server: string;
-  tool: string;
-  status: "ok" | "denied" | "error";
-  durationMs?: number;
-  errorClass?: string;
-  requestHash?: string;
-}
-
 function toStatus(status: number | string): "ok" | "denied" | "error" {
   if (typeof status === "string") return status as "ok" | "denied" | "error";
   if (status >= 200 && status < 300) return "ok";

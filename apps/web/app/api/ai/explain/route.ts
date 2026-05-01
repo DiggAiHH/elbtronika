@@ -54,6 +54,7 @@ export async function POST(request: NextRequest) {
     .from("ai_decisions")
     .select("output_summary, input_summary")
     .eq("id", body.decisionId)
+    .eq("triggered_by", user.id)
     .single();
 
   if (!decision) {

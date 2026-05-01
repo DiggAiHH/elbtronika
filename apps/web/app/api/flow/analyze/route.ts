@@ -41,6 +41,16 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Set not found" }, { status: 404 });
     }
 
+    // Ownership check: only the DJ who created the set can analyze it
+    const { data: setOwnership } = await supabase
+      .from("sets")
+      .select("dj_id")
+      .eq("id", body.setId)
+      .single();
+    if (!setOwnership || setOwnership.dj_id !== user.id) {
+      return NextResponse.json({ error: "Forbidden: not your set" }, { status: 403 });
+    }
+
     // In production: download audio, analyze with @elbtronika/flow analyzeAudio()
     // Wave 5: source:"simulated" — random values, not measured audio analysis
     const analysis = {

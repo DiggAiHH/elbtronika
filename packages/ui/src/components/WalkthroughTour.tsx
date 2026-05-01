@@ -7,7 +7,7 @@ export interface TourStep {
   description: string;
 }
 
-interface WalkthroughTourProps {
+export interface WalkthroughTourProps {
   steps?: TourStep[];
   locale?: string;
   delayMs?: number;

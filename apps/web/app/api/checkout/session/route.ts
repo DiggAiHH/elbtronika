@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
   }
 
   // Verify price matches (anti-tampering)
-  if (artwork.price_eur * 100 !== req.priceCents) {
+  if (Math.round(artwork.price_eur * 100) !== req.priceCents) {
     return NextResponse.json({ error: "Price mismatch" }, { status: 422 });
   }
 
