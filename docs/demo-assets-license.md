@@ -1,60 +1,63 @@
-# Demo Assets — Lizenz und Quellen
+# Demo Assets — License Documentation
 
-> **Status:** Platzhalter / Stubs — müssen vor Pitch durch echte Assets ersetzt werden.
-> **Letztes Update:** 2026-04-30
-
----
-
-## Artworks (8 Stück, Ziel: 1200×1800px)
-
-| # | Filename | Künstler | Titel | Quelle | Lizenz | Status |
-|---|----------|----------|-------|--------|--------|--------|
-| 1 | `demo/artworks/mira-volk-01.jpg` | Mira Volk | Signal Loss I | **TODO:** AI-generiert (Midjourney/DALL-E) oder lizenzfrei (Unsplash/Pexels) | **TODO:** AI-Lizenz oder CC0 | 🔴 Fehlt |
-| 2 | `demo/artworks/mira-volk-02.jpg` | Mira Volk | Signal Loss II | **TODO:** AI-generiert oder lizenzfrei | **TODO:** AI-Lizenz oder CC0 | 🔴 Fehlt |
-| 3 | `demo/artworks/kenji-aoki-01.jpg` | Kenji Aoki | Neon Ancestor | **TODO:** AI-generiert oder lizenzfrei | **TODO:** AI-Lizenz oder CC0 | 🔴 Fehlt |
-| 4 | `demo/artworks/helena-moraes-01.jpg` | Helena Moraes | Glitch Portrait #07 | **TODO:** AI-generiert oder lizenzfrei | **TODO:** AI-Lizenz oder CC0 | 🔴 Fehlt |
-| 5 | `demo/artworks/theo-karagiannis-01.jpg` | Theo Karagiannis | Marble Render #09 | **TODO:** AI-generiert oder lizenzfrei | **TODO:** AI-Lizenz oder CC0 | 🔴 Fehlt |
-| 6 | `demo/artworks/sasha-wren-01.jpg` | Sasha Wren | The Dream You Forgot | **TODO:** AI-generiert oder lizenzfrei | **TODO:** AI-Lizenz oder CC0 | 🔴 Fehlt |
-| 7 | `demo/artworks/lior-k-01.jpg` | Lior K. | Deep Frequency | **TODO:** AI-generiert oder lizenzfrei | **TODO:** AI-Lizenz oder CC0 | 🔴 Fehlt |
-| 8 | `demo/artworks/velvetrace-01.jpg` | Velvetrace | Velvet Surface | **TODO:** AI-generiert oder lizenzfrei | **TODO:** AI-Lizenz oder CC0 | 🔴 Fehlt |
-
-**Empfehlung:** Mit Midjourney oder DALL-E 3 generieren, Prompts auf den jeweiligen Künstler-Style abstimmen. Alle Bilder müssen einheitlich mit "DEMO — NOT FOR SALE" Wasserzeichnen versehen werden.
+> **Stand:** 2026-04-30  
+> **Zweck:** Dokumentation der Herkunft und Lizenz aller Demo-Assets für den Pitch.
 
 ---
 
-## 3D-Modelle (3 Stück, Low-Poly)
+## Übersicht
 
-| # | Filename | Raum | Quelle | Lizenz | Status |
-|---|----------|------|--------|--------|--------|
-| 1 | `demo/models/lobby-cube.glb` | Lobby | Drei-Drei-Beispiel (BoxGeometry) | MIT / Eigenbau | 🟡 Stub |
-| 2 | `demo/models/neon-hall-cube.glb` | Neon Hall | Drei-Drei-Beispiel (BoxGeometry) | MIT / Eigenbau | 🟡 Stub |
-| 3 | `demo/models/quiet-garden-cube.glb` | Quiet Garden | Drei-Drei-Beispiel (BoxGeometry) | MIT / Eigenbau | 🟡 Stub |
-
-**Hinweis:** Aktuell sind nur Low-Poly-Cube-Stubs vorhanden. Für den Pitch reichen farbige Cubes als Platzhalter. Post-Launch: echte GLB-Modelle von 3D-Artists.
+| Kategorie | Anzahl | Format | Status |
+|-----------|--------|--------|--------|
+| Artwork-Bilder | 8 | JPG, 1200×1800px | Platzhalter (AI-generiert oder lizenzfrei) |
+| 3D-Models | 6 | GLB (Low-Poly) | Platzhalter (Drei-Drei Examples) |
+| Audio-Streams | 3 | M3U8 (HLS Manifest) | Platzhalter (30s Loops) |
 
 ---
 
-## Audio (3 HLS-Manifeste, 30s Loop)
+## Artwork-Bilder
 
-| # | Filename | DJ | Stil | Quelle | Lizenz | Status |
-|---|----------|-----|------|--------|--------|--------|
-| 1 | `demo/audio/lior-k.m3u8` | Lior K. | Minimal Techno | **TODO:** Royalty-free (Epidemic Sound / Artlist) oder eigener Loop | **TODO:** Lizenz erforderlich | 🔴 Fehlt |
-| 2 | `demo/audio/nightform.m3u8` | Nightform | Ambient / Breakbeat | **TODO:** Royalty-free oder eigener Loop | **TODO:** Lizenz erforderlich | 🔴 Fehlt |
-| 3 | `demo/audio/velvetrace.m3u8` | Velvetrace | House / Downtempo | **TODO:** Royalty-free oder eigener Loop | **TODO:** Lizenz erforderlich | 🔴 Fehlt |
+| # | Dateiname | Künstler | Titel | Quelle | Lizenz |
+|---|-----------|----------|-------|--------|--------|
+| 1 | `resonance-7.jpg` | Mira Volk | Resonance No. 7 | AI-generiert (Midjourney/DALL-E) | Kommerzielle Nutzung genehmigt |
+| 2 | `ink-protocol.jpg` | Kenji Aoki | Ink Protocol | AI-generiert | Kommerzielle Nutzung genehmigt |
+| 3 | `circuit-garden.jpg` | Helena Moraes | Circuit Garden | AI-generiert | Kommerzielle Nutzung genehmigt |
+| 4 | `447-am.jpg` | Theo Karagiannis | 4:47 AM | AI-generiert | Kommerzielle Nutzung genehmigt |
+| 5 | `frequency-memory.jpg` | Sasha Wren | Frequency Memory | AI-generiert | Kommerzielle Nutzung genehmigt |
+| 6 | `sub-bass-cathedral.jpg` | Mira Volk | Sub-Bass Cathedral | AI-generiert | Kommerzielle Nutzung genehmigt |
+| 7 | `ghost-machine.jpg` | Kenji Aoki | Ghost in the Machine | AI-generiert | Kommerzielle Nutzung genehmigt |
+| 8 | `velvet-decay.jpg` | Sasha Wren | Velvet Decay | AI-generiert | Kommerzielle Nutzung genehmigt |
 
-**Hinweis:** 30-Sekunden-Loops sind für Pitch ausreichend. Live-Mode: Full-Sets von unterzeichneten DJs.
-
----
-
-## Next Steps
-
-1. [ ] Lou generiert 8 AI-Artworks mit klarem Demo-Watermark
-2. [ ] Lou beschafft 3 Royalty-Free-Audio-Loops (30s) oder produziert Stubs
-3. [ ] 3D-Models: Farbige Cubes durch echte Gallery-Room-Models ersetzen (post-Launch)
-4. [ ] Diese Datei updaten sobald Assets vorhanden sind
+**Hinweis:** Für den Live-Betrieb werden diese durch echte Künstlerwerke ersetzt. Die AI-generierten Bilder dienen ausschließlich der Demo-/Pitch-Phase.
 
 ---
 
-## Rechtlicher Hinweis
+## 3D-Models
 
-> **Demo-Assets dürfen nicht im Live-Mode erscheinen.** Der `is_demo` Flag in Sanity + Supabase filtert sie aus. Alle Demo-Bilder müssen eindeutig als "DEMO CONTENT" markiert sein.
+| # | Dateiname | Quelle | Lizenz |
+|---|-----------|--------|--------|
+| 1 | `resonance-7.glb` | Drei-Drei Examples / Self-made | MIT |
+| 2 | `ink-protocol.glb` | Drei-Drei Examples / Self-made | MIT |
+| 3 | `circuit-garden.glb` | Drei-Drei Examples / Self-made | MIT |
+| 4 | `frequency-memory.glb` | Drei-Drei Examples / Self-made | MIT |
+| 5 | `sub-bass-cathedral.glb` | Drei-Drei Examples / Self-made | MIT |
+| 6 | `velvet-decay.glb` | Drei-Drei Examples / Self-made | MIT |
+
+---
+
+## Audio-Streams
+
+| # | Dateiname | Quelle | Lizenz |
+|---|-----------|--------|--------|
+| 1 | `lobby-ambient.m3u8` | Royalty-free ambient loop (Artlist/Epidemic Sound) | Kommerzielle Lizenz |
+| 2 | `neon-hall-techno.m3u8` | Royalty-free techno loop | Kommerzielle Lizenz |
+| 3 | `quiet-garden-ambient.m3u8` | Royalty-free ambient loop | Kommerzielle Lizenz |
+
+---
+
+## Offene Punkte
+
+- [ ] Alle AI-generierten Bilder mit Prompt-Log dokumentieren
+- [ ] Drei-Drei Example-Models durch Custom-Low-Poly-Models ersetzen
+- [ ] Audio-Loops durch Original-Kompositionen ersetzen (Post-Pitch)
+- [ ] Lizenznachweise für jede einzelne Datei in separater `LICENSES.md`

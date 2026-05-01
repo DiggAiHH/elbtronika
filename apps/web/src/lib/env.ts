@@ -38,7 +38,7 @@ export type Env = z.infer<typeof envSchema>;
 
 let _env: Env | null = null;
 
-/** Reset cached env — useful for tests */
+/** Clear cached env — useful for tests that mutate process.env. */
 export function resetEnv(): void {
   _env = null;
 }

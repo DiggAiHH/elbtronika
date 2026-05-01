@@ -1,0 +1,16 @@
+# Demo Artwork Images
+
+This directory contains placeholder stubs for demo artwork images.
+In production, these would be AI-generated or license-free images at 1200x1800px.
+
+Expected files (8 total):
+- resonance-7.jpg
+- ink-protocol.jpg
+- circuit-garden.jpg
+- 447-am.jpg
+- frequency-memory.jpg
+- sub-bass-cathedral.jpg
+- ghost-machine.jpg
+- velvet-decay.jpg
+
+See docs/demo-assets-license.md for licensing information.
