@@ -1,14 +1,23 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import * as fs from "node:fs";
+import * as path from "node:path";
+import { fireEvent, render, screen } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { InvestorWelcomeModal } from "@/app/[locale]/pitch/InvestorWelcomeModal";
 
 // Mock next/link
-vi.mock("next/link", () => ({ default: ({ children, href }: { children: React.ReactNode; href: string }) => <a href={href}>{children}</a> }));
+vi.mock("next/link", () => ({
+  default: ({ children, href }: { children: React.ReactNode; href: string }) => (
+    <a href={href}>{children}</a>
+  ),
+}));
+
+const pitchPath = path.join(__dirname, "../../app/[locale]/pitch/page.tsx");
+const pitchSource = fs.readFileSync(pitchPath, "utf-8");
 
 describe("Pitch Dashboard", () => {
-  it("requires investor role", () => {
-    // Server-side gating is tested via E2E or integration tests
-    expect(true).toBe(true);
+  it("requires investor role for access", () => {
+    expect(pitchSource).toContain('"investor"');
+    expect(pitchSource).toContain('role !== "investor"');
   });
 });
 
@@ -35,4 +44,3 @@ describe("InvestorWelcomeModal", () => {
     expect(localStorage.getItem("elt-investor-welcomed")).toBe("true");
   });
 });
-

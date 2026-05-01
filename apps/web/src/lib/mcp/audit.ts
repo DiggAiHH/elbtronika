@@ -6,6 +6,7 @@
  */
 
 import { createClient } from "@supabase/supabase-js";
+import { logger } from "@/src/lib/logger";
 
 export interface AuditEvent {
   actorId: string;
@@ -63,7 +64,9 @@ export async function logAuditEvent(event: {
       const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
       const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
       if (!url || !serviceKey) return;
-      const admin = createClient(url, serviceKey, { auth: { autoRefreshToken: false, persistSession: false } });
+      const admin = createClient(url, serviceKey, {
+        auth: { autoRefreshToken: false, persistSession: false },
+      });
       const { error } = await admin.from("mcp_audit_log").insert({
         actor_id: event.actorId,
         role: event.role,
@@ -76,11 +79,11 @@ export async function logAuditEvent(event: {
       });
 
       if (error) {
-        console.error("[audit] DB insert failed:", error.message);
+        logger.error("[audit] DB insert failed", { message: error.message });
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
-      console.error("[audit] DB client failed:", message);
+      logger.error("[audit] DB client failed", { message });
       // Never throw — audit must not break the main flow
     }
   }

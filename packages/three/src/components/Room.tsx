@@ -63,7 +63,7 @@ export function GalleryRoom({ id, name, slug, slots, offsetX = 0 }: GalleryRoomP
       id,
       slug,
       name,
-      artworkIds: slots.filter((s) => s.artwork !== null).map((s) => s.artwork?.artworkId),
+      artworkIds: slots.filter((s) => s.artwork !== null).map((s) => s.artwork!.artworkId),
     };
     registerRoom(config);
   }, [id, slug, name, slots, registerRoom]);

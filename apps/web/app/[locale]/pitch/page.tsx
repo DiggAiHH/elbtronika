@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
+import { InvestorWelcomeModal } from "./InvestorWelcomeModal";
 
 interface Props {
   params: Promise<{ locale: string }>;
@@ -42,6 +43,7 @@ export default async function PitchPage({ params }: Props) {
 
   return (
     <main className="min-h-screen bg-[var(--color-background)]">
+      <InvestorWelcomeModal locale={locale} />
       {/* Header */}
       <div className="border-b border-[var(--color-border)] px-4 py-8 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-6xl">
