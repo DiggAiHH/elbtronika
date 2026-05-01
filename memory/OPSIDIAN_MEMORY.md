@@ -1,4 +1,26 @@
 ## Opus 4.8 Handoff (2026-04-30)
+## ML/AI Pipeline Optimization Session (Phase-11-AI)
+
+**Branch:** `feature/phase-11-ai` | **Last push:** `9830281`
+
+**Deep Audit Findings:**
+- `packages/ai`: Fully implemented — Anthropic SDK, exponential backoff (3x), streaming, `generateJson()` with Zod, role-based rate limiting, audit log to Supabase
+- `packages/flow`: Fully implemented — 25-dim audio + 19-dim art embeddings, cosine similarity, weighted scoring (mood 35%, energy 25%, color 20%, composition 20%)
+- `packages/agent`: HermesAgent loop complete; `planWithLLM` was a STUB → **FIXED**
+- `packages/mcp`: 4 servers (audio, sanity, stripe, supabase); `audio_analyze_track` was hardcoded → **FIXED**
+
+**Optimizations Implemented:**
+1. `agent/planner.ts` — `planWithLLM()` now calls `generateJson()` via `@elbtronika/ai` with Zod schema `{steps[], requiredTools[], estimatedDurationMs}` + graceful fallback
+2. `agent/agent.ts` — `executeTask()` routes novel tasks (no matching skill) through `planWithLLM`; known skills use fast rule-based path
+3. `mcp/servers/audio.ts` — `audio_analyze_track` uses seeded-RNG (mulberry32) for deterministic per-trackId analysis (BPM 80–180, real musical key/Camelot, mood tags, genre)
+4. `mcp/server.test.ts` — Fixed TS2345: added `string|undefined` null guard before `JSON.parse`
+
+**Test Results:** 38 unit tests ✅, tsc --noEmit clean all packages ✅, smoke `1 passed (34.0s)` ✅
+
+**Key architectural fact:** `@elbtronika/ai` is already a dependency of `@elbtronika/agent` (workspace:*). `generateJson(prompt, schema, opts)` signature confirmed. `AIPrompt` has `system`, `messages`, `model?`, `maxTokens?`, `temperature?`.
+
+---
+
 
 - [[OPUS_48_HANDOFF]] — Phase 18/19 recovery & lint green
 - [[OPUS_47_TO_48_HANDOFF]] — 10KB ground-truth knowledge transfer (predecessor)
