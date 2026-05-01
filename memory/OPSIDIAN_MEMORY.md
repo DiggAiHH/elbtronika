@@ -33,6 +33,7 @@
 - [[Run-03]] — Sonnet 4.6 Phase 18: `memory/runs/2026-04-30_Kimi_Run-03.md`
 - [[Run-04]] — GPT 5.4 + Gap-Fill: `memory/runs/2026-04-30_Kimi_Run-04.md`
 - [[Run-05]] — ULTRAPLAN Protocol v2: `memory/runs/2026-04-30_Kimi_Run-05.md`
+- [[Opus-Run-01]] — Plan v1.4 Update: `memory/runs/2026-04-30_Opus_47-Run01.md`
 
 **Neue Protokolle etabliert:**
 1. `engineering-harness/PRE_FLIGHT_PROTOCOL.md` — komplettes Agent-Operations-Manual (v2 mit 15 Patterns)
@@ -40,3 +41,11 @@
 3. Green-State-Regel: immer commiten nach tests+lint+typecheck green
 4. Memory-Disziplin: OPSIDIAN_MEMORY.md ist zentrale Index-Datei für alle Handoffs + Run-Logs
 5. **Gap-Fill-Inventur**: Nie annehmen dass etwas fertig ist nur weil Datei existiert — Inhalt prüfen!
+
+## Plan-Updates
+
+- **v1.4** (2026-04-30) — Opus 4.7: Phase 20 Sequenzierung, GPT-Drift-Dokumentation, Merge-Map, Agent-Prompts
+- **v1.3** → Audit-Trail (abgelöst durch v1.4)
+- **v1.2** → Audit-Trail
+- **v1.1** → Audit-Trail
+- **v1.0** → Audit-Trail
