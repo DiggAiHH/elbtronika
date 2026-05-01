@@ -1,82 +1,104 @@
-# Demo-Video Skript (60–90s)
+# ELBTRONIKA — Demo Video Script
 
-> **Ziel:** Lee Hoops bekommt in 60 Sekunden das komplette ELBTRONIKA-Erlebnis.
-> **Format:** Voice-Over + Visual-Cues
-> **Sprache:** Englisch primär, deutsche Untertitel optional
-> **Produktion:** Loom / OBS / Screen Recording
+> **Dauer:** 60–90 Sekunden  
+> **Sprache:** Englisch (primär), deutsche Untertitel empfohlen  
+> **Format:** Voice-Over + Screen-Recording (Loom / OBS / ähnlich)  
+> **Ziel:** Lee Hoops bekommt einen selbstgesteuerten Einblick, bevor Lou persönlich pitched.
 
 ---
 
 ## Szene 1: Hook (0:00–0:10)
 
-**Visual:** Black screen → ELBTRONIKA Logo fade-in → Landing page loads
-**Voice-Over:**
-> "This is ELBTRONIKA. Not a pitch deck. The real platform."
+**Visual:** Black screen → Logo-Animation (ELBTRONIKA wordmark, subtle glitch effect)
 
-**Cue:** Logo-Animation, dann Hard-Cut zur Landing-Page im Browser (Vollbild)
+**Voice-Over:**
+> "What if a gallery didn't just show art — but made you feel it?"
+
+**On-Screen Text:**
+> ELBTRONIKA — Where art meets frequency
 
 ---
 
-## Szene 2: Das Versprechen (0:10–0:20)
+## Szene 2: Landing + Entry (0:10–0:20)
 
-**Visual:** Landing-Page Hero, Text-Highlight auf "Where art meets frequency"
+**Visual:** Screen-Recording der Landing-Page. Cursor klickt "Enter Experience".
+
 **Voice-Over:**
-> "Where contemporary digital art meets electronic music culture."
+> "This is not a website. This is a space. You enter, and the art is alive around you."
 
-**Cue:** Mouse-Klick auf "Enter Experience", Audio-Unlock-Animation
+**Visual-Cue:**
+- Ambient-Sound startet (leicht im Hintergrund)
+- 3D-Galerie lädt, Kamera fährt langsam durch den Raum
 
 ---
 
-## Szene 3: Immersion (0:20–0:40)
+## Szene 3: 3D-Galerie + Spatial Audio (0:20–0:35)
 
-**Visual:** 3D-Galerie, smooth Scroll, Kamera folgt Spline
+**Visual:** Cursor bewegt sich durch die Galerie. Annäherung an Artwork → Audio wird lauter.
+
 **Voice-Over:**
-> "An immersive 3D gallery where every room is paired with a curated DJ set. The closer you get, the more the sound opens up."
+> "Every room has a soundscape. Every artwork reacts to it. The closer you get, the more you hear. The more you hear, the deeper you see."
 
-**Cue:**
-- Annäherung an Artwork → Audio-Visual-Overlay (Waveform oder Volume-Indicator)
-- Klick auf Artwork → Detail-Overlay
+**Visual-Cue:**
+- Artwork-Detail-Overlay erscheint bei Klick
+- Story-Text sichtbar: "A study in feedback loops — light reacting to sound reacting to light."
 
 ---
 
-## Szene 4: Transparenz (0:40–0:55)
+## Szene 4: Checkout + Stripe Split (0:35–0:50)
 
-**Visual:** Artwork-Detail-Page → Checkout → Stripe Test-Card-Hinweis
+**Visual:** "Acquire Artwork"-Button → Checkout-Page. Test-Card 4242 sichtbar.
+
 **Voice-Over:**
-> "Fair revenue split. Sixty percent to the artist. Twenty to the DJ. Twenty to the platform. Transparent. Automatic."
+> "And when you buy, everyone wins. Sixty percent to the artist. Twenty to the DJ whose soundscape made the moment. Twenty to the platform. Transparent. Automatic. No galleries taking half."
 
-**Cue:**
-- Klick "Acquire"
-- Checkout-Formular mit Test-Card-Hinweis
-- Hard-Cut zu Stripe-Dashboard (Test-Mode) mit Transfer-Group
+**Visual-Cue:**
+- Stripe-Test-Card-Hinweis: "Use card 4242 4242 4242 4242"
+- Success-Page mit Download-Code
 
 ---
 
-## Szene 5: Closing (0:55–1:10)
+## Szene 5: Press-Kit + Vision (0:50–1:05)
 
-**Visual:** Press-Kit-Page → Pitch-Dashboard (Mock-Daten)
+**Visual:** Schneller Schnitt durch /press — Vision, Roadmap, Team, Numbers.
+
 **Voice-Over:**
-> "Built for artists. Built for fans. Built to scale. ELBTRONIKA."
+> "We are not building a shop. We are building a new category. Immersive art commerce, powered by spatial audio, curated by AI, owned by creators."
 
-**Cue:**
-- Schnelle Schnitte: Roadmap, Team-Photo, Numbers
-- Finaler Freeze-Frame auf Logo + URL: elbtronika.art
+**On-Screen Text (Numbers):**
+- 5 launch artists
+- 3 audiovisual DJs
+- 8 unique drops
+- 60/20/20 Revenue Split
+
+---
+
+## Szene 6: CTA + Outro (1:05–1:15)
+
+**Visual:** Zurück zu Landing-Page. Logo. Kontakt-Daten.
+
+**Voice-Over:**
+> "ELBTRONIKA. The future of art is not flat. Let's build it together."
+
+**On-Screen Text:**
+> hallo@elbtronika.de  
+> elbtronika.art
+
+**Fade to black.**
 
 ---
 
 ## Produktions-Notizen
 
-- **Auflösung:** 1920×1080 oder höher
-- **Framerate:** 30fps minimum, 60fps bevorzugt für 3D-Scenes
-- **Audio:** Screen-Audio aufnehmen (Spatial Audio als Stereo-Downmix ist ok)
-- **Länge:** Ziel 60s, maximal 90s
-- **Musik:** Optional — Unterlegung mit 10s eines Demo-DJ-Sets (rechtlich sicherstellen)
+- **Tool:** Loom (Browser-Recording + Webcam optional) oder OBS (höhere Qualität)
+- **Audio:** Voice-Over mit Audacity nachbearbeiten (Rauschunterdrückung)
+- **Musik:** Royalty-free Ambient-Track (Empfehlung: Artlist.io oder Epidemic Sound)
+- **Untertitel:** YouTube auto-generieren oder Rev.com
+- **Format:** 1920×1080, 30fps, MP4 (H.264)
 
----
+## Offene Punkte
 
-## Post-Production Checkliste
-
-- [ ] Deutsche Untertitel als .srt
-- [ ] Thumbnail: Logo + "Watch the Demo"
-- [ ] Hosting: Loom / YouTube Unlisted / Cloudflare Stream
-- [ ] Einbettung: Landing-Page Video-Slot (wenn vorhanden)
+- [ ] Lou: Voice-Over aufnehmen (oder AI-Voice von ElevenLabs als Stub)
+- [ ] Lou: Screen-Recording machen (oder Kimi-Agent mit Playwright-Video)
+- [ ] Lou: Hintergrundmusik auswählen
+- [ ] Post-Production: Schnitt + Untertitel
