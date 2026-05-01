@@ -34,14 +34,18 @@ export default async function OpenGraphImage({ params }: Props) {
   const sanityClient = getSanityClient();
   const supabase = await createSupabaseClient();
 
-  const [artwork, commerce] = await Promise.all([
-    sanityClient.fetch<ArtworkPreviewData | null>(
-      artworkBySlugQuery,
-      { slug },
-      { next: { revalidate: 300 } },
-    ),
+  const [artworkResult, commerce] = await Promise.all([
+    sanityClient
+      .fetch<ArtworkPreviewData | null>(artworkBySlugQuery, { slug }, { next: { revalidate: 300 } })
+      .then((data) => ({ data, ok: true as const }))
+      .catch((err) => {
+        console.warn("[shop/artwork/opengraph] sanity fetch failed", err);
+        return { data: null, ok: false as const };
+      }),
     supabase.from("artworks").select("price_eur").eq("slug", slug).maybeSingle(),
   ]);
+
+  const artwork = artworkResult.data;
 
   const title = artwork?.title ?? "ELBTRONIKA";
   const imageUrl = artwork?.image?.asset?.url;

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useState, useCallback } from "react";
+import { useCallback, useState } from "react";
 
 function localeHref(locale: string, href: string) {
   return `/${locale}${href}`;
@@ -14,9 +14,9 @@ function HeroSection({ locale }: { locale: string }) {
     <section className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden">
       {/* Background gradients */}
       <div className="absolute inset-0">
-        <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full bg-[#00f5d4]/[0.03] blur-[120px]" />
-        <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] rounded-full bg-[#f720b8]/[0.03] blur-[100px]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-[#7b2fff]/[0.02] blur-[150px]" />
+        <div className="absolute top-1/4 left-1/4 w-[640px] h-[640px] rounded-full bg-[#e8a020]/[0.06] blur-[140px]" />
+        <div className="absolute bottom-1/4 right-1/4 w-[520px] h-[520px] rounded-full bg-[#2aada8]/[0.04] blur-[120px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[860px] h-[860px] rounded-full bg-[#f2ede4]/[0.02] blur-[180px]" />
       </div>
 
       {/* Grid pattern */}
@@ -35,24 +35,26 @@ function HeroSection({ locale }: { locale: string }) {
         </div>
 
         <p className="text-sm md:text-base text-[#00f5d4]/70 font-medium tracking-[0.2em] uppercase mb-4 animate-fade-in-up">
-          Where art meets frequency
+          Curated sonic commerce
         </p>
 
-        <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-6 animate-fade-in-up delay-100">
-          <span className="text-white">Where</span> <span className="gradient-text">Techno</span>
+        <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-6 animate-fade-in-up delay-100 font-[var(--font-display)] leading-[0.95]">
+          <span className="text-[#f2ede4]">Where</span>{" "}
+          <span className="text-[#e8a020]">Techno</span>
           <br />
-          <span className="text-white">Meets</span> <span className="gradient-text">Art</span>
+          <span className="text-[#f2ede4]">Meets</span> <span className="text-[#e8a020]">Art</span>
         </h1>
 
-        <p className="text-lg md:text-xl text-white/50 max-w-2xl mx-auto mb-10 leading-relaxed animate-fade-in-up delay-200">
-          ELBTRONIKA is a curated platform where electronic music culture and visionary digital art
-          collide. Discover, collect, and experience art that moves with the beat.
+        <p className="text-lg md:text-xl text-[#9a9590] max-w-2xl mx-auto mb-10 leading-relaxed animate-fade-in-up delay-200">
+          ELBTRONIKA is a premium art-tech platform where contemporary digital works and electronic
+          music culture are curated as one experience. Discover, collect, and verify provenance with
+          transparent economics.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in-up delay-300">
           <Link
             href={localeHref(locale, "/gallery")}
-            className="group px-8 py-4 text-sm font-semibold text-[#050508] bg-gradient-to-r from-[#00f5d4] to-[#00d4b8] rounded-full hover:shadow-[0_0_40px_rgba(0,245,212,0.3)] transition-all duration-500 hover:scale-105"
+            className="group px-8 py-4 text-sm font-semibold text-[#050508] bg-[#e8a020] rounded-full hover:shadow-[0_0_40px_rgba(232,160,32,0.35)] transition-all duration-500 hover:scale-105"
           >
             Enter Experience
             <span className="inline-block ml-2 transition-transform duration-300 group-hover:translate-x-1">
@@ -61,11 +63,13 @@ function HeroSection({ locale }: { locale: string }) {
           </Link>
           <Link
             href={localeHref(locale, "/shop")}
-            className="px-8 py-4 text-sm font-semibold text-white border border-white/15 rounded-full hover:bg-white/[0.05] hover:border-white/30 transition-all duration-300"
+            className="px-8 py-4 text-sm font-semibold text-[#f2ede4] border border-[#f2ede4]/20 rounded-full hover:bg-white/[0.05] hover:border-[#f2ede4]/40 transition-all duration-300"
           >
             View Catalog
           </Link>
         </div>
+
+        <TrustSplitPanel />
 
         <SoundToggle />
 
@@ -76,6 +80,36 @@ function HeroSection({ locale }: { locale: string }) {
         </div>
       </div>
     </section>
+  );
+}
+
+function TrustSplitPanel() {
+  const split = [
+    { label: "Artist", value: "60%", tone: "text-[#e8a020]" },
+    { label: "DJ", value: "20%", tone: "text-[#2aada8]" },
+    { label: "Platform", value: "20%", tone: "text-[#f2ede4]" },
+  ];
+
+  return (
+    <div className="mx-auto mt-10 max-w-2xl rounded-2xl border border-white/10 bg-[#0e0e12]/80 px-5 py-4 backdrop-blur animate-fade-in-up delay-400">
+      <div className="flex items-center justify-between gap-3 pb-3 border-b border-white/10">
+        <p className="text-[11px] uppercase tracking-[0.24em] text-[#9a9590]">
+          Transparent Revenue Split
+        </p>
+        <p className="text-xs text-[#9a9590]">Trust by default</p>
+      </div>
+      <div className="grid grid-cols-3 gap-3 pt-3">
+        {split.map((item) => (
+          <div
+            key={item.label}
+            className="rounded-xl border border-white/10 bg-white/[0.02] px-3 py-3 text-center"
+          >
+            <p className={`text-2xl font-bold ${item.tone}`}>{item.value}</p>
+            <p className="mt-1 text-xs uppercase tracking-[0.12em] text-[#9a9590]">{item.label}</p>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -326,17 +360,34 @@ function SoundToggle() {
 
   return (
     <button
+      type="button"
       onClick={toggleAudio}
       className="mt-8 flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 text-xs text-white/50 hover:text-white/80 hover:border-white/20 transition-all"
       aria-label={audioEnabled ? "Disable sound" : "Enable sound"}
     >
       {audioEnabled ? (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
+          <title>Sound enabled</title>
           <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
           <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
         </svg>
       ) : (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
+          <title>Sound disabled</title>
           <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
           <line x1="23" y1="9" x2="17" y2="15" />
           <line x1="17" y1="9" x2="23" y2="15" />

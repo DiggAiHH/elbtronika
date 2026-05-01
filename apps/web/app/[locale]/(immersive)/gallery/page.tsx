@@ -11,6 +11,22 @@ interface GalleryPageProps {
   params: Promise<{ locale: string }>;
 }
 
+type SanityArtworkRaw = {
+  _id: string;
+  title?: string;
+  slug?: { current: string };
+  image?: { asset?: { url?: string } };
+  artist?: { _id?: string };
+};
+
+type GalleryArtwork = {
+  _id: string;
+  title?: string;
+  slug?: { current: string };
+  imageUrl?: string;
+  artistId?: string;
+};
+
 export async function generateMetadata({ params }: GalleryPageProps): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "gallery" });
@@ -25,8 +41,26 @@ export default async function GalleryPage({ params }: GalleryPageProps) {
   const t = await getTranslations({ locale, namespace: "gallery" });
 
   // Fetch first 3 artworks for Room1 initial state
-  const artworks = await getClient().fetch(allArtworksQuery, {}, { next: { revalidate: 60 } });
-  const roomArtworks = (artworks ?? []).slice(0, 3);
+  let artworks: SanityArtworkRaw[] = [];
+  try {
+    const data = await getClient().fetch<SanityArtworkRaw[]>(
+      allArtworksQuery,
+      {},
+      { next: { revalidate: 60 } },
+    );
+    artworks = Array.isArray(data) ? data : [];
+  } catch (err) {
+    console.warn("[gallery] sanity fetch failed; using empty fallback", err);
+  }
+  const roomArtworks: GalleryArtwork[] = (artworks ?? [])
+    .slice(0, 3)
+    .map((aw) => ({
+      _id: aw._id,
+      ...(aw.title ? { title: aw.title } : {}),
+      ...(aw.slug ? { slug: aw.slug } : {}),
+      ...(aw.image?.asset?.url ? { imageUrl: aw.image.asset.url } : {}),
+      ...(aw.artist?._id ? { artistId: aw.artist._id } : {}),
+    }));
 
   return (
     <>

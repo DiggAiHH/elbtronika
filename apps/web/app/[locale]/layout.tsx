@@ -4,7 +4,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import "@/app/globals.css";
-import { DemoBanner } from "@elbtronika/ui";
+import { DemoBanner, WalkthroughTour } from "@elbtronika/ui";
 import dynamic from "next/dynamic";
 import { EnvProvider } from "@/src/components/providers/EnvProvider";
 import { getEnv } from "@/src/lib/env";
@@ -25,11 +25,6 @@ const GalleryHUD = dynamic(
   {
     loading: () => null,
   },
-);
-
-const WalkthroughTour = dynamic(
-  () => import("@elbtronika/ui").then((m) => ({ default: m.WalkthroughTour })),
-  { ssr: false },
 );
 
 type Props = {

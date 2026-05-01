@@ -5,34 +5,34 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: #050508;
-  --color-surface: rgba(255, 255, 255, 0.03);
+  --color-background: #050507;
+  --color-surface: rgba(255, 255, 255, 0.025);
   --color-surface-hover: rgba(255, 255, 255, 0.07);
   --color-surface-elevated: rgba(255, 255, 255, 0.05);
   --color-border: rgba(255, 255, 255, 0.08);
   --color-border-strong: rgba(255, 255, 255, 0.15);
 
-  --color-primary: #00f5d4;
-  --color-primary-hover: #00dcc0;
-  --color-primary-dim: rgba(0, 245, 212, 0.15);
-  --color-secondary: #f720b8;
-  --color-secondary-hover: #e01aa6;
-  --color-secondary-dim: rgba(247, 32, 184, 0.15);
-  --color-accent: #7b2fff;
-  --color-accent-hover: #6920e6;
-  --color-accent-dim: rgba(123, 47, 255, 0.15);
+  --color-primary: #e8a020;
+  --color-primary-hover: #d38e12;
+  --color-primary-dim: rgba(232, 160, 32, 0.15);
+  --color-secondary: #2aada8;
+  --color-secondary-hover: #1e918c;
+  --color-secondary-dim: rgba(42, 173, 168, 0.15);
+  --color-accent: #f2ede4;
+  --color-accent-hover: #e4dac8;
+  --color-accent-dim: rgba(242, 237, 228, 0.15);
 
-  --color-text-primary: rgba(255, 255, 255, 0.92);
-  --color-text-secondary: rgba(255, 255, 255, 0.55);
-  --color-text-muted: rgba(255, 255, 255, 0.3);
+  --color-text-primary: #f2ede4;
+  --color-text-secondary: #9a9590;
+  --color-text-muted: #5a5652;
   --color-text-inverse: #050508;
 
   --color-success: #22c55e;
   --color-warning: #f59e0b;
   --color-error: #ef4444;
 
-  --font-display: "Playfair Display", Georgia, serif;
-  --font-body: "Inter", system-ui, sans-serif;
+  --font-display: "DM Serif Display", "Playfair Display", Georgia, serif;
+  --font-body: "Space Grotesk", "Inter", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", "Fira Code", monospace;
 
   --duration-fast: 120ms;

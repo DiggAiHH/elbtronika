@@ -84,11 +84,16 @@ type CommerceDj = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const client = getSanityClient();
-  const artwork = await client.fetch<ArtworkPageData | null>(
-    artworkBySlugQuery,
-    { slug },
-    { next: { revalidate: 300 } },
-  );
+  let artwork: ArtworkPageData | null = null;
+  try {
+    artwork = await client.fetch<ArtworkPageData | null>(
+      artworkBySlugQuery,
+      { slug },
+      { next: { revalidate: 300 } },
+    );
+  } catch (err) {
+    console.warn("[shop/artwork] metadata sanity fetch failed", err);
+  }
 
   if (!artwork) {
     return {};
@@ -114,19 +119,30 @@ export default async function ArtworkDetailPage({ params }: Props) {
   const sanityClient = getSanityClient();
   const supabase = await createSupabaseClient();
 
-  const [artwork, relatedArtworks, commerce] = await Promise.all([
-    sanityClient.fetch<ArtworkPageData | null>(
-      artworkBySlugQuery,
-      { slug },
-      { next: { revalidate: 300 } },
-    ),
-    sanityClient.fetch<RelatedArtwork[]>(allArtworksQuery, {}, { next: { revalidate: 120 } }),
+  const [artworkResult, relatedArtworksResult, commerce] = await Promise.all([
+    sanityClient
+      .fetch<ArtworkPageData | null>(artworkBySlugQuery, { slug }, { next: { revalidate: 300 } })
+      .then((data) => ({ data, ok: true as const }))
+      .catch((err) => {
+        console.warn("[shop/artwork] sanity artwork fetch failed", err);
+        return { data: null, ok: false as const };
+      }),
+    sanityClient
+      .fetch<RelatedArtwork[]>(allArtworksQuery, {}, { next: { revalidate: 120 } })
+      .then((data) => ({ data, ok: true as const }))
+      .catch((err) => {
+        console.warn("[shop/artwork] sanity related fetch failed", err);
+        return { data: [], ok: false as const };
+      }),
     supabase
       .from("artworks")
       .select("id, slug, price_eur, edition_size, editions_sold, image_url, model_url, set_id")
       .eq("slug", slug)
       .maybeSingle(),
   ]);
+
+  const artwork = artworkResult.data;
+  const relatedArtworks = relatedArtworksResult.data;
 
   if (!artwork) {
     notFound();
