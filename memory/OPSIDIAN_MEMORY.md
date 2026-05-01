@@ -109,3 +109,11 @@
 - Chromium smoke test executed successfully after robustness fix in `apps/web/e2e/chromium-ultraplan-smoke.spec.ts`
 - Todo snapshot saved and completed in `docs/plans/todo-systematic-execution-2026-05-01.md`
 - Run log: `memory/runs/2026-05-01_Copilot_GPT53-Run02_ultraplan_harness_and_landing_slice.md`
+
+## Phase 2 Shop Surface (2026-05-01)
+
+- ArtworkCard: rounded-[20px], artist name in primary color + semibold, medium as editorial overline
+- shop/page.tsx: "Curated Commerce" overline, font-semibold h1, constrained subheading
+- Artwork detail: DJ name promoted with bullet dot above set title; trust mini-strip added above CTA (blockchain verified, limited edition, secure checkout — bilingual)
+- All files Biome clean, no TS errors
+- Run log: `memory/runs/2026-05-01_Copilot_GPT53-Run03_shop_phase2_slice.md`
