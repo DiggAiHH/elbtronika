@@ -117,3 +117,12 @@
 - Artwork detail: DJ name promoted with bullet dot above set title; trust mini-strip added above CTA (blockchain verified, limited edition, secure checkout — bilingual)
 - All files Biome clean, no TS errors
 - Run log: `memory/runs/2026-05-01_Copilot_GPT53-Run03_shop_phase2_slice.md`
+
+## Phase 3 + Surface Audit (2026-05-01)
+
+- Gallery: `GalleryEntryOverlay.tsx` created — fixed-position editorial entry, scroll-fade opacity, pointer-events:none
+- Press: overline "For Media", font-semibold h1/h2, rounded-[20px] cards, pill CTA
+- Pitch: overline "Investor Access", font-semibold h1, rounded-[20px] all sections, pill CTA
+- Surface audit: artist/dj/about pages — font-bold → font-semibold on all public headings
+- Chromium smoke: `1 passed (40.4s)` ✅ after Phase 3 + audit commits
+- All commits pushed: 0dafb8b → 1f64efd on `feature/phase-11-ai`
