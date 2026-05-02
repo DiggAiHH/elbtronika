@@ -19,10 +19,21 @@ import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { createClient } from "@/src/lib/supabase/server";
 
+const MAX_CONTEXT_BYTES = 10_000;
+
 const CreateTaskSchema = z.object({
   type: z.enum(["curate", "onboard", "test", "analyze", "research", "custom"]),
   goal: z.string().min(2).max(1000),
-  context: z.record(z.unknown()).default({}),
+  context: z
+    .record(z.unknown())
+    .refine((value) => {
+      try {
+        return JSON.stringify(value).length <= MAX_CONTEXT_BYTES;
+      } catch {
+        return false;
+      }
+    }, "Context payload too large")
+    .default({}),
   execute: z.boolean().default(false),
 });
 

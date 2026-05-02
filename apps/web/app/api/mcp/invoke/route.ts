@@ -27,10 +27,21 @@ const ALLOWED_TOOLS: Record<string, readonly string[]> = {
   stripe: ["stripe_list_transfers", "stripe_get_account_balance"],
 } as const;
 
+const MAX_PARAMS_BYTES = 10_000;
+
 const InvokeRequestSchema = z.object({
   server: z.string(),
   tool: z.string(),
-  params: z.record(z.unknown()).default({}),
+  params: z
+    .record(z.unknown())
+    .refine((value) => {
+      try {
+        return JSON.stringify(value).length <= MAX_PARAMS_BYTES;
+      } catch {
+        return false;
+      }
+    }, "Params payload too large")
+    .default({}),
 });
 
 const serverMap: Record<string, () => MCPServer> = {

@@ -57,25 +57,27 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    // Check if set exists
-    const { data: set } = await supabase
+    // Fetch set and enforce ownership boundary (with curator/admin override)
+    const { data: setData } = await supabase
       .from("sets")
-      .select("id, title")
+      .select("id, title, dj_id")
       .eq("id", body.setId)
       .single();
 
-    if (!set) {
+    if (!setData) {
       return NextResponse.json({ error: "Set not found" }, { status: 404 });
     }
 
-    // Ownership check: only the DJ who created the set can analyze it
-    const { data: setOwnership } = await supabase
-      .from("sets")
-      .select("dj_id")
-      .eq("id", body.setId)
-      .single();
-    if (!setOwnership || setOwnership.dj_id !== user.id) {
-      return NextResponse.json({ error: "Forbidden: not your set" }, { status: 403 });
+    if (setData.dj_id !== user.id) {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+      // Non-disclosure: treat unauthorized access to existing sets as not found
+      if (!profile || !["curator", "admin"].includes(profile.role)) {
+        return NextResponse.json({ error: "Set not found" }, { status: 404 });
+      }
     }
 
     // In production: download audio, analyze with @elbtronika/flow analyzeAudio().

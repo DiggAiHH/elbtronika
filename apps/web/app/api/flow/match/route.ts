@@ -111,8 +111,9 @@ export async function POST(request: NextRequest) {
         .select("role")
         .eq("id", user.id)
         .single();
+      // Non-disclosure: do not reveal set existence to unauthorized users
       if (!profile || !["curator", "admin"].includes(profile.role)) {
-        return NextResponse.json({ error: "Forbidden: not your set" }, { status: 403 });
+        return NextResponse.json({ error: "Set not found" }, { status: 404 });
       }
     }
 
