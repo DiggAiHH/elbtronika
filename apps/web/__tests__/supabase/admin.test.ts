@@ -23,4 +23,13 @@ describe("createAdminClient", () => {
 
     expect(() => createAdminClient()).toThrow("NEXT_PUBLIC_SUPABASE_URL not configured");
   });
+
+  it("returns a client when required env vars are present", () => {
+    process.env.NEXT_PUBLIC_SUPABASE_URL = "https://test.supabase.co";
+    process.env.SUPABASE_SERVICE_ROLE_KEY = "test-service-key";
+
+    const client = createAdminClient();
+    expect(client).toBeTruthy();
+    expect(typeof client.from).toBe("function");
+  });
 });
