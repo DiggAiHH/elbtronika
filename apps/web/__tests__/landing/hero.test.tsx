@@ -13,7 +13,11 @@ const pageSource = fs.readFileSync(pagePath, "utf-8");
 
 describe("Landing — Hero Section", () => {
   it("has USP text content", () => {
-    expect(pageSource).toContain("Where art meets frequency");
+    expect(pageSource).toContain("Curated sonic commerce");
+    expect(pageSource).toContain("Where");
+    expect(pageSource).toContain("Techno");
+    expect(pageSource).toContain("Meets");
+    expect(pageSource).toContain("Art");
   });
 
   it("has Enter Experience CTA", () => {

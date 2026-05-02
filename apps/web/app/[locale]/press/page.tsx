@@ -24,7 +24,7 @@ export default async function PressPage({ params }: Props) {
       <section className="border-b border-[var(--color-border)] px-4 py-16 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-4xl text-center">
           <p className="mb-4 text-xs font-medium uppercase tracking-[0.22em] text-[var(--color-text-muted)]">
-            {t.rich ? "For Media" : "For Media"}
+            For Media
           </p>
           <h1 className="text-4xl font-semibold text-[var(--color-text-primary)] sm:text-5xl">
             {t("heroTitle")}
