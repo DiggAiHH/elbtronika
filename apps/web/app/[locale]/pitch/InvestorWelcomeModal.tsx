@@ -39,7 +39,7 @@ export function InvestorWelcomeModal({ locale }: Props) {
     >
       <div className="relative w-full max-w-sm mx-4 rounded-2xl bg-[#0a0a0f] border border-white/[0.08] p-8 shadow-2xl text-center">
         {/* Glow accent */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-1 rounded-full bg-gradient-to-r from-[#00f5d4] to-[#7b2fff]" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-1 rounded-full bg-gradient-to-r from-[#e8a020] to-[#2aada8]" />
 
         <h2 className="text-2xl font-bold text-white mt-4 mb-2">
           Hi Lee 👋
@@ -53,7 +53,7 @@ export function InvestorWelcomeModal({ locale }: Props) {
         <div className="flex flex-col gap-3">
           <button
             onClick={takeTour}
-            className="w-full px-6 py-3 text-sm font-semibold text-[#050508] bg-gradient-to-r from-[#00f5d4] to-[#00d4b8] rounded-full hover:shadow-[0_0_30px_rgba(0,245,212,0.3)] transition-all duration-300"
+            className="w-full px-6 py-3 text-sm font-semibold text-[#050508] bg-[#e8a020] hover:bg-[#d38e12] rounded-full hover:shadow-[0_0_30px_rgba(232,160,32,0.3)] transition-all duration-300"
           >
             Take the Tour →
           </button>

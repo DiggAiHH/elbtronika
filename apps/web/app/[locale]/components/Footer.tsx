@@ -32,7 +32,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="md:col-span-1">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#00f5d4] to-[#7b2fff] flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#e8a020] to-[#2aada8] flex items-center justify-center">
                 <span className="text-[#050508] font-bold text-sm">E</span>
               </div>
               <span className="text-lg font-bold tracking-[0.15em] text-white">ELBTRONIKA</span>
@@ -53,7 +53,7 @@ export default function Footer() {
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="text-sm text-white/50 hover:text-[#00f5d4] transition-colors duration-300"
+                    className="text-sm text-white/50 hover:text-[#e8a020] transition-colors duration-300"
                   >
                     {link.label}
                   </Link>
@@ -71,7 +71,7 @@ export default function Footer() {
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="text-sm text-white/50 hover:text-[#00f5d4] transition-colors duration-300"
+                    className="text-sm text-white/50 hover:text-[#e8a020] transition-colors duration-300"
                   >
                     {link.label}
                   </Link>
@@ -89,7 +89,7 @@ export default function Footer() {
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="text-sm text-white/50 hover:text-[#00f5d4] transition-colors duration-300"
+                    className="text-sm text-white/50 hover:text-[#e8a020] transition-colors duration-300"
                   >
                     {link.label}
                   </Link>
@@ -111,12 +111,12 @@ export default function Footer() {
                           window.location.reload();
                         }
                       }}
-                      className="text-sm text-white/50 hover:text-[#00f5d4] transition-colors duration-300"
+                      className="text-sm text-white/50 hover:text-[#e8a020] transition-colors duration-300"
                     >
                       {link.label}
                     </button>
                   ) : (
-                    <Link href={link.href} className="text-sm text-white/50 hover:text-[#00f5d4] transition-colors duration-300">
+                    <Link href={link.href} className="text-sm text-white/50 hover:text-[#e8a020] transition-colors duration-300">
                       {link.label}
                     </Link>
                   )}

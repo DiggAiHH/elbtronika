@@ -30,11 +30,11 @@ function HeroSection({ locale }: { locale: string }) {
 
       <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-8 animate-fade-in-up">
-          <span className="w-2 h-2 rounded-full bg-[#00f5d4] animate-pulse" />
+          <span className="w-2 h-2 rounded-full bg-[#e8a020] animate-pulse" />
           <span className="text-xs font-medium text-white/60">Now Live — Berlin & Digital</span>
         </div>
 
-        <p className="text-sm md:text-base text-[#00f5d4]/70 font-medium tracking-[0.2em] uppercase mb-4 animate-fade-in-up">
+        <p className="text-sm md:text-base text-[#e8a020]/70 font-medium tracking-[0.2em] uppercase mb-4 animate-fade-in-up">
           Curated sonic commerce
         </p>
 
@@ -122,7 +122,7 @@ function FeaturesSection({ locale }: { locale: string }) {
       description:
         "Immersive 3D gallery spaces where each room is paired with a unique DJ set. Art that responds to sound.",
       href: "/gallery",
-      color: "#00f5d4",
+      color: "#e8a020",
     },
     {
       icon: "🛒",
@@ -130,7 +130,7 @@ function FeaturesSection({ locale }: { locale: string }) {
       description:
         "Collect limited-edition digital and physical artworks directly from visionary artists. Fair revenue split.",
       href: "/shop",
-      color: "#f720b8",
+      color: "#2aada8",
     },
     {
       icon: "🎵",
@@ -138,7 +138,7 @@ function FeaturesSection({ locale }: { locale: string }) {
       description:
         "Our Hermes Agent analyzes audio features and artwork metadata to find perfect music-art pairings.",
       href: "/dashboard/pm/curation",
-      color: "#7b2fff",
+      color: "#f2ede4",
     },
   ];
 
@@ -169,7 +169,7 @@ function FeaturesSection({ locale }: { locale: string }) {
               >
                 {f.icon}
               </div>
-              <h3 className="text-xl font-semibold text-white mb-3 group-hover:text-[#00f5d4] transition-colors duration-300">
+              <h3 className="text-xl font-semibold text-white mb-3 group-hover:text-[#e8a020] transition-colors duration-300">
                 {f.title}
               </h3>
               <p className="text-sm text-white/40 leading-relaxed mb-6">{f.description}</p>
@@ -276,7 +276,7 @@ function CTASection({ locale }: { locale: string }) {
   return (
     <section className="relative py-32 px-6 overflow-hidden">
       <div className="absolute inset-0">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-gradient-to-b from-[#00f5d4]/10 to-transparent blur-[100px]" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-gradient-to-b from-[#e8a020]/10 to-transparent blur-[100px]" />
       </div>
 
       <div className="relative z-10 max-w-3xl mx-auto text-center">
@@ -291,7 +291,7 @@ function CTASection({ locale }: { locale: string }) {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link
             href={localeHref(locale, "/gallery")}
-            className="px-10 py-4 text-sm font-semibold text-[#050508] bg-gradient-to-r from-[#00f5d4] to-[#00d4b8] rounded-full hover:shadow-[0_0_60px_rgba(0,245,212,0.4)] transition-all duration-500 hover:scale-105"
+            className="px-10 py-4 text-sm font-semibold text-[#050508] bg-[#e8a020] hover:bg-[#d38e12] rounded-full hover:shadow-[0_0_60px_rgba(232,160,32,0.4)] transition-all duration-500 hover:scale-105"
           >
             Enter the Gallery
           </Link>

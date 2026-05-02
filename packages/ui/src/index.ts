@@ -2,6 +2,14 @@
 
 // ── Form Controls ──────────────────────────────────────────────────────────
 export { Button, type ButtonProps, buttonVariants } from "./components/button";
+export {
+  Tooltip,
+  type TooltipProps,
+  TooltipContent,
+  TooltipProvider,
+  TooltipRoot,
+  TooltipTrigger,
+} from "./components/tooltip";
 export { Checkbox, type CheckboxProps } from "./components/checkbox";
 export { DemoBanner, type DemoBannerProps } from "./components/DemoBanner";
 // ── Overlay & Feedback ─────────────────────────────────────────────────────

@@ -13,7 +13,7 @@ export default async function AboutPage() {
       {/* Hero */}
       <section className="relative py-32 px-6 text-center overflow-hidden">
         <div className="absolute inset-0">
-          <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full bg-[#00f5d4]/[0.03] blur-[120px]" />
+          <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full bg-[#e8a020]/[0.03] blur-[120px]" />
         </div>
         <div className="relative z-10 max-w-3xl mx-auto">
           <h1 className="text-5xl md:text-7xl font-semibold mb-6">

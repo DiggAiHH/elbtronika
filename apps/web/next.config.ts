@@ -52,6 +52,9 @@ const nextConfig: NextConfig = {
       },
     ],
     formats: ["image/avif", "image/webp"],
+    deviceSizes: [375, 640, 768, 1024, 1280, 1536, 1920],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256],
+    minimumCacheTTL: 60 * 60 * 24 * 30, // 30 days
   },
 
   // Security headers (extended in netlify.toml for CDN)

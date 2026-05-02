@@ -142,10 +142,10 @@ body {
 @keyframes glow {
   0%,
   100% {
-    box-shadow: 0 0 20px rgba(0, 245, 212, 0.2);
+    box-shadow: 0 0 20px color-mix(in srgb, var(--color-primary) 20%, transparent);
   }
   50% {
-    box-shadow: 0 0 40px rgba(0, 245, 212, 0.4);
+    box-shadow: 0 0 40px color-mix(in srgb, var(--color-primary) 40%, transparent);
   }
 }
 
@@ -296,9 +296,9 @@ body {
 .gradient-bg {
   background: linear-gradient(
     135deg,
-    rgba(0, 245, 212, 0.05),
-    rgba(247, 32, 184, 0.05),
-    rgba(123, 47, 255, 0.05)
+    color-mix(in srgb, var(--color-primary) 5%, transparent),
+    color-mix(in srgb, var(--color-secondary) 5%, transparent),
+    color-mix(in srgb, var(--color-accent) 3%, transparent)
   );
 }
 
@@ -317,24 +317,24 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* ============ NEON EFFECTS ============ */
+/* ============ GLOW EFFECTS ============ */
 .neon-text {
   text-shadow:
-    0 0 10px rgba(0, 245, 212, 0.5),
-    0 0 20px rgba(0, 245, 212, 0.3),
-    0 0 40px rgba(0, 245, 212, 0.1);
+    0 0 10px color-mix(in srgb, var(--color-primary) 50%, transparent),
+    0 0 20px color-mix(in srgb, var(--color-primary) 30%, transparent),
+    0 0 40px color-mix(in srgb, var(--color-primary) 10%, transparent);
 }
 
-.neon-text-magenta {
+.neon-text-secondary {
   text-shadow:
-    0 0 10px rgba(247, 32, 184, 0.5),
-    0 0 20px rgba(247, 32, 184, 0.3);
+    0 0 10px color-mix(in srgb, var(--color-secondary) 50%, transparent),
+    0 0 20px color-mix(in srgb, var(--color-secondary) 30%, transparent);
 }
 
 .neon-border {
   box-shadow:
-    0 0 10px rgba(0, 245, 212, 0.2),
-    inset 0 0 10px rgba(0, 245, 212, 0.05);
+    0 0 10px color-mix(in srgb, var(--color-primary) 20%, transparent),
+    inset 0 0 10px color-mix(in srgb, var(--color-primary) 5%, transparent);
 }
 
 /* ============ SCROLLBAR ============ */
