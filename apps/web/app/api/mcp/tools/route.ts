@@ -83,6 +83,7 @@ export async function GET() {
     return NextResponse.json({ tools: allTools, total: allTools.length }, { status: 200 });
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    return NextResponse.json({ error: message }, { status: 500 });
+    console.error("[mcp/tools] error:", message);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

@@ -3,6 +3,7 @@
 
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { auditLog, checkUserRateLimit, hashText } from "@/src/lib/ai/server";
 import { createClient } from "@/src/lib/supabase/server";
 
 const OverrideRequestSchema = z.object({
@@ -35,7 +36,7 @@ export async function POST(request: NextRequest) {
   // Verify the decision belongs to this user (or user has admin/curator rights)
   const { data: decision } = await supabase
     .from("ai_decisions")
-    .select("triggered_by")
+    .select("triggered_by, metadata")
     .eq("id", body.decisionId)
     .single();
 
@@ -49,6 +50,12 @@ export async function POST(request: NextRequest) {
     .eq("id", user.id)
     .single();
 
+  const role = profile?.role ?? "visitor";
+  const rate = await checkUserRateLimit(user.id, role);
+  if (!rate.allowed) {
+    return NextResponse.json({ error: "Rate limit exceeded", limit: rate.limit }, { status: 429 });
+  }
+
   const isAdmin = ["admin", "curator"].includes(profile?.role ?? "");
   if (decision.triggered_by !== user.id && !isAdmin) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -56,13 +63,33 @@ export async function POST(request: NextRequest) {
 
   const { error } = await supabase
     .from("ai_decisions")
-    .update({ metadata: { override: true } })
+    .update({
+      metadata: {
+        ...((decision.metadata as Record<string, unknown> | null) ?? {}),
+        override: true,
+        overriddenBy: user.id,
+        overriddenAt: new Date().toISOString(),
+      },
+    })
     .eq("id", body.decisionId);
 
   if (error) {
     console.error("[ai/override] update error:", error.message);
     return NextResponse.json({ error: "Failed to record override" }, { status: 500 });
   }
+
+  auditLog(supabase, {
+    userId: user.id,
+    feature: "override",
+    promptHash: await hashText(body.decisionId),
+    model: "system",
+    output: JSON.stringify({ decisionId: body.decisionId, override: true }),
+    inputTokens: 0,
+    outputTokens: 0,
+    latencyMs: 0,
+  }).catch(() => {
+    /* best-effort logging */
+  });
 
   return NextResponse.json({ success: true }, { status: 200 });
 }

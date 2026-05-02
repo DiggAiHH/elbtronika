@@ -83,11 +83,19 @@ export async function POST(request: NextRequest) {
   }
 
   const startMs = Date.now();
+  const auditSafe = async (event: Parameters<typeof logAuditEvent>[0]) => {
+    try {
+      await logAuditEvent(event);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      console.error("[mcp/invoke] audit failed:", message);
+    }
+  };
 
   // Wave 0: Allowlist check — deny unlisted servers
   const allowedTools = ALLOWED_TOOLS[rawServer];
   if (!allowedTools) {
-    logAuditEvent({
+    await auditSafe({
       actorId: user.id,
       role: profile.role,
       server: rawServer,
@@ -100,7 +108,7 @@ export async function POST(request: NextRequest) {
 
   // Wave 0: Allowlist check — deny unlisted or blocked tools
   if (!allowedTools.includes(rawTool)) {
-    logAuditEvent({
+    await auditSafe({
       actorId: user.id,
       role: profile.role,
       server: rawServer,
@@ -117,7 +125,7 @@ export async function POST(request: NextRequest) {
   try {
     const serverFactory = serverMap[rawServer];
     if (!serverFactory) {
-      await logAuditEvent({
+      await auditSafe({
         actorId: user.id,
         role: profile.role,
         server: rawServer,
@@ -138,8 +146,7 @@ export async function POST(request: NextRequest) {
     const durationMs = Date.now() - startMs;
 
     if (response && "error" in (response as Record<string, unknown>)) {
-      const error = (response as { error?: { message: string } }).error;
-      logAuditEvent({
+      await auditSafe({
         actorId: user.id,
         role: profile.role,
         server: rawServer,
@@ -148,14 +155,11 @@ export async function POST(request: NextRequest) {
         durationMs,
         errorClass: "tool_error",
       });
-      return NextResponse.json(
-        { error: error?.message ?? "Tool execution failed" },
-        { status: 500 },
-      );
+      return NextResponse.json({ error: "Tool execution failed" }, { status: 500 });
     }
 
     const result = (response as { result?: unknown })?.result;
-    logAuditEvent({
+    await auditSafe({
       actorId: user.id,
       role: profile.role,
       server: rawServer,
@@ -167,7 +171,7 @@ export async function POST(request: NextRequest) {
   } catch (err) {
     const durationMs = Date.now() - startMs;
     const message = err instanceof Error ? err.message : String(err);
-    logAuditEvent({
+    await auditSafe({
       actorId: user.id,
       role: profile.role,
       server: rawServer,
@@ -176,6 +180,7 @@ export async function POST(request: NextRequest) {
       durationMs,
       errorClass: "execution_exception",
     });
-    return NextResponse.json({ error: message }, { status: 500 });
+    console.error("[mcp/invoke] execution exception:", message);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

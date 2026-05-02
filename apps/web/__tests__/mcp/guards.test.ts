@@ -27,6 +27,15 @@ describe("MCP invoke route guardrails", () => {
     expect(invokeSource).toContain('errorClass: "server_not_found"');
     expect(invokeSource).toContain('errorClass: "tool_not_allowed"');
     expect(invokeSource).toContain('errorClass: "tool_error"');
+    expect(invokeSource).toContain('errorClass: "execution_exception"');
+    expect(invokeSource).toContain("const auditSafe = async");
+    expect(invokeSource).toContain("await auditSafe(");
+  });
+
+  it("does not leak internal error details to clients", () => {
+    expect(invokeSource).toContain('{ error: "Tool execution failed" }');
+    expect(invokeSource).toContain('{ error: "Internal server error" }');
+    expect(invokeSource).not.toContain("return NextResponse.json({ error: message }, { status: 500 });");
   });
 });
 
@@ -41,5 +50,10 @@ describe("MCP tools route guardrails", () => {
     expect(toolsSource).toContain('{ name: "sanity"');
     expect(toolsSource).toContain('{ name: "stripe"');
     expect(toolsSource).toContain('{ name: "audio"');
+  });
+
+  it("returns generic 500 error payload on internal failures", () => {
+    expect(toolsSource).toContain('{ error: "Internal server error" }');
+    expect(toolsSource).not.toContain("return NextResponse.json({ error: message }, { status: 500 });");
   });
 });
