@@ -140,6 +140,14 @@
 - All files Biome clean, no TS errors
 - Run log: `memory/runs/2026-05-01_Copilot_GPT53-Run03_shop_phase2_slice.md`
 
+## Skill-Team Harness (2026-05-02)
+
+- Installed Codex skills were converted into explicit lanes: browser-harness, hermes-agent, caveman, obsidian, remotion-best-practices
+- New source of truth: `engineering-harness/SKILL_TEAM_HARNESS.md`
+- New validator: `scripts/validate-skill-team.cjs`
+- Preflight links updated in `PRE_FLIGHT_PROTOCOL.md`, `ULTRAPLAN_AGENT_PREFLIGHT.md`, `COPILOT_AGENT_PREFLIGHT.md`, `CHEATSHEET.md`, and `HARNESS.md`
+- Run log: `memory/runs/2026-05-02_Codex_GPT5-Run01_skill_team_harness.md`
+
 ## Phase 3 + Surface Audit (2026-05-01)
 
 - Gallery: `GalleryEntryOverlay.tsx` created — fixed-position editorial entry, scroll-fade opacity, pointer-events:none

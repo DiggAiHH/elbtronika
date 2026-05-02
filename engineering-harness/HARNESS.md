@@ -173,6 +173,24 @@ npx designlang https://bandcamp.com --full --out ./design-extract-output/bandcam
 
 ---
 
+## Skill-Team Harness
+
+Installed Codex skills are routed through one repo contract:
+
+- `engineering-harness/SKILL_TEAM_HARNESS.md`
+- `scripts/validate-skill-team.cjs`
+
+Use it for browser proof, Hermes/MCP boundaries, caveman compression, Obsidian memory,
+and Remotion demo-video work. The harness separates work executed as docs/scripts now
+from runtime-gated work that needs a server, browser session, credentials, or a future
+Remotion app.
+
+```powershell
+node .\scripts\validate-skill-team.cjs
+```
+
+---
+
 ## Fehler-Prävention (Zero-Repeat-Error)
 
 | Fehler | Prävention | Automatisierung |

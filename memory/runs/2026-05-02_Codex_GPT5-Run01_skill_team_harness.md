@@ -1,0 +1,5 @@
+- **Datum:** 2026-05-02
+- **Agent/Model:** Codex / GPT-5
+- **Task:** Use the newly installed skills as a subagent team, define ten tasks per skill lane, and integrate the result into preflight/harness docs.
+- **Outcome:** Added `SKILL_TEAM_HARNESS.md`, `validate-skill-team.cjs`, preflight cross-links, skill inventory entries, and memory index/run-log updates.
+- **Lesson:** Runtime-capable skills need explicit gates so docs can execute routing now without falsely claiming browser, Hermes, or Remotion runtime proof.

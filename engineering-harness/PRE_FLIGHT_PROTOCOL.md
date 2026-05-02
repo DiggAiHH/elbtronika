@@ -11,7 +11,8 @@ Vor jedem substantiellen Task zusaetzlich lesen:
 
 1. `engineering-harness/ULTRAPLAN_AGENT_PREFLIGHT.md` (Execution Contract + Done Definition)
 2. `engineering-harness/COPILOT_AGENT_PREFLIGHT.md` (VS Code Tool Routing)
-3. `engineering-harness/HERMES_TRUST_HARNESS.md` (nur bei Trust-Boundary Tasks)
+3. `engineering-harness/SKILL_TEAM_HARNESS.md` (installed Codex skills: browser, Hermes, caveman, Obsidian, Remotion)
+4. `engineering-harness/HERMES_TRUST_HARNESS.md` (nur bei Trust-Boundary Tasks)
 
 Prioritaetsreihenfolge bei Konflikten:
 
@@ -312,6 +313,11 @@ CLOUDFLARE_R2_*, RESEND_API_KEY, SENTRY_DSN, etc.
 | `research` | Codebase-Exploration, Pattern-Suche | Read-only, schnell, parallel |
 | `microsoft-foundry` | "deploy agent", "Foundry" | Azure Foundry |
 | `skill-creator` | "create skill", "update skill" | Neue Skills bauen |
+| `browser-harness` | Runtime UI proof, screenshots, CDP | Erst nach lokalem Read/Search; stop bei Auth-Wall |
+| `hermes-agent` | Hermes/MCP/agent runtime | Immer mit `HERMES_TRUST_HARNESS.md` bei Trust-Boundaries |
+| `caveman` | Token-Kompression, terse status | Safety-Off bei Security, irreversible Actions, Trust-Boundaries |
+| `obsidian` | Memory, run logs, handoffs, vault notes | Keine private Vault-Writes ohne User-Auftrag |
+| `remotion-best-practices` | Demo video, Remotion code | Kein Render-Claim ohne Remotion-Projekt + Still-Check |
 
 ### 9.2 Projekt-Skills
 | Skill | Pfad | Trigger |
@@ -319,7 +325,25 @@ CLOUDFLARE_R2_*, RESEND_API_KEY, SENTRY_DSN, etc.
 | `Mechanism Agent` | `.sixth/skills/Mechanism Agent.md` | Agent hoert auf / wartet unnoetig |
 | `designlang-tokens` | `design-extract-output/*/.claude/skills/designlang/SKILL.md` | Frontend-Styling mit Design-Tokens |
 
-### 9.3 Skill-Aufruf-Muster
+### 9.3 Installed Skill-Team Harness
+
+| Lane | Primary files | Gate |
+|------|---------------|------|
+| Browser Harness | `packages/browser`, `apps/web/e2e` | Runtime browser/server required for screenshots |
+| Hermes Agent | `packages/agent`, `packages/mcp`, `apps/web/app/api/mcp/*` | Negative-path trust proof required |
+| Caveman | `CLAUDE.md`, harness docs, run logs | Disable compression where ambiguity creates risk |
+| Obsidian | `memory/OPSIDIAN_MEMORY.md`, `memory/runs`, `memory/handoffs` | Quote vault paths; validate memory refs |
+| Remotion | `docs/marketing/demo-video-script.md`, future `apps/video` | Future scaffold; no current Remotion package |
+
+Source of truth: `engineering-harness/SKILL_TEAM_HARNESS.md`.
+
+Validate after any skill/preflight edit:
+
+```powershell
+node .\scripts\validate-skill-team.cjs
+```
+
+### 9.4 Skill-Aufruf-Muster
 ```typescript
 // Plan-Mode (vor Implementation)
 Agent(subagent_type="plan", skill="plan", prompt="...implementation plan...")
@@ -342,6 +366,12 @@ Agent(subagent_type="coder", skill="frontend-design", prompt="...design this pag
 3. **Targeted Biome** — `node_modules\.bin\biome.cmd check <changed-files>`
 4. **Full Typecheck** — `turbo run typecheck --concurrency=2` (wenn OOM erlaubt)
 5. **Full Lint** — `node_modules\.bin\biome.cmd check .` oder `pnpm lint`
+
+Bei Skill-/Preflight-Aenderungen zuerst:
+
+```powershell
+node .\scripts\validate-skill-team.cjs
+```
 
 **Nach jedem Schritt:** Bei Fehlern → fixen, NICHT zum naechsten Schritt gehen.
 

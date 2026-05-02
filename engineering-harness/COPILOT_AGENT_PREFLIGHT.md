@@ -180,6 +180,11 @@ Load skills by reading their `SKILL.md` with `read_file`, then execute the instr
 | `cross-review` | Review with a specified model | `c:\Users\Moin\.agents\skills\cross-review\SKILL.md` |
 | `frontend-design` | UI mockups, landing pages, dashboards | `c:\Users\Moin\.agents\skills\frontend-design\SKILL.md` |
 | `playwright` | Browser automation, screenshots, flow testing | `c:\Users\Moin\.agents\skills\playwright\SKILL.md` |
+| `browser-harness` | Runtime UI proof and CDP-specific browser work | `c:\Users\Moin\.codex\skills\browser-harness\SKILL.md` |
+| `hermes-agent` | Hermes/MCP/agent runtime boundaries | `c:\Users\Moin\.codex\skills\hermes-agent\SKILL.md` |
+| `caveman` | Terse output and token discipline | `c:\Users\Moin\.codex\skills\caveman\SKILL.md` |
+| `obsidian` | Memory index, run logs, handoffs, vault notes | `c:\Users\Moin\.codex\skills\obsidian\SKILL.md` |
+| `remotion-best-practices` | Demo video and future Remotion work | `c:\Users\Moin\.codex\skills\remotion-best-practices\SKILL.md` |
 | `research` | Read-only codebase exploration subagent | `c:\Users\Moin\.agents\skills\research\SKILL.md` |
 | `plan` | Architecture planning before coding | `c:\Users\Moin\.agents\skills\plan\SKILL.md` |
 | `graphify` | Any input → knowledge graph → HTML/JSON | `c:\Users\Moin\.copilot\skills\graphify\SKILL.md` |
@@ -187,6 +192,7 @@ Load skills by reading their `SKILL.md` with `read_file`, then execute the instr
 | `agent-customization` | `.instructions.md`, `.prompt.md`, `AGENTS.md`, agent config | VS Code extension assets |
 
 **Rule:** Never invoke a skill without reading its `SKILL.md` first in this session.
+For the installed Codex skill team, also read `engineering-harness/SKILL_TEAM_HARNESS.md`.
 
 ---
 

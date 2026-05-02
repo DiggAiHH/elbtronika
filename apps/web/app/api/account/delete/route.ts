@@ -17,8 +17,12 @@ export async function POST(_request: NextRequest) {
     error: authError,
   } = await supabase.auth.getUser();
 
-  if (authError || !user) {
-    // Idempotent: if user is already gone, treat as success
+  if (authError) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  if (!user) {
+    // Idempotent: session already expired or account was previously deleted
     return NextResponse.json(
       { success: true, message: "Account already deleted or session expired" },
       { status: 200 },

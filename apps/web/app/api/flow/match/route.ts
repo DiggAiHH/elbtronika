@@ -95,12 +95,25 @@ export async function POST(request: NextRequest) {
     // Fetch set audio features
     const { data: setData } = await supabase
       .from("sets")
-      .select("id, title, hls_manifest_url, dj_id")
+      .select("id, title, dj_id")
       .eq("id", body.setId)
       .single();
 
     if (!setData) {
       return NextResponse.json({ error: "Set not found" }, { status: 404 });
+    }
+
+    // Ownership check: only the DJ who owns the set can run match on it
+    if (setData.dj_id !== user.id) {
+      // Check if user has curator/admin override
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+      if (!profile || !["curator", "admin"].includes(profile.role)) {
+        return NextResponse.json({ error: "Forbidden: not your set" }, { status: 403 });
+      }
     }
 
     // Fetch audio features if available (cast for new schema)

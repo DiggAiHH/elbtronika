@@ -147,6 +147,27 @@ Start Wave 0 only: lock /api/mcp/invoke and /api/mcp/tools.
 
 ---
 
+## Skill-Team Harness
+
+Installed Codex skills now have explicit lanes:
+
+- `browser-harness` - runtime UI proof, screenshots, browser mechanics
+- `hermes-agent` - agent runtime, MCP, trust-boundary routing
+- `caveman` - terse output, with safety-off rules for risky operations
+- `obsidian` - memory index, run logs, handoffs, vault path handling
+- `remotion-best-practices` - demo video and future `apps/video` Remotion scaffold
+
+Read and validate:
+
+```powershell
+notepad .\engineering-harness\SKILL_TEAM_HARNESS.md
+node .\scripts\validate-skill-team.cjs
+```
+
+Do not claim browser screenshots, Hermes runtime health, or Remotion renders unless the runtime gate actually ran.
+
+---
+
 ## Pre-Flight Protocol
 
 **Jeder Agent liest dies vor dem ersten Tool-Call:**

@@ -114,11 +114,17 @@ Use the minimum skill required.
 | Explicit full PR review | `comprehensive-review` (only when explicitly requested) |
 | Review with named model | `cross-review` |
 | Browser behavior, screenshots, forms | `playwright` |
+| Browser harness/CDP proof | `browser-harness` lane in `SKILL_TEAM_HARNESS.md` |
+| Hermes/MCP/agent trust boundary | `hermes-agent` lane + `HERMES_TRUST_HARNESS.md` |
+| Terse output/token discipline | `caveman` lane; disable when clarity is safety-critical |
+| Memory, run logs, handoffs, vault notes | `obsidian` lane |
+| Demo video or Remotion code | `remotion-best-practices` lane |
 | UI design generation | `frontend-design` |
 | Repo exploration | `research` or `Explore` agent |
 | Planning before implementation | `plan` |
 
 If no skill trigger applies, work directly in repo files.
+For installed external skills, read `engineering-harness/SKILL_TEAM_HARNESS.md` before claiming execution.
 
 ## 6. Windows Guardrails
 
@@ -159,6 +165,12 @@ Run the narrowest valid gate first, then expand only if needed.
 Gate A (local scope): changed tests or targeted checks.
 Gate B (package scope): package lint/typecheck/test.
 Gate C (cross-package): monorepo-level checks when interfaces changed.
+
+For skill-team or preflight edits, Gate A includes:
+
+```powershell
+node .\scripts\validate-skill-team.cjs
+```
 
 A task is not done until at least one relevant gate is green and evidence is recorded.
 
