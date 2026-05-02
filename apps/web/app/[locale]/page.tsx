@@ -2,8 +2,7 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-
-// import { useEffect, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 
 function localeHref(locale: string, href: string) {
   return `/${locale}${href}`;
@@ -15,9 +14,9 @@ function HeroSection({ locale }: { locale: string }) {
     <section className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden">
       {/* Background gradients */}
       <div className="absolute inset-0">
-        <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full bg-[#00f5d4]/[0.03] blur-[120px]" />
-        <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] rounded-full bg-[#f720b8]/[0.03] blur-[100px]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-[#7b2fff]/[0.02] blur-[150px]" />
+        <div className="absolute top-1/4 left-1/4 w-[640px] h-[640px] rounded-full bg-[#e8a020]/[0.06] blur-[140px]" />
+        <div className="absolute bottom-1/4 right-1/4 w-[520px] h-[520px] rounded-full bg-[#2aada8]/[0.04] blur-[120px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[860px] h-[860px] rounded-full bg-[#f2ede4]/[0.02] blur-[180px]" />
       </div>
 
       {/* Grid pattern */}
@@ -31,38 +30,48 @@ function HeroSection({ locale }: { locale: string }) {
 
       <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-8 animate-fade-in-up">
-          <span className="w-2 h-2 rounded-full bg-[#00f5d4] animate-pulse" />
+          <span className="w-2 h-2 rounded-full bg-[#e8a020] animate-pulse" />
           <span className="text-xs font-medium text-white/60">Now Live — Berlin & Digital</span>
         </div>
 
-        <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-6 animate-fade-in-up delay-100">
-          <span className="text-white">Where</span> <span className="gradient-text">Techno</span>
+        <p className="text-sm md:text-base text-[#e8a020]/70 font-medium tracking-[0.2em] uppercase mb-4 animate-fade-in-up">
+          Curated sonic commerce
+        </p>
+
+        <h1 className="text-5xl md:text-7xl lg:text-8xl font-semibold tracking-tight mb-6 animate-fade-in-up delay-100 font-[var(--font-display)] leading-[0.95]">
+          <span className="text-[#f2ede4]">Where</span>{" "}
+          <span className="text-[#e8a020]">Techno</span>
           <br />
-          <span className="text-white">Meets</span> <span className="gradient-text">Art</span>
+          <span className="text-[#f2ede4]">Meets</span> <span className="text-[#e8a020]">Art</span>
         </h1>
 
-        <p className="text-lg md:text-xl text-white/50 max-w-2xl mx-auto mb-10 leading-relaxed animate-fade-in-up delay-200">
-          ELBTRONIKA is a curated platform where electronic music culture and visionary digital art
-          collide. Discover, collect, and experience art that moves with the beat.
+        <p className="text-lg md:text-xl text-[#9a9590] max-w-2xl mx-auto mb-10 leading-relaxed animate-fade-in-up delay-200">
+          ELBTRONIKA is a premium art-tech platform where contemporary digital works and electronic
+          music culture are curated as one experience. Discover, collect, and verify provenance with
+          transparent economics.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in-up delay-300">
           <Link
             href={localeHref(locale, "/gallery")}
-            className="group px-8 py-4 text-sm font-semibold text-[#050508] bg-gradient-to-r from-[#00f5d4] to-[#00d4b8] rounded-full hover:shadow-[0_0_40px_rgba(0,245,212,0.3)] transition-all duration-500 hover:scale-105"
+            className="group px-8 py-4 text-sm font-semibold text-[#050508] bg-[#e8a020] rounded-full hover:shadow-[0_0_40px_rgba(232,160,32,0.35)] transition-all duration-500 hover:scale-105"
           >
-            Enter Gallery
+            Enter Experience
             <span className="inline-block ml-2 transition-transform duration-300 group-hover:translate-x-1">
               →
             </span>
           </Link>
           <Link
             href={localeHref(locale, "/shop")}
-            className="px-8 py-4 text-sm font-semibold text-white border border-white/15 rounded-full hover:bg-white/[0.05] hover:border-white/30 transition-all duration-300"
+            className="px-8 py-4 text-sm font-semibold text-[#f2ede4] border border-[#f2ede4]/20 rounded-full hover:bg-white/[0.05] hover:border-[#f2ede4]/40 transition-all duration-300"
           >
-            Browse Collection
+            View Catalog
           </Link>
         </div>
+
+        <TrustSplitPanel />
+
+        <SoundToggle />
 
         {/* Scroll indicator */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-fade-in delay-700">
@@ -71,6 +80,36 @@ function HeroSection({ locale }: { locale: string }) {
         </div>
       </div>
     </section>
+  );
+}
+
+function TrustSplitPanel() {
+  const split = [
+    { label: "Artist", value: "60%", tone: "text-[#e8a020]" },
+    { label: "DJ", value: "20%", tone: "text-[#2aada8]" },
+    { label: "Platform", value: "20%", tone: "text-[#f2ede4]" },
+  ];
+
+  return (
+    <div className="mx-auto mt-10 max-w-2xl rounded-2xl border border-white/10 bg-[#0e0e12]/80 px-5 py-4 backdrop-blur animate-fade-in-up delay-400">
+      <div className="flex items-center justify-between gap-3 pb-3 border-b border-white/10">
+        <p className="text-[11px] uppercase tracking-[0.24em] text-[#9a9590]">
+          Transparent Revenue Split
+        </p>
+        <p className="text-xs text-[#9a9590]">Trust by default</p>
+      </div>
+      <div className="grid grid-cols-3 gap-3 pt-3">
+        {split.map((item) => (
+          <div
+            key={item.label}
+            className="rounded-xl border border-white/10 bg-white/[0.02] px-3 py-3 text-center"
+          >
+            <p className={`text-2xl font-bold ${item.tone}`}>{item.value}</p>
+            <p className="mt-1 text-xs uppercase tracking-[0.12em] text-[#9a9590]">{item.label}</p>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -83,7 +122,7 @@ function FeaturesSection({ locale }: { locale: string }) {
       description:
         "Immersive 3D gallery spaces where each room is paired with a unique DJ set. Art that responds to sound.",
       href: "/gallery",
-      color: "#00f5d4",
+      color: "#e8a020",
     },
     {
       icon: "🛒",
@@ -91,7 +130,7 @@ function FeaturesSection({ locale }: { locale: string }) {
       description:
         "Collect limited-edition digital and physical artworks directly from visionary artists. Fair revenue split.",
       href: "/shop",
-      color: "#f720b8",
+      color: "#2aada8",
     },
     {
       icon: "🎵",
@@ -99,7 +138,7 @@ function FeaturesSection({ locale }: { locale: string }) {
       description:
         "Our Hermes Agent analyzes audio features and artwork metadata to find perfect music-art pairings.",
       href: "/dashboard/pm/curation",
-      color: "#7b2fff",
+      color: "#f2ede4",
     },
   ];
 
@@ -107,7 +146,7 @@ function FeaturesSection({ locale }: { locale: string }) {
     <section className="relative py-32 px-6">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-20">
-          <h2 className="text-3xl md:text-5xl font-bold mb-4">
+          <h2 className="text-3xl md:text-5xl font-semibold mb-4">
             <span className="text-white">Three Ways to</span>{" "}
             <span className="gradient-text">Experience</span>
           </h2>
@@ -130,7 +169,7 @@ function FeaturesSection({ locale }: { locale: string }) {
               >
                 {f.icon}
               </div>
-              <h3 className="text-xl font-semibold text-white mb-3 group-hover:text-[#00f5d4] transition-colors duration-300">
+              <h3 className="text-xl font-semibold text-white mb-3 group-hover:text-[#e8a020] transition-colors duration-300">
                 {f.title}
               </h3>
               <p className="text-sm text-white/40 leading-relaxed mb-6">{f.description}</p>
@@ -206,7 +245,7 @@ function HowItWorksSection() {
     <section className="relative py-32 px-6">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-20">
-          <h2 className="text-3xl md:text-5xl font-bold mb-4">
+          <h2 className="text-3xl md:text-5xl font-semibold mb-4">
             <span className="text-white">How It</span> <span className="gradient-text">Works</span>
           </h2>
         </div>
@@ -237,11 +276,11 @@ function CTASection({ locale }: { locale: string }) {
   return (
     <section className="relative py-32 px-6 overflow-hidden">
       <div className="absolute inset-0">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-gradient-to-b from-[#00f5d4]/10 to-transparent blur-[100px]" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-gradient-to-b from-[#e8a020]/10 to-transparent blur-[100px]" />
       </div>
 
       <div className="relative z-10 max-w-3xl mx-auto text-center">
-        <h2 className="text-4xl md:text-6xl font-bold mb-6">
+        <h2 className="text-4xl md:text-6xl font-semibold mb-6">
           <span className="text-white">Ready to</span>{" "}
           <span className="gradient-text">Dive In?</span>
         </h2>
@@ -252,7 +291,7 @@ function CTASection({ locale }: { locale: string }) {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link
             href={localeHref(locale, "/gallery")}
-            className="px-10 py-4 text-sm font-semibold text-[#050508] bg-gradient-to-r from-[#00f5d4] to-[#00d4b8] rounded-full hover:shadow-[0_0_60px_rgba(0,245,212,0.4)] transition-all duration-500 hover:scale-105"
+            className="px-10 py-4 text-sm font-semibold text-[#050508] bg-[#e8a020] hover:bg-[#d38e12] rounded-full hover:shadow-[0_0_60px_rgba(232,160,32,0.4)] transition-all duration-500 hover:scale-105"
           >
             Enter the Gallery
           </Link>
@@ -306,6 +345,56 @@ function MarqueeSection() {
         }
       `}</style>
     </section>
+  );
+}
+
+/* ─────────── SOUND TOGGLE ─────────── */
+function SoundToggle() {
+  const [audioEnabled, setAudioEnabled] = useState(false);
+
+  const toggleAudio = useCallback(() => {
+    setAudioEnabled((prev) => !prev);
+    // In a real implementation, this would unlock/resume the AudioContext
+    // and start ambient background audio.
+  }, []);
+
+  return (
+    <button
+      type="button"
+      onClick={toggleAudio}
+      className="mt-8 flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 text-xs text-white/50 hover:text-white/80 hover:border-white/20 transition-all"
+      aria-label={audioEnabled ? "Disable sound" : "Enable sound"}
+    >
+      {audioEnabled ? (
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
+          <title>Sound enabled</title>
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+          <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
+        </svg>
+      ) : (
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
+          <title>Sound disabled</title>
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+          <line x1="23" y1="9" x2="17" y2="15" />
+          <line x1="17" y1="9" x2="23" y2="15" />
+        </svg>
+      )}
+      <span>{audioEnabled ? "Sound on" : "Sound off"}</span>
+    </button>
   );
 }
 

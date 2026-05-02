@@ -1,22 +1,47 @@
 /**
  * MCP Invoke API
- * POST /api/mcp/invoke — Invoke an MCP tool by name
+ * POST /api/mcp/invoke — Invoke an MCP tool by canonical name
+ * Requires: authenticated session + curator or admin role
+ * Wave 0: Auth gate, role gate, tool allowlist
+ * Wave 1: Structured audit log for every attempt (allowed and denied)
+ * Wave 2: Accepts canonical "server/tool" form or {server, tool} separately
  */
 
-import { type NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
+import type { MCPServer } from "@elbtronika/mcp";
 import {
-  createSupabaseMCPServer,
+  createAudioMCPServer,
   createSanityMCPServer,
   createStripeMCPServer,
-  createAudioMCPServer,
+  createSupabaseMCPServer,
 } from "@elbtronika/mcp";
-import type { MCPServer } from "@elbtronika/mcp";
+import { type NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+import { logAuditEvent } from "@/src/lib/mcp/audit";
+import { createClient } from "@/src/lib/supabase/server";
+
+// Wave 0: Allowlist — only read/analyze tools from the Harness initial surface
+const ALLOWED_TOOLS: Record<string, readonly string[]> = {
+  supabase: ["supabase_query", "supabase_query_profiles", "supabase_query_artworks"],
+  sanity: ["sanity_fetch_document", "sanity_fetch_artwork_by_slug", "sanity_list_artworks"],
+  audio: ["audio_analyze_track", "audio_match_artwork_to_track"],
+  stripe: ["stripe_list_transfers", "stripe_get_account_balance"],
+} as const;
+
+const MAX_PARAMS_BYTES = 10_000;
 
 const InvokeRequestSchema = z.object({
   server: z.string(),
   tool: z.string(),
-  params: z.record(z.unknown()).default({}),
+  params: z
+    .record(z.unknown())
+    .refine((value) => {
+      try {
+        return JSON.stringify(value).length <= MAX_PARAMS_BYTES;
+      } catch {
+        return false;
+      }
+    }, "Params payload too large")
+    .default({}),
 });
 
 const serverMap: Record<string, () => MCPServer> = {
@@ -27,36 +52,146 @@ const serverMap: Record<string, () => MCPServer> = {
 };
 
 export async function POST(request: NextRequest) {
-  let body: z.infer<typeof InvokeRequestSchema>;
+  // Wave 0: Auth gate
+  const supabase = await createClient();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+  if (authError || !user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Wave 0: Role gate — curators and admins only
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+  if (!profile || !["curator", "admin"].includes(profile.role)) {
+    return NextResponse.json({ error: "Forbidden: curators and admins only" }, { status: 403 });
+  }
+
+  // Wave 2: Parse body — accept canonical "server/tool" string or {server, tool} object
+  let rawServer: string;
+  let rawTool: string;
+  let params: Record<string, unknown>;
   try {
-    body = InvokeRequestSchema.parse(await request.json());
+    const raw = await request.json();
+    if (typeof raw.server === "string" && raw.server.includes("/") && !raw.tool) {
+      const slash = raw.server.indexOf("/");
+      rawServer = raw.server.slice(0, slash);
+      rawTool = raw.server.slice(slash + 1);
+      params = (raw.params as Record<string, unknown>) ?? {};
+    } else {
+      const parsed = InvokeRequestSchema.parse(raw);
+      rawServer = parsed.server;
+      rawTool = parsed.tool;
+      params = parsed.params;
+    }
   } catch {
     return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
   }
 
-  try {
-    const serverFactory = serverMap[body.server];
-    if (!serverFactory) {
-      return NextResponse.json({ error: `Server not found: ${body.server}` }, { status: 404 });
+  const startMs = Date.now();
+  const auditSafe = async (event: Parameters<typeof logAuditEvent>[0]) => {
+    try {
+      await logAuditEvent(event);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      console.error("[mcp/invoke] audit failed:", message);
     }
+  };
 
+  // Wave 0: Allowlist check — deny unlisted servers
+  const allowedTools = ALLOWED_TOOLS[rawServer];
+  if (!allowedTools) {
+    await auditSafe({
+      actorId: user.id,
+      role: profile.role,
+      server: rawServer,
+      tool: rawTool,
+      status: 404,
+      errorClass: "server_not_found",
+    });
+    return NextResponse.json({ error: `Server not found: ${rawServer}` }, { status: 404 });
+  }
+
+  // Wave 0: Allowlist check — deny unlisted or blocked tools
+  if (!allowedTools.includes(rawTool)) {
+    await auditSafe({
+      actorId: user.id,
+      role: profile.role,
+      server: rawServer,
+      tool: rawTool,
+      status: 403,
+      errorClass: "tool_not_allowed",
+    });
+    return NextResponse.json(
+      { error: `Tool not allowed: ${rawServer}/${rawTool}. Use canonical form server/tool.` },
+      { status: 403 },
+    );
+  }
+
+  try {
+    const serverFactory = serverMap[rawServer];
+    if (!serverFactory) {
+      await auditSafe({
+        actorId: user.id,
+        role: profile.role,
+        server: rawServer,
+        tool: rawTool,
+        status: 404,
+        errorClass: "server_not_found",
+      });
+      return NextResponse.json({ error: `Server not found: ${rawServer}` }, { status: 404 });
+    }
     const server = serverFactory();
     const response = await server.handleHttp({
       jsonrpc: "2.0",
       id: `invoke-${Date.now()}`,
       method: "tools/call",
-      params: { name: body.tool, arguments: body.params },
+      params: { name: rawTool, arguments: params },
     });
 
+    const durationMs = Date.now() - startMs;
+
     if (response && "error" in (response as Record<string, unknown>)) {
-      const error = (response as { error?: { message: string } }).error;
-      return NextResponse.json({ error: error?.message ?? "Tool execution failed" }, { status: 500 });
+      await auditSafe({
+        actorId: user.id,
+        role: profile.role,
+        server: rawServer,
+        tool: rawTool,
+        status: 500,
+        durationMs,
+        errorClass: "tool_error",
+      });
+      return NextResponse.json({ error: "Tool execution failed" }, { status: 500 });
     }
 
     const result = (response as { result?: unknown })?.result;
+    await auditSafe({
+      actorId: user.id,
+      role: profile.role,
+      server: rawServer,
+      tool: rawTool,
+      status: 200,
+      durationMs,
+    });
     return NextResponse.json({ result }, { status: 200 });
   } catch (err) {
+    const durationMs = Date.now() - startMs;
     const message = err instanceof Error ? err.message : String(err);
-    return NextResponse.json({ error: message }, { status: 500 });
+    await auditSafe({
+      actorId: user.id,
+      role: profile.role,
+      server: rawServer,
+      tool: rawTool,
+      status: 500,
+      durationMs,
+      errorClass: "execution_exception",
+    });
+    console.error("[mcp/invoke] execution exception:", message);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

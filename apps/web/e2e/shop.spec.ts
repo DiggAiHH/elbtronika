@@ -37,16 +37,16 @@ test.describe("Cart Flow", () => {
     await page.waitForLoadState("networkidle");
 
     // Look for cart button
-    const cartButton = page.locator('[data-testid="cart-button"]').or(
-      page.getByRole("button", { name: /cart|warenkorb/i })
-    );
+    const cartButton = page
+      .locator('[data-testid="cart-button"]')
+      .or(page.getByRole("button", { name: /cart|warenkorb/i }));
 
     if (await cartButton.isVisible().catch(() => false)) {
       await cartButton.click();
       // Check if drawer opened
-      const drawer = page.locator('[data-testid="cart-drawer"]').or(
-        page.locator("[role='dialog']")
-      );
+      const drawer = page
+        .locator('[data-testid="cart-drawer"]')
+        .or(page.locator("[role='dialog']"));
       await expect(drawer).toBeVisible();
     }
   });

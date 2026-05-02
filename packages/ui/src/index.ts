@@ -2,7 +2,16 @@
 
 // ── Form Controls ──────────────────────────────────────────────────────────
 export { Button, type ButtonProps, buttonVariants } from "./components/button";
+export {
+  Tooltip,
+  type TooltipProps,
+  TooltipContent,
+  TooltipProvider,
+  TooltipRoot,
+  TooltipTrigger,
+} from "./components/tooltip";
 export { Checkbox, type CheckboxProps } from "./components/checkbox";
+export { DemoBanner, type DemoBannerProps } from "./components/DemoBanner";
 // ── Overlay & Feedback ─────────────────────────────────────────────────────
 export {
   Dialog,
@@ -31,6 +40,7 @@ export {
 export { Select, type SelectProps } from "./components/select";
 export { Skeleton, type SkeletonProps } from "./components/skeleton";
 export { Slider, type SliderProps } from "./components/slider";
+
 export {
   Toast,
   ToastDescription,
@@ -39,7 +49,6 @@ export {
   ToastTitle,
   ToastViewport,
 } from "./components/toast";
-
 // ── Typography ─────────────────────────────────────────────────────────────
 export {
   Caption,
@@ -51,4 +60,10 @@ export {
   Text,
   type TextProps,
 } from "./components/typography";
+export {
+  resetTour,
+  type TourStep,
+  WalkthroughTour,
+  type WalkthroughTourProps,
+} from "./components/WalkthroughTour";
 export { cn } from "./lib/cn";

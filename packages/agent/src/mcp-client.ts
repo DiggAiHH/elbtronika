@@ -3,8 +3,7 @@
  * Manages tool discovery and invocation across multiple servers.
  */
 
-import { MCPServer } from "@elbtronika/mcp";
-import type { ToolDefinition } from "@elbtronika/mcp";
+import type { MCPServer, ToolDefinition } from "@elbtronika/mcp";
 
 export interface MCPServerConnection {
   name: string;
@@ -34,7 +33,17 @@ export class MCPClient {
           method: "tools/list",
         });
         if (response && "result" in (response as Record<string, unknown>)) {
-          const result = (response as { result?: { tools?: Array<{ name: string; description: string; inputSchema: Record<string, unknown> }> } }).result;
+          const result = (
+            response as {
+              result?: {
+                tools?: Array<{
+                  name: string;
+                  description: string;
+                  inputSchema: Record<string, unknown>;
+                }>;
+              };
+            }
+          ).result;
           if (result?.tools) {
             for (const tool of result.tools) {
               // Create a proxy tool that routes to the correct server
@@ -59,7 +68,7 @@ export class MCPClient {
   async callTool(
     serverName: string,
     toolName: string,
-    params: Record<string, unknown>
+    params: Record<string, unknown>,
   ): Promise<unknown> {
     const conn = this.servers.get(serverName);
     if (!conn) throw new Error(`MCP server not found: ${serverName}`);

@@ -1,14 +1,11 @@
 // AI Mood-based Artwork Recommendation
 // Eselbrücke: "Der Barkeeper empfiehlt" — Nutzer sagt Stimmung, KI schlägt 3 Werke vor
 
+import { createRecommendationPrompt, generateJson } from "@elbtronika/ai";
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { auditLog, checkUserRateLimit, hashText } from "@/src/lib/ai/server";
 import { createClient } from "@/src/lib/supabase/server";
-import {
-  generateJson,
-  createRecommendationPrompt,
-} from "@elbtronika/ai";
-import { checkUserRateLimit, auditLog, hashText } from "@/src/lib/ai/server";
 
 const RecommendRequestSchema = z.object({
   mood: z.string().min(2).max(500),
@@ -51,10 +48,7 @@ export async function POST(request: NextRequest) {
   // Rate limit
   const rate = await checkUserRateLimit(user.id, role);
   if (!rate.allowed) {
-    return NextResponse.json(
-      { error: "Rate limit exceeded", limit: rate.limit },
-      { status: 429 },
-    );
+    return NextResponse.json({ error: "Rate limit exceeded", limit: rate.limit }, { status: 429 });
   }
 
   // Fetch catalog context from Supabase (last 20 published artworks)
@@ -89,10 +83,7 @@ export async function POST(request: NextRequest) {
       ),
     });
 
-    const { response, data } = await generateJson(
-      prompt,
-      RecommendResultSchema,
-    );
+    const { response, data } = await generateJson(prompt, RecommendResultSchema);
 
     // Audit log (non-blocking)
     const promptText = `${prompt.system}\n${prompt.messages.map((m) => m.content).join("\n")}`;
@@ -123,9 +114,6 @@ export async function POST(request: NextRequest) {
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     console.error("[ai/recommend] generation error:", message);
-    return NextResponse.json(
-      { error: "AI generation failed" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: "AI generation failed" }, { status: 500 });
   }
 }

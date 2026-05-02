@@ -29,18 +29,25 @@ export class HLSLoader {
   /** Load an HLS manifest and return the underlying <audio> element. */
   load(opts: HLSLoadOptions): Promise<HTMLAudioElement> {
     return new Promise((resolve, reject) => {
-
       if (this.audioEl.canPlayType("application/vnd.apple.mpegurl")) {
         // Native HLS support (Safari)
         this.audioEl.src = opts.src;
-        this.audioEl.addEventListener("loadedmetadata", () => {
-          opts.onManifestParsed?.();
-          resolve(this.audioEl);
-        }, { once: true });
-        this.audioEl.addEventListener("error", (e) => {
-          opts.onError?.(new Error(`Native HLS error: ${e.type}`));
-          reject(e);
-        }, { once: true });
+        this.audioEl.addEventListener(
+          "loadedmetadata",
+          () => {
+            opts.onManifestParsed?.();
+            resolve(this.audioEl);
+          },
+          { once: true },
+        );
+        this.audioEl.addEventListener(
+          "error",
+          (e) => {
+            opts.onError?.(new Error(`Native HLS error: ${e.type}`));
+            reject(e);
+          },
+          { once: true },
+        );
         return;
       }
 
@@ -60,7 +67,7 @@ export class HLSLoader {
       this.hls.attachMedia(this.audioEl);
 
       this.hls.on(Hls.Events.MEDIA_ATTACHED, () => {
-        this.hls!.loadSource(opts.src);
+        this.hls?.loadSource(opts.src);
       });
 
       this.hls.on(Hls.Events.MANIFEST_PARSED, () => {

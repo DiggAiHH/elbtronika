@@ -8,8 +8,8 @@
  * - Reads sessionStorage to hide if already unlocked.
  */
 
-import { useState, useEffect, useCallback } from "react";
-import { unlockAudioContext, isUnlocked } from "../context";
+import { useCallback, useEffect, useState } from "react";
+import { isUnlocked, unlockAudioContext } from "../context";
 
 export function AudioUnlockOverlay() {
   const [visible, setVisible] = useState(false);

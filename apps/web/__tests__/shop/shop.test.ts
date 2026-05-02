@@ -10,11 +10,7 @@ import {
 describe("shop utilities", () => {
   it("builds filter URLs while preserving existing params", () => {
     expect(
-      buildShopFilterHref(
-        "de",
-        { artist: "eva-richter", medium: "photography" },
-        { dj: "dj-koi" },
-      ),
+      buildShopFilterHref("de", { artist: "eva-richter", medium: "photography" }, { dj: "dj-koi" }),
     ).toBe("/de/shop?artist=eva-richter&medium=photography&dj=dj-koi");
   });
 

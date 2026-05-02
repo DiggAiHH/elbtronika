@@ -9,8 +9,7 @@
  * – Falls back gracefully to WebGL EffectComposer on older hardware.
  * – Threshold tuned for ELBTRONIKA neon aesthetic (cyan + magenta primaries).
  */
-import { EffectComposer, Bloom } from "@react-three/postprocessing";
-
+import { Bloom, EffectComposer } from "@react-three/postprocessing";
 
 interface BloomPassProps {
   /** Bloom strength multiplier. Default 0.4 for subtle neon glow. */

@@ -3,13 +3,7 @@
  * JSON-RPC 2.0 over stdio and HTTP/SSE transports.
  */
 
-import type {
-  MCPRequest,
-  MCPResponse,
-  MCPServerInfo,
-  ToolDefinition,
-  MCPError,
-} from "./types";
+import type { MCPError, MCPRequest, MCPResponse, MCPServerInfo, ToolDefinition } from "./types";
 import { McpErrorCode } from "./types";
 
 export interface MCPServerOptions {
@@ -42,7 +36,9 @@ export class MCPServer {
     void this.stdioMode;
     process.stdin.setEncoding("utf8");
     process.stdin.on("data", (chunk) => {
-      const lines = String(chunk).split("\n").filter((l) => l.trim());
+      const lines = String(chunk)
+        .split("\n")
+        .filter((l) => l.trim());
       for (const line of lines) {
         this.handleMessage(line).catch((err) => {
           console.error("[mcp] stdio error:", err);
@@ -90,14 +86,20 @@ export class MCPServer {
         const tool = this.tools.get(toolName)!;
         try {
           const result = await tool.handler(params.arguments ?? {});
-          return this.successResponse(req.id, { content: [{ type: "text", text: JSON.stringify(result) }] });
+          return this.successResponse(req.id, {
+            content: [{ type: "text", text: JSON.stringify(result) }],
+          });
         } catch (err) {
           const message = err instanceof Error ? err.message : String(err);
           return this.errorResponse(req.id, McpErrorCode.ToolExecutionError, message);
         }
       }
       default:
-        return this.errorResponse(req.id, McpErrorCode.MethodNotFound, `Method not found: ${req.method}`);
+        return this.errorResponse(
+          req.id,
+          McpErrorCode.MethodNotFound,
+          `Method not found: ${req.method}`,
+        );
     }
   }
 

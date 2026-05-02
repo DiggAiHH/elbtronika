@@ -16,16 +16,35 @@ export function WebVitals() {
         path: window.location.pathname,
       });
 
-      // Queue to analytics endpoint (non-blocking)
-      if (navigator.sendBeacon) {
-        navigator.sendBeacon("/api/analytics/vitals", new Blob([body], { type: "application/json" }));
-      } else {
-        fetch("/api/analytics/vitals", {
-          method: "POST",
-          body,
-          keepalive: true,
-        }).catch(() => {});
+      // Wave 6: Only report if user has granted analytics consent
+      let analyticsConsented = false;
+      try {
+        // Try Zustand store format first (elt-consent)
+        const stored = localStorage.getItem("elt-consent");
+        if (stored) {
+          const parsed = JSON.parse(stored) as { state?: { choices?: { analytics?: boolean } } };
+          analyticsConsented = parsed?.state?.choices?.analytics === true;
+        }
+        // Fallback: ConsentBanner format (elbtronika-consent)
+        if (!analyticsConsented) {
+          const bannerStored = localStorage.getItem("elbtronika-consent");
+          if (bannerStored) {
+            const bannerParsed = JSON.parse(bannerStored) as { analytics?: boolean };
+            analyticsConsented = bannerParsed?.analytics === true;
+          }
+        }
+      } catch {
+        // localStorage not available — skip reporting
       }
+      if (!analyticsConsented) return;
+
+      // Queue to analytics endpoint with consent signal (non-blocking)
+      fetch("/api/analytics/vitals", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-consent-analytics": "true" },
+        body,
+        keepalive: true,
+      }).catch(() => {});
     }
   });
 

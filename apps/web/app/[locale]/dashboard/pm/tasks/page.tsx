@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 interface AgentTaskItem {
   id: string;
@@ -79,7 +79,10 @@ export default function PMTasksPage() {
       </header>
 
       {/* Create Task Form */}
-      <form onSubmit={createTask} className="mb-8 rounded-xl border border-neutral-800 bg-neutral-900/50 p-6">
+      <form
+        onSubmit={createTask}
+        className="mb-8 rounded-xl border border-neutral-800 bg-neutral-900/50 p-6"
+      >
         <h2 className="text-lg font-semibold mb-4">Neuen Task erstellen</h2>
         <div className="flex gap-4 flex-wrap">
           <select
@@ -115,7 +118,9 @@ export default function PMTasksPage() {
       {loading ? (
         <div className="text-neutral-400">Lade Tasks...</div>
       ) : tasks.length === 0 ? (
-        <div className="text-neutral-500 text-center py-12">Keine Tasks vorhanden. Erstelle einen neuen Task oben.</div>
+        <div className="text-neutral-500 text-center py-12">
+          Keine Tasks vorhanden. Erstelle einen neuen Task oben.
+        </div>
       ) : (
         <div className="space-y-3">
           {tasks.map((task) => (
@@ -125,14 +130,17 @@ export default function PMTasksPage() {
             >
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${statusColors[task.status] ?? "text-neutral-400 bg-neutral-400/10"}`}>
+                  <span
+                    className={`text-xs font-medium px-2 py-0.5 rounded-full ${statusColors[task.status] ?? "text-neutral-400 bg-neutral-400/10"}`}
+                  >
                     {task.status}
                   </span>
                   <span className="text-xs text-neutral-500 uppercase">{task.type}</span>
                 </div>
                 <p className="text-sm truncate">{task.goal}</p>
                 <p className="text-xs text-neutral-500 mt-1">
-                  Schritt {task.currentStep} / {task.totalSteps} • {new Date(task.createdAt).toLocaleString("de-DE")}
+                  Schritt {task.currentStep} / {task.totalSteps} •{" "}
+                  {new Date(task.createdAt).toLocaleString("de-DE")}
                 </p>
               </div>
             </div>

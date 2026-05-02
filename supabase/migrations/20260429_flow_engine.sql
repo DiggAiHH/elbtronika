@@ -50,41 +50,12 @@ CREATE TABLE IF NOT EXISTS music_art_matches (
   UNIQUE(set_id, artwork_id)
 );
 
--- Agent task log (for PM dashboard)
-CREATE TABLE IF NOT EXISTS agent_tasks (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  type VARCHAR(50) NOT NULL,
-  status VARCHAR(20) DEFAULT 'pending' CHECK (status IN ('pending', 'running', 'completed', 'failed', 'cancelled')),
-  goal TEXT NOT NULL,
-  plan JSONB DEFAULT '[]',
-  result JSONB,
-  error TEXT,
-  assigned_agent VARCHAR(100) DEFAULT 'hermes-curator',
-  context JSONB DEFAULT '{}',
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  started_at TIMESTAMPTZ,
-  completed_at TIMESTAMPTZ
-);
-
--- Agent episodic memory
-CREATE TABLE IF NOT EXISTS agent_episodes (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  task_id UUID REFERENCES agent_tasks(id) ON DELETE CASCADE,
-  goal TEXT NOT NULL,
-  outcome VARCHAR(20) CHECK (outcome IN ('success', 'failure', 'partial')),
-  key_observations JSONB DEFAULT '[]',
-  lessons JSONB DEFAULT '[]',
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
-
 -- Indexes for performance
 CREATE INDEX IF NOT EXISTS idx_audio_features_set ON audio_features(set_id);
 CREATE INDEX IF NOT EXISTS idx_artwork_features_artwork ON artwork_features(artwork_id);
 CREATE INDEX IF NOT EXISTS idx_matches_set ON music_art_matches(set_id);
 CREATE INDEX IF NOT EXISTS idx_matches_artwork ON music_art_matches(artwork_id);
 CREATE INDEX IF NOT EXISTS idx_matches_score ON music_art_matches(similarity_score DESC);
-CREATE INDEX IF NOT EXISTS idx_agent_tasks_status ON agent_tasks(status);
-CREATE INDEX IF NOT EXISTS idx_agent_tasks_type ON agent_tasks(type);
 
 -- RLS policies (enable if needed)
 -- ALTER TABLE audio_features ENABLE ROW LEVEL SECURITY;

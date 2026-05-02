@@ -1,7 +1,7 @@
 // Cart store – Zustand, persisted to localStorage (logged-out) or Supabase (Phase 10).
 // MVP: single-item cart (one artwork at a time, matches Lean Cart spec).
 import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
 
 export interface CartItem {
   artworkId: string;
@@ -35,7 +35,9 @@ export const useCartStore = create<CartState>()(
     {
       name: "elbtronika-cart",
       storage: createJSONStorage(() =>
-        typeof window !== "undefined" ? localStorage : { getItem: () => null, setItem: () => {}, removeItem: () => {} },
+        typeof window !== "undefined"
+          ? localStorage
+          : { getItem: () => null, setItem: () => {}, removeItem: () => {} },
       ),
       // Only persist the item, not UI state
       partialize: (state) => ({ item: state.item }),

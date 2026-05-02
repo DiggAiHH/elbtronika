@@ -15,9 +15,7 @@
           "l": 91
         },
         "count": 766,
-        "contexts": [
-          "border"
-        ]
+        "contexts": ["border"]
       },
       {
         "hex": "#000000",
@@ -33,11 +31,7 @@
           "l": 0
         },
         "count": 723,
-        "contexts": [
-          "text",
-          "background",
-          "border"
-        ]
+        "contexts": ["text", "background", "border"]
       },
       {
         "hex": "#ffffff",
@@ -53,11 +47,7 @@
           "l": 100
         },
         "count": 67,
-        "contexts": [
-          "background",
-          "text",
-          "border"
-        ]
+        "contexts": ["background", "text", "border"]
       },
       {
         "hex": "#f0f0f0",
@@ -73,10 +63,7 @@
           "l": 94
         },
         "count": 24,
-        "contexts": [
-          "border",
-          "background"
-        ]
+        "contexts": ["border", "background"]
       },
       {
         "hex": "#6b6b6b",
@@ -92,9 +79,7 @@
           "l": 42
         },
         "count": 24,
-        "contexts": [
-          "text"
-        ]
+        "contexts": ["text"]
       },
       {
         "hex": "#a0a0a0",
@@ -110,9 +95,7 @@
           "l": 63
         },
         "count": 18,
-        "contexts": [
-          "text"
-        ]
+        "contexts": ["text"]
       },
       {
         "hex": "#0a0a0a",
@@ -128,9 +111,7 @@
           "l": 4
         },
         "count": 9,
-        "contexts": [
-          "border"
-        ]
+        "contexts": ["border"]
       },
       {
         "hex": "#dcdcdc",
@@ -146,9 +127,7 @@
           "l": 86
         },
         "count": 4,
-        "contexts": [
-          "border"
-        ]
+        "contexts": ["border"]
       },
       {
         "hex": "#bdbdbd",
@@ -164,9 +143,7 @@
           "l": 74
         },
         "count": 2,
-        "contexts": [
-          "border"
-        ]
+        "contexts": ["border"]
       },
       {
         "hex": "#180d43",
@@ -182,9 +159,7 @@
           "l": 16
         },
         "count": 1,
-        "contexts": [
-          "background"
-        ]
+        "contexts": ["background"]
       },
       {
         "hex": "#aaaaaa",
@@ -200,9 +175,7 @@
           "l": 67
         },
         "count": 1,
-        "contexts": [
-          "text"
-        ]
+        "contexts": ["text"]
       }
     ]
   },
@@ -656,22 +629,10 @@
       }
     ],
     "specificity": {
-      "max": [
-        1,
-        7,
-        8
-      ],
-      "average": [
-        0.02,
-        1.66,
-        0.08
-      ],
+      "max": [1, 7, 8],
+      "average": [0.02, 1.66, 0.08],
       "count": 1795
     },
-    "issues": [
-      "98 !important rules",
-      "1156 duplicate declarations",
-      "84% unused CSS"
-    ]
+    "issues": ["98 !important rules", "1156 duplicate declarations", "84% unused CSS"]
   }
 }

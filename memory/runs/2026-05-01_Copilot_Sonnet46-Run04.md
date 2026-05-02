@@ -1,0 +1,5 @@
+- **Datum:** 2026-05-01
+- **Agent/Model:** GitHub Copilot / GPT-5.3-Codex
+- **Task:** Continue optimizing end-to-end: harden harness doc, tighten matching core consistency, and revalidate targeted packages
+- **Outcome:** Added markdownlint guard set for preflight protocol, simplified style-embedding output path, and validated with clean `get_errors` plus successful typechecks for `@elbtronika/web` and `@elbtronika/flow`
+- **Lesson:** After major functional fixes, fastest stabilization is to close lint/protocol noise and run narrow package-level checks to keep iteration speed high without full-monorepo runs

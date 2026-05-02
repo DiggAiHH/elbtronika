@@ -3,8 +3,8 @@
  * Every curatorial AI output is written to the ai_decisions table.
  */
 
-import type { AIDecisionLog } from "./types";
 import { createHash } from "node:crypto";
+import type { AIDecisionLog } from "./types";
 
 export interface AuditStore {
   insert(log: Omit<AIDecisionLog, "id" | "createdAt">): Promise<void>;
@@ -42,8 +42,7 @@ export function createMemoryAuditStore(): AuditStore {
   return {
     async insert(entry) {
       const id = (entry as AIDecisionLog).id ?? crypto.randomUUID();
-      const createdAt =
-        (entry as AIDecisionLog).createdAt ?? new Date().toISOString();
+      const createdAt = (entry as AIDecisionLog).createdAt ?? new Date().toISOString();
       logs.set(id, {
         ...entry,
         id,

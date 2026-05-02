@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
 import { Button } from "@elbtronika/ui";
+import { useEffect } from "react";
 
 interface ErrorProps {
   error: Error & { digest?: string };
@@ -26,7 +26,7 @@ export default function ShopErrorBoundary({ error, reset }: ErrorProps) {
         <Button onClick={reset} variant="primary" size="sm">
           Retry
         </Button>
-        <Button onClick={() => window.location.href = "/"} variant="secondary" size="sm">
+        <Button onClick={() => (window.location.href = "/")} variant="secondary" size="sm">
           Back to Gallery
         </Button>
       </div>

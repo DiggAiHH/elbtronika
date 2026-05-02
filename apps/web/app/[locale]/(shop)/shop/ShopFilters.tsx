@@ -1,13 +1,9 @@
 import Link from "next/link";
-import type { ReactNode } from "react";
 import { getTranslations } from "next-intl/server";
+import type { ReactNode } from "react";
 import { getClient } from "@/lib/sanity/client";
 import { allArtistsQuery, allArtworksQuery, allDjsQuery } from "@/lib/sanity/queries";
-import {
-  buildShopFilterHref,
-  isNonEmptyString,
-  type ShopFilterState,
-} from "@/lib/shop";
+import { buildShopFilterHref, isNonEmptyString, type ShopFilterState } from "@/lib/shop";
 
 type ArtistFilter = {
   _id: string;
@@ -44,8 +40,9 @@ export async function ShopFilters({ locale, filters }: Props) {
     client.fetch<MediumFilter[]>(allArtworksQuery, {}, { next: { revalidate: 60 } }),
   ]);
 
-  const mediums = [...new Set(artworks.map((artwork) => artwork.medium).filter(isNonEmptyString))]
-    .sort((left, right) => left.localeCompare(right, locale));
+  const mediums = [
+    ...new Set(artworks.map((artwork) => artwork.medium).filter(isNonEmptyString)),
+  ].sort((left, right) => left.localeCompare(right, locale));
 
   return (
     <div className="space-y-6 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">

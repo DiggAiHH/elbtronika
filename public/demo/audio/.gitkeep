@@ -1,0 +1,9 @@
+# Demo Audio Files
+
+This directory contains placeholder stubs for demo audio files (.m3u8 HLS manifests).
+In production, these would be 30-second royalty-free loops or sample streams.
+
+Expected files (3 total):
+- lobby-ambient.m3u8
+- neon-hall-techno.m3u8
+- quiet-garden-ambient.m3u8

@@ -1,14 +1,11 @@
 // AI Artwork Description Assistant
 // Eselbrücke: "Ghostwriter für Künstler" — nimmt Stichpunkte, liefert 3 Galerie-Texte
 
+import { createDescriptionPrompt, generateJson } from "@elbtronika/ai";
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { auditLog, checkUserRateLimit, hashText } from "@/src/lib/ai/server";
 import { createClient } from "@/src/lib/supabase/server";
-import {
-  generateJson,
-  createDescriptionPrompt,
-} from "@elbtronika/ai";
-import { checkUserRateLimit, auditLog, hashText } from "@/src/lib/ai/server";
 
 const DescribeRequestSchema = z.object({
   bullets: z.array(z.string().min(1)).min(1).max(20),
@@ -41,10 +38,7 @@ export async function POST(request: NextRequest) {
     .single();
 
   if (!profile || !["artist", "dj", "curator", "admin"].includes(profile.role)) {
-    return NextResponse.json(
-      { error: "Forbidden: artists and DJs only" },
-      { status: 403 },
-    );
+    return NextResponse.json({ error: "Forbidden: artists and DJs only" }, { status: 403 });
   }
 
   // Parse body
@@ -58,10 +52,7 @@ export async function POST(request: NextRequest) {
   // Rate limit
   const rate = await checkUserRateLimit(user.id, profile.role);
   if (!rate.allowed) {
-    return NextResponse.json(
-      { error: "Rate limit exceeded", limit: rate.limit },
-      { status: 429 },
-    );
+    return NextResponse.json({ error: "Rate limit exceeded", limit: rate.limit }, { status: 429 });
   }
 
   // AI generation
@@ -75,10 +66,7 @@ export async function POST(request: NextRequest) {
       variants: z.array(z.string()),
     });
 
-    const { response, data } = await generateJson(
-      prompt,
-      DescriptionResultSchema,
-    );
+    const { response, data } = await generateJson(prompt, DescriptionResultSchema);
 
     // Audit log (non-blocking)
     const promptText = `${prompt.system}\n${prompt.messages.map((m) => m.content).join("\n")}`;
@@ -109,9 +97,6 @@ export async function POST(request: NextRequest) {
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     console.error("[ai/describe] generation error:", message);
-    return NextResponse.json(
-      { error: "AI generation failed" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: "AI generation failed" }, { status: 500 });
   }
 }

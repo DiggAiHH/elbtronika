@@ -1,11 +1,15 @@
 // Stripe Connect — create Express account + return onboarding URL
 // Eselbrücke: "passport office" — creates Stripe account, hands out the form link
 
+import { getStripe } from "@elbtronika/payments";
 import { type NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/src/lib/supabase/server";
-import { getStripe } from "@elbtronika/payments";
+import { getEnv } from "@/src/lib/env";
+import { getDemoArtistAccountId } from "@/src/lib/stripe/demo";
 
 export async function POST(request: NextRequest) {
+  const { ELT_MODE } = getEnv();
+
   const supabase = await createClient();
   const {
     data: { user },
@@ -22,10 +26,19 @@ export async function POST(request: NextRequest) {
     .single();
 
   if (!profile || (profile.role !== "artist" && profile.role !== "dj")) {
-    return NextResponse.json(
-      { error: "Only artists and DJs can onboard." },
-      { status: 403 },
-    );
+    return NextResponse.json({ error: "Only artists and DJs can onboard." }, { status: 403 });
+  }
+
+  // Demo mode: return a mock onboarding stub — no real Stripe KYC
+  if (ELT_MODE === "demo") {
+    const slug = profile.display_name?.toLowerCase().replace(/\s+/g, "-") ?? "unknown";
+    const mockAccountId = getDemoArtistAccountId(slug);
+    return NextResponse.json({
+      url: null,
+      accountId: mockAccountId,
+      demo: true,
+      message: "Demo mode: Stripe onboarding is mocked. No real KYC required.",
+    });
   }
 
   const stripe = getStripe();

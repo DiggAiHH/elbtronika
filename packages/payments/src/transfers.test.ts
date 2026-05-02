@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getStripe } from "./client";
 
 const stripe = getStripe();
@@ -79,7 +79,7 @@ describe("createTransfers", () => {
 
     expect(mockTransfersCreate).toHaveBeenCalledTimes(2);
     expect(result.artistTransfer.id).toBe("tr_artist");
-    expect(result.djTransfer!.id).toBe("tr_dj");
+    expect(result.djTransfer?.id).toBe("tr_dj");
   });
 });
 

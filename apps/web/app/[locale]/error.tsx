@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
 import { Button } from "@elbtronika/ui";
+import { useEffect } from "react";
 
 interface ErrorProps {
   error: Error & { digest?: string };
@@ -27,7 +27,7 @@ export default function RootErrorBoundary({ error, reset }: ErrorProps) {
         <Button onClick={reset} variant="primary">
           Try Again
         </Button>
-        <Button onClick={() => window.location.href = "/"} variant="secondary">
+        <Button onClick={() => (window.location.href = "/")} variant="secondary">
           Go Home
         </Button>
       </div>

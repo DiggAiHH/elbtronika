@@ -1,9 +1,7 @@
 {
   "library": "tailwindcss",
   "confidence": 0.742,
-  "evidence": [
-    "tailwind-like class density 72%"
-  ],
+  "evidence": ["tailwind-like class density 72%"],
   "alternates": [],
   "signals": {
     "tailwindLike": 0.718,

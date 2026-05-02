@@ -10,8 +10,8 @@
  */
 
 import { useEffect, useRef } from "react";
-import { SpatialAudioEngine, computeGain } from "../engine/SpatialAudioEngine";
 import { HLSLoader } from "../engine/HLSLoader";
+import { computeGain, SpatialAudioEngine } from "../engine/SpatialAudioEngine";
 import { useAudioStore } from "../store";
 
 interface ProximityEntry {
@@ -84,8 +84,12 @@ export function useProximityAudio(
 
       const camOrient = getCameraOrientation();
       engine.setListenerOrientation(
-        camOrient[0], camOrient[1], camOrient[2],
-        camOrient[3], camOrient[4], camOrient[5],
+        camOrient[0],
+        camOrient[1],
+        camOrient[2],
+        camOrient[3],
+        camOrient[4],
+        camOrient[5],
       );
 
       const now = Date.now();
@@ -175,5 +179,3 @@ export function useProximityAudio(
     return () => cancelAnimationFrame(rafId);
   }, [spatialEnabled, isPlaying, getProximity, getCameraPosition, getCameraOrientation, artworks]);
 }
-
-

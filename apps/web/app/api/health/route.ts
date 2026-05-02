@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/src/lib/supabase/server";
 import { getClient } from "@/src/lib/sanity/client";
+import { createClient } from "@/src/lib/supabase/server";
 
 /**
  * GET /api/health

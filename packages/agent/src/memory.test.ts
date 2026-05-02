@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import { MemoryManager } from "./memory";
 import type { AgentTask } from "./types";
 
@@ -59,7 +59,7 @@ describe("MemoryManager", () => {
 
     const results = mem.searchEpisodic("curate", 5);
     expect(results.length).toBe(1);
-    expect(results[0]!.goal).toBe("Curate room A");
+    expect(results[0]?.goal).toBe("Curate room A");
   });
 
   it("registers and finds skills", () => {
@@ -79,6 +79,6 @@ describe("MemoryManager", () => {
 
     const skills = mem.findSkills("Run a test task");
     expect(skills.length).toBe(1);
-    expect(skills[0]!.name).toBe("test_skill");
+    expect(skills[0]?.name).toBe("test_skill");
   });
 });

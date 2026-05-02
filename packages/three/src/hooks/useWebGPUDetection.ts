@@ -1,7 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { getWebGPUCookie, setWebGPUCookie, detectWebGPU } from "../lib/feature-detection";
+import { detectWebGPU, getWebGPUCookie, setWebGPUCookie } from "../lib/feature-detection";
 
 let cached: boolean | null = null;
 

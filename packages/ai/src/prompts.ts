@@ -3,8 +3,8 @@
  * All prompts are German-first with English fallbacks.
  */
 
-import type { AIPrompt, AIDescriptionRequest, AIRecommendRequest } from "./types";
 import { DEFAULT_MODEL } from "./client";
+import type { AIDescriptionRequest, AIPrompt, AIRecommendRequest } from "./types";
 
 const SYSTEM_IDENTITY = `Du bist ELBTRONIKA — ein KI-Kurator für eine digitale Kunstplattform, die Techno-Kultur mit bildender Kunst verbindet.
 Du schreibst präzise, atmosphärisch und nie generisch. Jeder Text soll klingen, als hätte ein Mensch ihn verfasst.
@@ -22,9 +22,7 @@ function buildSystemPrompt(base: string, language: "de" | "en"): string {
   return base;
 }
 
-export function createDescriptionPrompt(
-  req: AIDescriptionRequest,
-): AIPrompt {
+export function createDescriptionPrompt(req: AIDescriptionRequest): AIPrompt {
   const lang = req.language ?? "de";
   const tone = req.tone ?? "gallery";
   const bullets = req.bullets.map((b) => `- ${b}`).join("\n");
@@ -160,8 +158,9 @@ export function createCurationPrompt(
   selectedArtworks: string,
   language: "de" | "en" = "de",
 ): import("./types").AIPrompt {
-  const userContent = language === "de"
-    ? `Erstelle eine Kuratier-Beschreibung für den Raum "${roomName}".
+  const userContent =
+    language === "de"
+      ? `Erstelle eine Kuratier-Beschreibung für den Raum "${roomName}".
 DJ: ${djName}
 Set-Beschreibung: ${setDescription}
 
@@ -169,7 +168,7 @@ Ausgewählte Artworks:
 ${selectedArtworks}
 
 Schreibe 2-3 Sätze, die erklären, warum diese Werke zu diesem Set passen. Atmosphärisch, nie generisch.`
-    : `Create a curation description for room "${roomName}".
+      : `Create a curation description for room "${roomName}".
 DJ: ${djName}
 Set description: ${setDescription}
 

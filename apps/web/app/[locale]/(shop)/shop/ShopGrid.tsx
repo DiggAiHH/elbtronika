@@ -10,7 +10,13 @@ interface ArtworkItem {
   slug: { current: string };
   title: string;
   artist?: { _id: string; name: string; slug: { current: string } };
-  image?: { asset?: { url: string; metadata?: { dimensions?: { width: number; height: number }; lqip?: string } }; alt?: string };
+  image?: {
+    asset?: {
+      url: string;
+      metadata?: { dimensions?: { width: number; height: number }; lqip?: string };
+    };
+    alt?: string;
+  };
   medium?: string;
   year?: number;
   genreTags?: string[];
@@ -41,11 +47,7 @@ export function ShopGrid({ artworks, filters, locale }: Props) {
   });
 
   if (filtered.length === 0) {
-    return (
-      <p className="py-16 text-center text-[var(--color-text-secondary)]">
-        {t("noResults")}
-      </p>
-    );
+    return <p className="py-16 text-center text-[var(--color-text-secondary)]">{t("noResults")}</p>;
   }
 
   return (
@@ -65,7 +67,7 @@ function ArtworkCard({ artwork, locale }: { artwork: ArtworkItem; locale: string
   return (
     <Link
       href={`/${locale}/shop/artwork/${artwork.slug.current}`}
-      className="group relative flex flex-col overflow-hidden rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] transition-colors hover:border-[var(--color-primary)]/50"
+      className="group relative flex flex-col overflow-hidden rounded-[20px] border border-[var(--color-border)] bg-[var(--color-surface)] transition-colors hover:border-[var(--color-primary)]/50"
     >
       {/* Artwork image */}
       <div className="relative aspect-square overflow-hidden bg-[var(--color-surface)]">
@@ -87,16 +89,24 @@ function ArtworkCard({ artwork, locale }: { artwork: ArtworkItem; locale: string
       </div>
 
       {/* Info */}
-      <div className="flex flex-col gap-1 p-4">
-        <p className="font-medium text-[var(--color-text-primary)] line-clamp-1">{artwork.title}</p>
-        {artwork.artist && (
-          <p className="text-sm text-[var(--color-text-secondary)]">{artwork.artist.name}</p>
-        )}
+      <div className="flex flex-col gap-2 p-4">
+        <div>
+          <p className="font-semibold text-[var(--color-text-primary)] line-clamp-1">
+            {artwork.title}
+          </p>
+          {artwork.artist && (
+            <p className="mt-0.5 text-sm font-medium text-[var(--color-primary)]">
+              {artwork.artist.name}
+            </p>
+          )}
+        </div>
         {artwork.medium && (
-          <p className="text-xs text-[var(--color-text-muted)]">{artwork.medium}</p>
+          <p className="text-xs text-[var(--color-text-muted)] uppercase tracking-[0.16em]">
+            {artwork.medium}
+          </p>
         )}
         {artwork.genreTags && artwork.genreTags.length > 0 && (
-          <div className="mt-2 flex flex-wrap gap-1">
+          <div className="flex flex-wrap gap-1">
             {artwork.genreTags.slice(0, 3).map((tag) => (
               <span
                 key={tag}

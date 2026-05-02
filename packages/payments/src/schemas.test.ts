@@ -1,9 +1,5 @@
-import { describe, it, expect } from "vitest";
-import {
-  CheckoutRequestSchema,
-  RevenueSplitSchema,
-  computeRevenueSplit,
-} from "./index";
+import { describe, expect, it } from "vitest";
+import { CheckoutRequestSchema, computeRevenueSplit, RevenueSplitSchema } from "./index";
 
 describe("CheckoutRequestSchema", () => {
   it("accepts valid checkout request", () => {

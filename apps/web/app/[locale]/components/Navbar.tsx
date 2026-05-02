@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -33,10 +33,10 @@ export default function Navbar() {
       <nav className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 group">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#00f5d4] to-[#7b2fff] flex items-center justify-center">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#e8a020] to-[#2aada8] flex items-center justify-center">
             <span className="text-[#050508] font-bold text-sm">E</span>
           </div>
-          <span className="text-lg font-bold tracking-[0.15em] text-white group-hover:text-[#00f5d4] transition-colors duration-300">
+          <span className="text-lg font-bold tracking-[0.15em] text-white group-hover:text-[#e8a020] transition-colors duration-300">
             ELBTRONIKA
           </span>
         </Link>
@@ -50,14 +50,12 @@ export default function Navbar() {
                 key={link.href}
                 href={link.href}
                 className={`relative px-4 py-2 text-sm font-medium transition-colors duration-300 rounded-lg ${
-                  active
-                    ? "text-[#00f5d4]"
-                    : "text-white/60 hover:text-white"
+                  active ? "text-[#e8a020]" : "text-white/60 hover:text-white"
                 }`}
               >
                 {link.label}
                 {active && (
-                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-[#00f5d4]" />
+                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-[#e8a020]" />
                 )}
               </Link>
             );
@@ -68,7 +66,7 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-3">
           <Link
             href="/shop"
-            className="px-5 py-2 text-sm font-semibold text-[#050508] bg-gradient-to-r from-[#00f5d4] to-[#00d4b8] rounded-full hover:shadow-[0_0_20px_rgba(0,245,212,0.3)] transition-all duration-300 hover:scale-105"
+            className="px-5 py-2 text-sm font-semibold text-[#050508] bg-[#e8a020] rounded-full hover:bg-[#d38e12] hover:shadow-[0_0_20px_rgba(232,160,32,0.3)] transition-all duration-300 hover:scale-105"
           >
             Explore Art
           </Link>
@@ -80,9 +78,15 @@ export default function Navbar() {
           className="md:hidden w-10 h-10 flex flex-col items-center justify-center gap-1.5"
           aria-label="Toggle menu"
         >
-          <span className={`w-5 h-0.5 bg-white transition-all duration-300 ${mobileOpen ? "rotate-45 translate-y-2" : ""}`} />
-          <span className={`w-5 h-0.5 bg-white transition-all duration-300 ${mobileOpen ? "opacity-0" : ""}`} />
-          <span className={`w-5 h-0.5 bg-white transition-all duration-300 ${mobileOpen ? "-rotate-45 -translate-y-2" : ""}`} />
+          <span
+            className={`w-5 h-0.5 bg-white transition-all duration-300 ${mobileOpen ? "rotate-45 translate-y-2" : ""}`}
+          />
+          <span
+            className={`w-5 h-0.5 bg-white transition-all duration-300 ${mobileOpen ? "opacity-0" : ""}`}
+          />
+          <span
+            className={`w-5 h-0.5 bg-white transition-all duration-300 ${mobileOpen ? "-rotate-45 -translate-y-2" : ""}`}
+          />
         </button>
       </nav>
 
@@ -103,7 +107,7 @@ export default function Navbar() {
             <Link
               href="/shop"
               onClick={() => setMobileOpen(false)}
-              className="block mt-3 px-4 py-3 text-sm font-semibold text-center text-[#050508] bg-gradient-to-r from-[#00f5d4] to-[#00d4b8] rounded-full"
+              className="block mt-3 px-4 py-3 text-sm font-semibold text-center text-[#050508] bg-[#e8a020] hover:bg-[#d38e12] rounded-full transition-colors duration-300"
             >
               Explore Art
             </Link>

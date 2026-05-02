@@ -36,7 +36,10 @@ const DEFAULT_OPTS: Required<AnalyzeOptions> = {
  * Estimate BPM from onset detection function.
  * Simplified autocorrelation-based approach.
  */
-export function estimateBpm(audioData: Float32Array, opts: AnalyzeOptions = {}): { bpm: number; confidence: number } {
+export function estimateBpm(
+  audioData: Float32Array,
+  opts: AnalyzeOptions = {},
+): { bpm: number; confidence: number } {
   const { sampleRate, hopSize } = { ...DEFAULT_OPTS, ...opts };
 
   // Compute energy envelope
@@ -86,13 +89,25 @@ export function estimateBpm(audioData: Float32Array, opts: AnalyzeOptions = {}):
  * Estimate musical key from chroma features.
  * Simplified using spectral peaks.
  */
-export function estimateKey(audioData: Float32Array, sampleRate = 44100): { key: string; camelot: string; confidence: number } {
+export function estimateKey(
+  audioData: Float32Array,
+  sampleRate = 44100,
+): { key: string; camelot: string; confidence: number } {
   // Simplified: use spectral centroid to guess major/minor tendency
   // Full implementation would use FFT + chroma filtering
   const centroid = computeSpectralCentroid(audioData, sampleRate);
 
   // Heuristic mapping (very simplified)
-  const keys = ["C major", "A minor", "G major", "E minor", "D major", "B minor", "A major", "F# minor"];
+  const keys = [
+    "C major",
+    "A minor",
+    "G major",
+    "E minor",
+    "D major",
+    "B minor",
+    "A major",
+    "F# minor",
+  ];
   const camelots = ["8B", "8A", "9B", "9A", "10B", "10A", "11B", "11A"];
   const idx = Math.floor((centroid / 8000) * keys.length) % keys.length;
 
@@ -117,7 +132,7 @@ export function computeSpectralCentroid(audioData: Float32Array, sampleRate = 44
     let real = 0;
     let imag = 0;
     for (let t = 0; t < n; t++) {
-      const angle = -2 * Math.PI * k * t / n;
+      const angle = (-2 * Math.PI * k * t) / n;
       real += audioData[t]! * Math.cos(angle);
       imag += audioData[t]! * Math.sin(angle);
     }
@@ -146,7 +161,10 @@ export function computeRms(audioData: Float32Array): number {
 export function computeZcr(audioData: Float32Array): number {
   let crossings = 0;
   for (let i = 1; i < audioData.length; i++) {
-    if ((audioData[i]! >= 0 && audioData[i - 1]! < 0) || (audioData[i]! < 0 && audioData[i - 1]! >= 0)) {
+    if (
+      (audioData[i]! >= 0 && audioData[i - 1]! < 0) ||
+      (audioData[i]! < 0 && audioData[i - 1]! >= 0)
+    ) {
       crossings++;
     }
   }
@@ -156,7 +174,9 @@ export function computeZcr(audioData: Float32Array): number {
 /**
  * Generate mood tags from extracted features.
  */
-export function generateMoodTags(features: Pick<AudioFeatures, "bpm" | "valence" | "arousal" | "spectralCentroid">): string[] {
+export function generateMoodTags(
+  features: Pick<AudioFeatures, "bpm" | "valence" | "arousal" | "spectralCentroid">,
+): string[] {
   const tags: string[] = [];
 
   if (features.bpm > 130) tags.push("fast", "driving");
@@ -195,12 +215,18 @@ export function analyzeAudio(audioData: Float32Array, opts: AnalyzeOptions = {})
   const valence = Math.min(1, Math.max(0, 0.3 + (spectralCentroid / 8000) * 0.5 + rmsEnergy * 0.2));
   const arousal = Math.min(1, Math.max(0, rmsEnergy * 0.6 + (bpmResult.bpm / 200) * 0.4));
 
-  const dominantRange = spectralCentroid < 60 ? "sub-bass"
-    : spectralCentroid < 250 ? "bass"
-    : spectralCentroid < 500 ? "low-mid"
-    : spectralCentroid < 2000 ? "mid"
-    : spectralCentroid < 6000 ? "high-mid"
-    : "high";
+  const dominantRange =
+    spectralCentroid < 60
+      ? "sub-bass"
+      : spectralCentroid < 250
+        ? "bass"
+        : spectralCentroid < 500
+          ? "low-mid"
+          : spectralCentroid < 2000
+            ? "mid"
+            : spectralCentroid < 6000
+              ? "high-mid"
+              : "high";
 
   const moodTags = generateMoodTags({ bpm: bpmResult.bpm, valence, arousal, spectralCentroid });
 
@@ -218,6 +244,7 @@ export function analyzeAudio(audioData: Float32Array, opts: AnalyzeOptions = {})
     rmsEnergy: Math.round(rmsEnergy * 1000) / 1000,
     dominantFrequencyRange: dominantRange,
     moodTags,
-    estimatedGenre: bpmResult.bpm > 125 && arousal > 0.6 ? "techno" : bpmResult.bpm > 120 ? "house" : "ambient",
+    estimatedGenre:
+      bpmResult.bpm > 125 && arousal > 0.6 ? "techno" : bpmResult.bpm > 120 ? "house" : "ambient",
   };
 }

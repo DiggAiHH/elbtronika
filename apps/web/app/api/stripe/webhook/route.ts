@@ -2,17 +2,17 @@
 // Eselbrücke: "mailroom" — receives Stripe events, logs + routes to DB
 // Handles: account.updated, checkout.session.completed, payment_intent.succeeded
 
-import { type NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/src/lib/supabase/server";
 import type { WebhookContext } from "@elbtronika/payments";
 import {
   getStripe,
   getWebhookSecret,
   handleAccountUpdated,
   handleCheckoutSessionCompleted,
-  handlePaymentIntentSucceeded,
   handlePaymentIntentFailed,
+  handlePaymentIntentSucceeded,
 } from "@elbtronika/payments";
+import { type NextRequest, NextResponse } from "next/server";
+import { createClient } from "@/src/lib/supabase/server";
 
 // ---------------------------------------------------------------------------
 // Shared Supabase-backed webhook context
@@ -30,10 +30,11 @@ function createWebhookContext(supabase: Awaited<ReturnType<typeof createClient>>
         .eq("id", params.orderId);
     },
     getOrderBySessionId: async (sessionId) => {
+      // Wave 7: look up by stripe_session_id (stored at checkout creation time)
       const { data } = await supabase
         .from("orders")
         .select("id, artwork_id, buyer_id, artist_payout_eur, dj_payout_eur, status")
-        .eq("stripe_payment_intent_id", sessionId)
+        .eq("stripe_session_id", sessionId)
         .maybeSingle();
       return data ?? null;
     },
@@ -43,8 +44,7 @@ function createWebhookContext(supabase: Awaited<ReturnType<typeof createClient>>
         .select("artist_id, artists(stripe_account_id)")
         .eq("id", artworkId)
         .single();
-      return (data?.artists as { stripe_account_id: string } | null)
-        ?.stripe_account_id ?? null;
+      return (data?.artists as { stripe_account_id: string } | null)?.stripe_account_id ?? null;
     },
     getDjStripeAccount: async (artworkId) => {
       const { data } = await supabase
@@ -53,8 +53,11 @@ function createWebhookContext(supabase: Awaited<ReturnType<typeof createClient>>
         .eq("id", artworkId)
         .single();
       return (
-        (data as unknown as { sets?: { dj_id: string; djs?: { stripe_account_id: string } } } | null)
-          ?.sets?.djs?.stripe_account_id ?? null
+        (
+          data as unknown as {
+            sets?: { dj_id: string; djs?: { stripe_account_id: string } };
+          } | null
+        )?.sets?.djs?.stripe_account_id ?? null
       );
     },
   };
@@ -75,7 +78,11 @@ export async function POST(request: NextRequest) {
 
   let event: import("stripe").Stripe.Event;
   try {
-    event = stripe.webhooks.constructEvent(body, sig, webhookSecret) as import("stripe").Stripe.Event;
+    event = stripe.webhooks.constructEvent(
+      body,
+      sig,
+      webhookSecret,
+    ) as import("stripe").Stripe.Event;
   } catch {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }

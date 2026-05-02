@@ -90,8 +90,8 @@ function verifySignature(rawBody: string, signatureHeader: string | null, secret
     signatureHeader.split(",").map((p) => p.split("=", 2) as [string, string]),
   );
 
-  const timestamp = parts["t"];
-  const signature = parts["v1"];
+  const timestamp = parts.t;
+  const signature = parts.v1;
   if (!timestamp || !signature) return false;
 
   // Reject if timestamp is more than 5 minutes old (replay protection)

@@ -66,9 +66,7 @@
         "cardCount": 0,
         "slots": {
           "heading": "Company",
-          "subheadings": [
-            "Connect"
-          ],
+          "subheadings": ["Connect"],
           "lede": "Foundation\nCompany\nHelp Center\nSubscribe\nConnect\nX\nInstagram\nBlog\n© 2026 Foundation Labs\nPrivacy Policy\nTerms of Service"
         },
         "needsSmart": false
@@ -78,9 +76,6 @@
       "content": 1,
       "footer": 1
     },
-    "readingOrder": [
-      "content",
-      "footer"
-    ]
+    "readingOrder": ["content", "footer"]
   }
 }

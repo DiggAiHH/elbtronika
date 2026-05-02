@@ -1,0 +1,5 @@
+- **Datum:** 2026-05-01
+- **Agent/Model:** GitHub Copilot / GPT-5.3-Codex
+- **Task:** Upgrade ULTRAPLAN and PRE_FLIGHT docs, add copilot instructions references, and create a Chromium Playwright smoke test.
+- **Outcome:** ULTRAPLAN v5 protocol shipped, PRE_FLIGHT cross-references added, .github/copilot-instructions.md created, chromium-ultraplan-smoke.spec.ts added and discovered.
+- **Lesson:** Treat preflight docs as executable contracts and always verify new e2e specs via test listing before full runtime execution.

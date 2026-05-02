@@ -6,6 +6,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { logger } from "@/src/lib/logger";
 import { createClient } from "./server";
 
 // ── Validation schemas ───────────────────────────────────────────────────────
@@ -35,7 +36,7 @@ export async function signInWithMagicLink(
   });
 
   if (error) {
-    console.error("[auth] magic link error:", error.message);
+    logger.error("[auth] magic link error", { message: error.message });
     return { error: "E-Mail konnte nicht gesendet werden. Bitte erneut versuchen." };
   }
 
@@ -55,7 +56,7 @@ export async function signInWithGitHub(locale: string): Promise<void> {
   });
 
   if (error) {
-    console.error("[auth] github oauth error:", error.message);
+    logger.error("[auth] github oauth error", { message: error.message });
     redirect(`/${locale}/login?error=oauth`);
   }
 

@@ -1,13 +1,13 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
+import type { ArtFeatures, AudioFeatures } from "./index";
 import {
-  audioToEmbedding,
   artToEmbedding,
-  cosineSimilarity,
+  audioToEmbedding,
   calculateSimilarity,
+  cosineSimilarity,
   generateMatchReason,
   matchArtworks,
 } from "./match";
-import type { AudioFeatures, ArtFeatures } from "./index";
 
 function mockAudio(overrides: Partial<AudioFeatures> = {}): AudioFeatures {
   return {
@@ -101,8 +101,18 @@ describe("matchArtworks", () => {
   it("returns ranked matches", () => {
     const audio = mockAudio();
     const artworks = [
-      { id: "a1", title: "Dark Wave", artist: "Artist A", features: mockArt({ brightness: 0.2, moodTags: ["dark"] }) },
-      { id: "a2", title: "Bright Sun", artist: "Artist B", features: mockArt({ brightness: 0.9, moodTags: ["bright"] }) },
+      {
+        id: "a1",
+        title: "Dark Wave",
+        artist: "Artist A",
+        features: mockArt({ brightness: 0.2, moodTags: ["dark"] }),
+      },
+      {
+        id: "a2",
+        title: "Bright Sun",
+        artist: "Artist B",
+        features: mockArt({ brightness: 0.9, moodTags: ["bright"] }),
+      },
     ];
     const matches = matchArtworks(audio, artworks, { limit: 2 });
     expect(matches.length).toBeGreaterThan(0);
@@ -128,10 +138,12 @@ describe("matchArtworks", () => {
       { id: "a3", title: "C", artist: "C", features: mockArt({ styleTags: ["abstract"] }) },
     ];
     const matches = matchArtworks(audio, artworks, { limit: 3, diversifyStyles: true });
-    const styles = new Set(matches.map((m) => {
-      const art = artworks.find((a) => a.id === m.artworkId);
-      return art?.features.styleTags[0];
-    }));
+    const styles = new Set(
+      matches.map((m) => {
+        const art = artworks.find((a) => a.id === m.artworkId);
+        return art?.features.styleTags[0];
+      }),
+    );
     expect(styles.size).toBeGreaterThanOrEqual(2);
   });
 });

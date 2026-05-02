@@ -173,6 +173,24 @@ npx designlang https://bandcamp.com --full --out ./design-extract-output/bandcam
 
 ---
 
+## Skill-Team Harness
+
+Installed Codex skills are routed through one repo contract:
+
+- `engineering-harness/SKILL_TEAM_HARNESS.md`
+- `scripts/validate-skill-team.cjs`
+
+Use it for browser proof, Hermes/MCP boundaries, caveman compression, Obsidian memory,
+and Remotion demo-video work. The harness separates work executed as docs/scripts now
+from runtime-gated work that needs a server, browser session, credentials, or a future
+Remotion app.
+
+```powershell
+node .\scripts\validate-skill-team.cjs
+```
+
+---
+
 ## Fehler-Prävention (Zero-Repeat-Error)
 
 | Fehler | Prävention | Automatisierung |
@@ -194,6 +212,16 @@ npx designlang https://bandcamp.com --full --out ./design-extract-output/bandcam
 - [ ] `npx skills add Manavarya09/design-extract` für `/extract-design` Befehl
 
 ---
+
+## Pre-Flight Protocol (Agent Operations)
+
+Before every session, every agent reads:
+
+- `engineering-harness/PRE_FLIGHT_PROTOCOL.md` — Tool-Matrix, Skills, Windows-Gotchas, Workflows, Memory-Disziplin
+
+Contains the operating manual for all tools, when to use `ReadFile` vs `Agent(subagent_type="explore")`,
+Windows PowerShell-specific fatal errors (UTF-16, `.cmd` suffix, Biome v2 traps), and the
+Green-State Protocol: tests → lint → typecheck → commit → push → run-log.
 
 ## Trust-Boundary Harness
 

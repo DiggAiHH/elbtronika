@@ -79,7 +79,10 @@ export default function PMCurationPage() {
         <p className="text-neutral-400">Music-Art Matching — Verbinde DJ-Sets mit Kunstwerken</p>
       </header>
 
-      <form onSubmit={runMatching} className="mb-8 rounded-xl border border-neutral-800 bg-neutral-900/50 p-6">
+      <form
+        onSubmit={runMatching}
+        className="mb-8 rounded-xl border border-neutral-800 bg-neutral-900/50 p-6"
+      >
         <h2 className="text-lg font-semibold mb-4">Matching starten</h2>
         <div className="flex gap-4 flex-wrap items-end">
           <div className="flex-1 min-w-[200px]">

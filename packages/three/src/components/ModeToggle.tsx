@@ -67,9 +67,7 @@ export const ModeToggle = memo(function ModeToggle() {
       borderRadius: "4px",
       cursor: isTransitioning ? "wait" : "pointer",
       opacity: isTransitioning ? 0.6 : 1,
-      transition: prefersReducedMotion
-        ? "none"
-        : "opacity 0.3s ease, background-color 0.3s ease",
+      transition: prefersReducedMotion ? "none" : "opacity 0.3s ease, background-color 0.3s ease",
     }),
     [isTransitioning, prefersReducedMotion],
   );

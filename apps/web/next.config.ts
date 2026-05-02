@@ -1,6 +1,6 @@
+import withBundleAnalyzer from "@next/bundle-analyzer";
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
-import withBundleAnalyzer from "@next/bundle-analyzer";
 
 const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 
@@ -52,6 +52,9 @@ const nextConfig: NextConfig = {
       },
     ],
     formats: ["image/avif", "image/webp"],
+    deviceSizes: [375, 640, 768, 1024, 1280, 1536, 1920],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256],
+    minimumCacheTTL: 60 * 60 * 24 * 30, // 30 days
   },
 
   // Security headers (extended in netlify.toml for CDN)
@@ -136,15 +139,11 @@ const nextConfig: NextConfig = {
       },
       {
         source: "/api/health",
-        headers: [
-          { key: "Cache-Control", value: "public, max-age=10, stale-while-revalidate=30" },
-        ],
+        headers: [{ key: "Cache-Control", value: "public, max-age=10, stale-while-revalidate=30" }],
       },
       {
         source: "/api/:path*",
-        headers: [
-          { key: "Cache-Control", value: "private, no-store" },
-        ],
+        headers: [{ key: "Cache-Control", value: "private, no-store" }],
       },
     ];
   },
@@ -158,8 +157,6 @@ const nextConfig: NextConfig = {
     "@elbtronika/agent",
     "@elbtronika/flow",
   ],
-
-
 };
 
 const withAnalyzer = withBundleAnalyzer({

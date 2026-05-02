@@ -1,40 +1,40 @@
-export {
-  generate,
-  generateJson,
-  stream,
-  AIClientError,
-  setLogHook,
-  resetClient,
-  DEFAULT_MODEL,
-  OPUS_MODEL,
-} from "./client";
+export { createMemoryAuditStore, hashPrompt, logDecision } from "./audit";
 export type { GenerateOptions } from "./client";
 export {
+  AIClientError,
+  DEFAULT_MODEL,
+  generate,
+  generateJson,
+  OPUS_MODEL,
+  resetClient,
+  setLogHook,
+  stream,
+} from "./client";
+export {
+  createCurationPrompt,
   createDescriptionPrompt,
-  createRecommendationPrompt,
   createExplainPrompt,
   createFlowMatchPrompt,
-  createCurationPrompt,
+  createRecommendationPrompt,
   SYSTEM_IDENTITY,
   SYSTEM_JSON,
 } from "./prompts";
 export { checkRateLimit, createMemoryStore, ROLE_LIMITS } from "./rate-limit";
-export { logDecision, createMemoryAuditStore, hashPrompt } from "./audit";
 export type {
-  AIModel,
-  AIPrompt,
-  AIResponse,
+  AgentPrompt,
+  AIDecisionLog,
   AIDescriptionRequest,
   AIDescriptionResult,
+  AIModel,
+  AIPrompt,
   AIRecommendRequest,
   AIRecommendResult,
-  AIDecisionLog,
-  RateLimitStatus,
-  UserRole,
+  AIResponse,
   AITool,
-  AIToolUse,
   AIToolResult,
-  AgentPrompt,
+  AIToolUse,
   FlowMatchRequest,
   FlowMatchResult,
+  RateLimitStatus,
+  UserRole,
 } from "./types";

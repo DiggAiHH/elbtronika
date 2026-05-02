@@ -1,5 +1,6 @@
 "use client";
 
+import { useFrame, useThree } from "@react-three/fiber";
 /**
  * ScrollSpline – drives camera position along a CatmullRom spline via scroll.
  *
@@ -11,7 +12,6 @@
  * 4. useFrame runs unconditionally; it no-ops when mode !== "immersive".
  */
 import { useEffect, useRef } from "react";
-import { useFrame, useThree } from "@react-three/fiber";
 import { CatmullRomCurve3, Vector3 } from "three";
 import { useThreeStore } from "../store";
 
@@ -101,11 +101,14 @@ export function ScrollSpline({
     // Mobile auto-scroll: nudge T forward if device is tilted forward
     if (autoScrollRef.current) {
       const forwardTilt = deviceTiltRef.current.x; // positive = leaning forward
-      scrollTRef.current = Math.min(1, Math.max(0, scrollTRef.current + forwardTilt * delta * 0.05));
+      scrollTRef.current = Math.min(
+        1,
+        Math.max(0, scrollTRef.current + forwardTilt * delta * 0.05),
+      );
     }
 
     // Lerp current T toward target for smooth easing
-    targetTRef.current += (scrollTRef.current - targetTRef.current) * (1 - Math.pow(0.001, delta));
+    targetTRef.current += (scrollTRef.current - targetTRef.current) * (1 - 0.001 ** delta);
     const t = targetTRef.current;
 
     // Sample position on curve

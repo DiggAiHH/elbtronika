@@ -56,7 +56,8 @@ export const allArtworksQuery = groq`
     image ${imageFragment},
     medium,
     year,
-    genreTags
+    genreTags,
+    isDemo
   }
 `;
 
@@ -77,6 +78,7 @@ export const artworkBySlugQuery = groq`
     dimensions,
     year,
     genreTags,
+    isDemo,
     featuredInRoom->{ _id, title, slug ${slugFragment} }
   }
 `;

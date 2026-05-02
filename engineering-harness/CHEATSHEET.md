@@ -1,5 +1,7 @@
 # Engineering Harness — Cheatsheet
 
+> **Vor jedem Session-Start:** `PRE_FLIGHT_PROTOCOL.md` lesen — Agent-Operations-Manual für alle Tools, Skills und Windows-Gotchas.
+
 ## 🪨 caveman (Token-Kompression)
 ```
 AKTIVIERT via CLAUDE.md — kein Befehl nötig
@@ -90,6 +92,43 @@ npx designlang brands superrare.com foundation.app bandcamp.com
 
 ---
 
+## 🖥️ Windows-Spezifische Befehle (Dieser Computer)
+
+```powershell
+# Lint (korrekte Biome v2 — NIE `npx biome`)
+pnpm.cmd lint
+# oder: node_modules\.bin\biome.cmd check --write .
+
+# Typecheck (OOM-Schutz via --concurrency=2)
+pnpm.cmd typecheck
+
+# Tests
+pnpm.cmd test
+
+# Git multi-line commit (PowerShell-safe)
+"feat: summary
+
+body" | Out-File -Encoding utf8 D:\msg.txt
+git commit -F D:\msg.txt
+
+# Git file recovery (Tests aus alter Commit)
+git show <commit>:path/to/file.ts | Out-File -Encoding utf8 path/to/file.ts
+
+# Verzeichnis mit Klammern erstellen
+node -e "require('fs').mkdirSync('./[locale]', {recursive:true})"
+```
+
+**Fatal Error Patterns:**
+| # | Fehler | Fix |
+|---|--------|-----|
+| 1 | `>` erzeugt UTF-16/BOM | `Out-File -Encoding utf8` oder WriteFile |
+| 2 | `pnpm` ohne `.cmd` | **IMMER** `pnpm.cmd`, `npx.cmd`, `npm.cmd` |
+| 3 | Biome falsche Version | `node_modules\.bin\biome.cmd` statt `npx biome` |
+| 4 | Turbo OOM | `--concurrency=2` (bereits in root package.json) |
+| 5 | `css.linter.rules` in biome.json | **ENTFERNEN** — Biome v2 akzeptiert das nicht |
+
+---
+
 ## Hermes Trust Harness
 
 Use this before agent/MCP/checkout/privacy/status work:
@@ -105,3 +144,42 @@ First safe prompt:
 Use PROMPTS_HERMES_TRUST_2026-04-30.md section 12.
 Start Wave 0 only: lock /api/mcp/invoke and /api/mcp/tools.
 ```
+
+---
+
+## Skill-Team Harness
+
+Installed Codex skills now have explicit lanes:
+
+- `browser-harness` - runtime UI proof, screenshots, browser mechanics
+- `hermes-agent` - agent runtime, MCP, trust-boundary routing
+- `caveman` - terse output, with safety-off rules for risky operations
+- `obsidian` - memory index, run logs, handoffs, vault path handling
+- `remotion-best-practices` - demo video and future `apps/video` Remotion scaffold
+
+Read and validate:
+
+```powershell
+notepad .\engineering-harness\SKILL_TEAM_HARNESS.md
+node .\scripts\validate-skill-team.cjs
+```
+
+Do not claim browser screenshots, Hermes runtime health, or Remotion renders unless the runtime gate actually ran.
+
+---
+
+## Pre-Flight Protocol
+
+**Jeder Agent liest dies vor dem ersten Tool-Call:**
+
+```powershell
+notepad .\engineering-harness\PRE_FLIGHT_PROTOCOL.md
+```
+
+Enthält:
+- Tool-Matrix: wann rufst du WAS auf
+- Skills-Inventory: wann welchen Skill laden
+- Windows-Gotchas (10 Fatal Error Patterns)
+- Workflow-Protokolle (Green-State, Batch-Fix, Parallelize, Recovery)
+- Memory-Disziplin (Run-Logs, Handoffs, OPSIDIAN_MEMORY.md)
+- Trust-Boundary Checklist

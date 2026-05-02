@@ -15,9 +15,9 @@
  * and HUD can read their IDs without prop-drilling.
  */
 import { useEffect } from "react";
-import { ArtworkMesh, type ArtworkMeshProps } from "./Artwork";
-import { useThreeStore, type RoomConfig } from "../store";
 import { BloomPass } from "../post/Bloom";
+import { type RoomConfig, useThreeStore } from "../store";
+import { ArtworkMesh, type ArtworkMeshProps } from "./Artwork";
 
 interface RoomSlot {
   /** Artwork data from Sanity for this slot */
@@ -39,19 +39,21 @@ interface GalleryRoomProps {
 
 /** Default slot positions along room walls */
 const SLOT_POSITIONS: [number, number, number][] = [
-  [0, 1.5, -4.8],    // Centre back wall
+  [0, 1.5, -4.8], // Centre back wall
   [-3.8, 1.5, -2.5], // Left wall
-  [3.8, 1.5, -2.5],  // Right wall
+  [3.8, 1.5, -2.5], // Right wall
 ];
 
 const SLOT_ROTATIONS: number[] = [
-  0,           // Back wall faces viewer
+  0, // Back wall faces viewer
   Math.PI / 2, // Left wall
   -Math.PI / 2, // Right wall
 ];
 
 // Room dimensions
-const W = 10; const H = 4; const D = 10;
+const W = 10;
+const H = 4;
+const D = 10;
 
 export function GalleryRoom({ id, name, slug, slots, offsetX = 0 }: GalleryRoomProps) {
   const registerRoom = useThreeStore((s) => s.registerRoom);
@@ -61,9 +63,7 @@ export function GalleryRoom({ id, name, slug, slots, offsetX = 0 }: GalleryRoomP
       id,
       slug,
       name,
-      artworkIds: slots
-        .filter((s) => s.artwork !== null)
-        .map((s) => s.artwork!.artworkId),
+      artworkIds: slots.filter((s) => s.artwork !== null).map((s) => s.artwork!.artworkId),
     };
     registerRoom(config);
   }, [id, slug, name, slots, registerRoom]);
@@ -123,8 +123,8 @@ export function GalleryRoom({ id, name, slug, slots, offsetX = 0 }: GalleryRoomP
       {/* Artwork slots */}
       {slots.map((slot, i) => {
         if (!slot.artwork) return null;
-        const pos = slot.position ?? (SLOT_POSITIONS[i] ?? [0, 1.5, -4.8]);
-        const rotY = slot.rotationY ?? (SLOT_ROTATIONS[i] ?? 0);
+        const pos = slot.position ?? SLOT_POSITIONS[i] ?? [0, 1.5, -4.8];
+        const rotY = slot.rotationY ?? SLOT_ROTATIONS[i] ?? 0;
         return (
           <ArtworkMesh
             key={slot.artwork.artworkId}

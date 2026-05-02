@@ -1,13 +1,13 @@
 // Checkout Session — creates Stripe Checkout for artwork purchase
 // Eselbrücke: "Die Kasse" — Kunde klickt "Acquire", Stripe übernimmt Bezahlung
 
-import { type NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/src/lib/supabase/server";
 import {
   CheckoutRequestSchema,
-  createCheckoutSession,
   computeRevenueSplit,
+  createCheckoutSession,
 } from "@elbtronika/payments";
+import { type NextRequest, NextResponse } from "next/server";
+import { createClient } from "@/src/lib/supabase/server";
 
 // ---------------------------------------------------------------------------
 // POST /api/checkout/session
@@ -16,9 +16,10 @@ export async function POST(request: NextRequest) {
   const supabase = await createClient();
   const {
     data: { user },
+    error: authError,
   } = await supabase.auth.getUser();
 
-  if (!user) {
+  if (authError || !user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -52,11 +53,8 @@ export async function POST(request: NextRequest) {
   }
 
   // Verify price matches (anti-tampering)
-  if (artwork.price_eur * 100 !== req.priceCents) {
-    return NextResponse.json(
-      { error: "Price mismatch" },
-      { status: 422 },
-    );
+  if (Math.round(artwork.price_eur * 100) !== req.priceCents) {
+    return NextResponse.json({ error: "Price mismatch" }, { status: 422 });
   }
 
   // Get artist Stripe account
@@ -67,10 +65,7 @@ export async function POST(request: NextRequest) {
     .single();
 
   if (!artist?.stripe_account_id || !artist.payout_enabled) {
-    return NextResponse.json(
-      { error: "Artist not ready for payouts" },
-      { status: 422 },
-    );
+    return NextResponse.json({ error: "Artist not ready for payouts" }, { status: 422 });
   }
 
   // Get DJ Stripe account if applicable
@@ -118,10 +113,7 @@ export async function POST(request: NextRequest) {
 
     if (orderError || !order) {
       console.error("[checkout] order creation failed:", orderError?.message);
-      return NextResponse.json(
-        { error: "Failed to create order" },
-        { status: 500 },
-      );
+      return NextResponse.json({ error: "Failed to create order" }, { status: 500 });
     }
 
     // Create Stripe Checkout Session with order ID for tracking
@@ -139,6 +131,9 @@ export async function POST(request: NextRequest) {
       ...(user.email ? { buyerEmail: user.email } : {}),
     });
 
+    // Wave 7: Store session ID so the webhook can reconcile by stripe_session_id
+    await supabase.from("orders").update({ stripe_session_id: session.id }).eq("id", order.id);
+
     return NextResponse.json(
       {
         sessionId: session.id,
@@ -149,9 +144,6 @@ export async function POST(request: NextRequest) {
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     console.error("[checkout] Stripe error:", message);
-    return NextResponse.json(
-      { error: "Payment provider error" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: "Payment provider error" }, { status: 500 });
   }
 }

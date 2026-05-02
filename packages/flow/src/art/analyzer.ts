@@ -34,7 +34,7 @@ export function extractDominantColors(pixels: PixelData, k = 5): ArtFeatures["do
   }
 
   // Simple histogram bucketing (faster than k-means)
-  const buckets = new Map<string, { r: number; g: number; b: number; count: number }>;
+  const buckets = new Map<string, { r: number; g: number; b: number; count: number }>();
   const bucketSize = 32;
 
   for (const [r, g, b] of samples) {
@@ -67,7 +67,11 @@ export function extractDominantColors(pixels: PixelData, k = 5): ArtFeatures["do
 /**
  * Compute brightness, contrast, saturation.
  */
-export function computeColorMetrics(pixels: PixelData): { brightness: number; contrast: number; saturation: number } {
+export function computeColorMetrics(pixels: PixelData): {
+  brightness: number;
+  contrast: number;
+  saturation: number;
+} {
   const { data } = pixels;
   let totalLuma = 0;
   let totalSat = 0;
@@ -110,7 +114,9 @@ export function computeColorMetrics(pixels: PixelData): { brightness: number; co
 /**
  * Detect color harmony type.
  */
-export function detectColorHarmony(colors: ArtFeatures["dominantColors"]): ArtFeatures["colorHarmony"] {
+export function detectColorHarmony(
+  colors: ArtFeatures["dominantColors"],
+): ArtFeatures["colorHarmony"] {
   if (colors.length < 2) return "monochromatic";
 
   // Convert to HSL and analyze hue relationships
@@ -150,7 +156,8 @@ export function estimateComposition(pixels: PixelData): number {
     for (let x = 1; x < width; x++) {
       const idx = (y * width + x) * 4;
       const prevIdx = (y * width + (x - 1)) * 4;
-      const diff = Math.abs(data[idx]! - data[prevIdx]!) +
+      const diff =
+        Math.abs(data[idx]! - data[prevIdx]!) +
         Math.abs(data[idx + 1]! - data[prevIdx + 1]!) +
         Math.abs(data[idx + 2]! - data[prevIdx + 2]!);
       if (diff > threshold) edgeScore++;
@@ -165,7 +172,10 @@ export function estimateComposition(pixels: PixelData): number {
 /**
  * Generate style and mood tags from visual features.
  */
-export function generateArtTags(features: ArtFeatures): { styleTags: string[]; moodTags: string[] } {
+export function generateArtTags(features: ArtFeatures): {
+  styleTags: string[];
+  moodTags: string[];
+} {
   const styleTags: string[] = [];
   const moodTags: string[] = [];
 

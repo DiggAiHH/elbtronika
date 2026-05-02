@@ -1,7 +1,5 @@
 {
-  "cms": [
-    "webflow"
-  ],
+  "cms": ["webflow"],
   "analytics": [],
   "experimentation": [],
   "signals": {

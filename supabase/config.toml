@@ -1,0 +1,47 @@
+# Supabase CLI configuration
+# Generated for Elbtronika monorepo — Phase 20.B
+# Install CLI: pnpm add -D supabase (or use npx supabase)
+
+[project]
+# The project ID from your Supabase dashboard
+# Replace with your actual project ID or set via SUPABASE_PROJECT_ID env var
+project_id = "elbtronika"
+
+[api]
+# Port for the local Supabase API
+port = 54321
+# Schemas to expose in your API
+schemas = ["public", "storage"]
+# Extra schemas to add to the search_path of every request
+extra_search_path = ["public", "extensions"]
+# The maximum number of rows returns from a single view, table, or stored procedure
+max_rows = 1000
+
+[db]
+# Port to use for the local database URL
+port = 54322
+# The database major version to use. This has to be the same as your remote database's
+major_version = 15
+
+[studio]
+# Port to use for Supabase Studio
+port = 54323
+
+[inbucket]
+# Port to use for the email testing server web interface
+port = 54324
+
+[storage]
+# The maximum file size allowed (e.g. "5MB", "500KB")
+file_size_limit = "50MiB"
+
+[auth]
+# The base URL of your website. Used as an allow-list for redirects and for constructing URLs used
+# in emails
+site_url = "http://localhost:3000"
+# A list of *exact* URLs that auth providers are permitted to redirect to post authentication
+additional_redirect_urls = ["https://localhost:3000"]
+# How long tokens are valid for, in seconds. Defaults to 3600 (1 hour), maximum 604800 (1 week)
+jwt_expiry = 3600
+# Allow/disallow new user signups to your project
+enable_signup = true

@@ -1,12 +1,8 @@
 {
-  "flags": [
-    "forms"
-  ],
+  "flags": ["forms"],
   "forms": {
     "count": 1,
-    "families": [
-      1
-    ]
+    "families": [1]
   },
   "inputTypesSeen": {
     "input": 1

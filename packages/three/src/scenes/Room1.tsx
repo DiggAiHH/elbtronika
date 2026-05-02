@@ -1,5 +1,6 @@
 "use client";
 
+import type { ArtworkMeshProps } from "../components/Artwork";
 /**
  * Room1 – first gallery room with 3 artwork slots.
  *
@@ -11,7 +12,6 @@
  * – ScrollSpline reads currentRoomId to know which spline path to activate.
  */
 import { GalleryRoom } from "../components/Room";
-import type { ArtworkMeshProps } from "../components/Artwork";
 
 interface Room1Props {
   artworks?: Array<Omit<ArtworkMeshProps, "position" | "rotationY"> | null>;
@@ -35,11 +35,7 @@ export function Room1Scene({ artworks = [] }: Room1Props) {
       id="room-1"
       name="Room 1"
       slug="room-1"
-      slots={[
-        { artwork: slot(0) },
-        { artwork: slot(1) },
-        { artwork: slot(2) },
-      ]}
+      slots={[{ artwork: slot(0) }, { artwork: slot(1) }, { artwork: slot(2) }]}
     />
   );
 }

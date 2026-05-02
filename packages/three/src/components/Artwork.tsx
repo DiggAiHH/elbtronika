@@ -1,5 +1,7 @@
 "use client";
 
+import { Html, useTexture } from "@react-three/drei";
+import { useFrame } from "@react-three/fiber";
 /**
  * ArtworkMesh – renders a single artwork as a Three.js plane with a texture.
  *
@@ -9,10 +11,8 @@
  * 3. Interactive hover uses onPointerEnter/Leave for cursor feedback only.
  * 4. Max 10 active proximity tracks to limit audio worker overhead.
  */
-import { useRef, useMemo } from "react";
-import { useFrame } from "@react-three/fiber";
-import { useTexture, Html } from "@react-three/drei";
-import type { Mesh, Camera } from "three";
+import { useMemo, useRef } from "react";
+import type { Camera, Mesh } from "three";
 import { useThreeStore } from "../store";
 
 export interface ArtworkMeshProps {
@@ -79,17 +79,9 @@ export function ArtworkMesh({
   });
 
   return (
-    <mesh
-      ref={meshRef}
-      position={position}
-      rotation={[0, rotationY, 0]}
-    >
+    <mesh ref={meshRef} position={position} rotation={[0, rotationY, 0]}>
       <planeGeometry args={planeArgs} />
-      <meshStandardMaterial
-        map={texture}
-        roughness={0.9}
-        metalness={0.05}
-      />
+      <meshStandardMaterial map={texture} roughness={0.9} metalness={0.05} />
 
       {/* Accessible label at bottom of artwork – visible close-up */}
       <Html

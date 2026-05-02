@@ -1,9 +1,9 @@
+export type { ArtFeatures, PixelData } from "./analyzer";
 export {
   analyzeArt,
-  extractDominantColors,
   computeColorMetrics,
   detectColorHarmony,
   estimateComposition,
+  extractDominantColors,
   generateArtTags,
 } from "./analyzer";
-export type { ArtFeatures, PixelData } from "./analyzer";

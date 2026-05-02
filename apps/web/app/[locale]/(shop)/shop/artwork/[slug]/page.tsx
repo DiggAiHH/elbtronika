@@ -84,11 +84,16 @@ type CommerceDj = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const client = getSanityClient();
-  const artwork = await client.fetch<ArtworkPageData | null>(
-    artworkBySlugQuery,
-    { slug },
-    { next: { revalidate: 300 } },
-  );
+  let artwork: ArtworkPageData | null = null;
+  try {
+    artwork = await client.fetch<ArtworkPageData | null>(
+      artworkBySlugQuery,
+      { slug },
+      { next: { revalidate: 300 } },
+    );
+  } catch (err) {
+    console.warn("[shop/artwork] metadata sanity fetch failed", err);
+  }
 
   if (!artwork) {
     return {};
@@ -114,15 +119,30 @@ export default async function ArtworkDetailPage({ params }: Props) {
   const sanityClient = getSanityClient();
   const supabase = await createSupabaseClient();
 
-  const [artwork, relatedArtworks, commerce] = await Promise.all([
-    sanityClient.fetch<ArtworkPageData | null>(artworkBySlugQuery, { slug }, { next: { revalidate: 300 } }),
-    sanityClient.fetch<RelatedArtwork[]>(allArtworksQuery, {}, { next: { revalidate: 120 } }),
+  const [artworkResult, relatedArtworksResult, commerce] = await Promise.all([
+    sanityClient
+      .fetch<ArtworkPageData | null>(artworkBySlugQuery, { slug }, { next: { revalidate: 300 } })
+      .then((data) => ({ data, ok: true as const }))
+      .catch((err) => {
+        console.warn("[shop/artwork] sanity artwork fetch failed", err);
+        return { data: null, ok: false as const };
+      }),
+    sanityClient
+      .fetch<RelatedArtwork[]>(allArtworksQuery, {}, { next: { revalidate: 120 } })
+      .then((data) => ({ data, ok: true as const }))
+      .catch((err) => {
+        console.warn("[shop/artwork] sanity related fetch failed", err);
+        return { data: [], ok: false as const };
+      }),
     supabase
       .from("artworks")
       .select("id, slug, price_eur, edition_size, editions_sold, image_url, model_url, set_id")
       .eq("slug", slug)
       .maybeSingle(),
   ]);
+
+  const artwork = artworkResult.data;
+  const relatedArtworks = relatedArtworksResult.data;
 
   if (!artwork) {
     notFound();
@@ -148,11 +168,7 @@ export default async function ArtworkDetailPage({ params }: Props) {
           .maybeSingle()
           .then(async ({ data }) => {
             if (!data?.dj_id) return { data: null };
-            return supabase
-              .from("djs")
-              .select("name, slug")
-              .eq("id", data.dj_id)
-              .maybeSingle();
+            return supabase.from("djs").select("name, slug").eq("id", data.dj_id).maybeSingle();
           }),
       ])
     : [{ data: null }, { data: null }];
@@ -248,7 +264,9 @@ export default async function ArtworkDetailPage({ params }: Props) {
                 <h2 className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-text-secondary)]">
                   {locale === "de" ? "Story" : "Story"}
                 </h2>
-                <p className="text-sm leading-7 text-[var(--color-text-secondary)]">{description}</p>
+                <p className="text-sm leading-7 text-[var(--color-text-secondary)]">
+                  {description}
+                </p>
               </div>
             )}
 
@@ -270,23 +288,51 @@ export default async function ArtworkDetailPage({ params }: Props) {
                 <p className="text-xs uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
                   {locale === "de" ? "DJ-Set" : "DJ Set"}
                 </p>
-                <p className="mt-2 text-sm text-[var(--color-text-secondary)]">
-                  {commerceSet?.title ?? (locale === "de" ? "Noch kein Set verknuepft" : "No set linked yet")}
-                </p>
-                {commerceDj && (
+                {commerceDj ? (
                   <Link
                     href={`/${locale}/dj/${commerceDj.slug}`}
-                    className="mt-2 inline-flex text-sm text-[var(--color-primary)] hover:underline"
+                    className="mt-2 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-primary)] hover:underline"
                   >
-                    {locale === "de" ? `Set von ${commerceDj.name}` : `Set by ${commerceDj.name}`}
+                    <span className="inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-primary)]" />
+                    {commerceDj.name}
                   </Link>
-                )}
+                ) : null}
+                <p className="mt-1.5 text-sm text-[var(--color-text-secondary)]">
+                  {commerceSet?.title ??
+                    (locale === "de" ? "Noch kein Set verknuepft" : "No set linked yet")}
+                </p>
               </div>
               {commerceSet?.hls_url && (
                 <audio className="w-full" controls preload="none" src={commerceSet.hls_url}>
                   <track kind="captions" />
                 </audio>
               )}
+            </div>
+
+            {/* Trust mini-strip */}
+            <div className="rounded-2xl border border-[var(--color-border)] bg-black/10 px-4 py-3">
+              <p className="mb-2 text-xs uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
+                {locale === "de" ? "Ihre Sicherheit" : "Your Assurance"}
+              </p>
+              <div className="flex flex-col gap-1.5">
+                {[
+                  locale === "de"
+                    ? "Blockchain-verifizierte Provenienz"
+                    : "Blockchain-verified provenance",
+                  locale === "de"
+                    ? "Limitierte Edition — nummeriert"
+                    : "Limited edition — numbered",
+                  locale === "de" ? "Sicherer Checkout" : "Secure checkout",
+                ].map((item) => (
+                  <div
+                    key={item}
+                    className="flex items-center gap-2 text-xs text-[var(--color-text-secondary)]"
+                  >
+                    <span className="shrink-0 text-[var(--color-primary)]">✓</span>
+                    {item}
+                  </div>
+                ))}
+              </div>
             </div>
 
             <div className="flex flex-wrap gap-3">
@@ -367,7 +413,9 @@ export default async function ArtworkDetailPage({ params }: Props) {
 function InfoBlock({ label, value }: { label: string; value: string }) {
   return (
     <div className="space-y-1 rounded-2xl border border-[var(--color-border)] bg-black/10 p-4">
-      <dt className="text-xs uppercase tracking-[0.18em] text-[var(--color-text-muted)]">{label}</dt>
+      <dt className="text-xs uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
+        {label}
+      </dt>
       <dd className="text-sm text-[var(--color-text-primary)]">{value}</dd>
     </div>
   );
