@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0a0a0a" />
+    <title>ELBTRONIKA — Immersive Audio-Visual Gallery</title>
+    <meta
+      name="description"
+      content="ELBTRONIKA — wo elektronische Musik und visuelle Kunst zu einem Raum verschmelzen. Coming soon."
+    />
+    <meta property="og:title" content="ELBTRONIKA" />
+    <meta
+      property="og:description"
+      content="Immersive 3D-Galerie. Elektronische Musik trifft visuelle Kunst. Bald."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://elbtronika.art" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%230a0a0a'/%3E%3Ctext x='50' y='62' font-family='monospace' font-size='48' font-weight='900' fill='%23ffffff' text-anchor='middle'%3EE%3C/text%3E%3C/svg%3E" />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      :root {
+        --bg: #0a0a0a;
+        --fg: #ffffff;
+        --dim: #888888;
+        --accent: #00ffaa;
+      }
+      html,
+      body {
+        height: 100%;
+        background: var(--bg);
+        color: var(--fg);
+        font-family: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+        overflow: hidden;
+        -webkit-font-smoothing: antialiased;
+      }
+      body {
+        display: grid;
+        place-items: center;
+        position: relative;
+      }
+      canvas#stage {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        opacity: 0.6;
+        mix-blend-mode: screen;
+      }
+      main {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+        padding: 2rem;
+        max-width: 720px;
+      }
+      .mark {
+        font-size: clamp(2.5rem, 9vw, 6.5rem);
+        font-weight: 900;
+        letter-spacing: 0.18em;
+        line-height: 0.95;
+        margin-bottom: 1.25rem;
+        text-shadow: 0 0 60px rgba(0, 255, 170, 0.25);
+      }
+      .tagline {
+        font-size: clamp(0.85rem, 1.6vw, 1rem);
+        color: var(--dim);
+        letter-spacing: 0.32em;
+        text-transform: uppercase;
+        margin-bottom: 3rem;
+      }
+      .status {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.6rem 1.2rem;
+        border: 1px solid #1f1f1f;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.02);
+        backdrop-filter: blur(8px);
+        font-size: 0.78rem;
+        color: var(--dim);
+        letter-spacing: 0.12em;
+      }
+      .pulse {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 0 0 var(--accent);
+        animation: pulse 2s infinite;
+      }
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 0 0 0 rgba(0, 255, 170, 0.6);
+        }
+        70% {
+          box-shadow: 0 0 0 14px rgba(0, 255, 170, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(0, 255, 170, 0);
+        }
+      }
+      footer {
+        position: fixed;
+        bottom: 1.25rem;
+        left: 0;
+        right: 0;
+        text-align: center;
+        z-index: 1;
+        color: #444;
+        font-size: 0.7rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+      footer a {
+        color: #666;
+        text-decoration: none;
+        margin: 0 0.5rem;
+      }
+      footer a:hover {
+        color: var(--fg);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .pulse {
+          animation: none;
+        }
+        canvas#stage {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="stage" aria-hidden="true"></canvas>
+    <main>
+      <div class="mark">ELBTRONIKA</div>
+      <div class="tagline">Immersive Audio-Visual Gallery</div>
+      <div class="status">
+        <span class="pulse" aria-hidden="true"></span>
+        <span>Phase 5/12 — DJ &amp; Artist Onboarding live in 2026</span>
+      </div>
+    </main>
+    <footer>
+      <a href="mailto:diggai@tutanota.de">contact</a>
+      <span>·</span>
+      <a href="https://github.com/DiggAiHH/elbtronika" rel="noopener">github</a>
+      <span>·</span>
+      <span>Hamburg / EU</span>
+    </footer>
+    <script>
+      // Lightweight reactive grid — no libs, GPU-accelerated, ~2KB
+      (function () {
+        const c = document.getElementById("stage");
+        const ctx = c.getContext("2d");
+        let w, h, t = 0;
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        function resize() {
+          w = c.width = window.innerWidth * dpr;
+          h = c.height = window.innerHeight * dpr;
+          c.style.width = window.innerWidth + "px";
+          c.style.height = window.innerHeight + "px";
+        }
+        resize();
+        window.addEventListener("resize", resize);
+        function frame() {
+          t += 0.006;
+          ctx.fillStyle = "rgba(10,10,10,0.18)";
+          ctx.fillRect(0, 0, w, h);
+          const cols = 22;
+          const cw = w / cols;
+          const rows = Math.ceil(h / cw);
+          for (let i = 0; i < cols; i++) {
+            for (let j = 0; j < rows; j++) {
+              const x = i * cw + cw / 2;
+              const y = j * cw + cw / 2;
+              const dx = x - w / 2, dy = y - h / 2;
+              const dist = Math.sqrt(dx * dx + dy * dy);
+              const wave = Math.sin(dist * 0.012 - t * 4) * 0.5 + 0.5;
+              const a = wave * 0.35;
+              ctx.fillStyle = "rgba(0,255,170," + a.toFixed(3) + ")";
+              ctx.fillRect(x - 1, y - 1, 2, 2);
+            }
+          }
+          requestAnimationFrame(frame);
+        }
+        if (!matchMedia("(prefers-reduced-motion: reduce)").matches) frame();
+      })();
+    </script>
+  </body>
+</html>

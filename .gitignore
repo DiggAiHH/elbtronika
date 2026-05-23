@@ -2,6 +2,9 @@
 node_modules
 .pnpm-store
 
+# Playwright DR-Blast persistent browser profile (logins!)
+browser-profile/
+
 # Build outputs
 .next
 dist

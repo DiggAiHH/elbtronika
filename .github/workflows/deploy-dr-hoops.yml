@@ -1,0 +1,49 @@
+name: Deploy Dr. Hoops Dashboard
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'dr-hoops.html'
+      - 'dr-hoops-site/**'
+      - '.github/workflows/deploy-dr-hoops.yml'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Build & Deploy to Netlify
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build deploy bundle
+        run: |
+          mkdir -p dist
+          cp dr-hoops.html dist/index.html
+          cat > dist/netlify.toml <<'EOF'
+          [build]
+            publish = "."
+          [[headers]]
+            for = "/*"
+            [headers.values]
+              X-Frame-Options = "DENY"
+              X-Content-Type-Options = "nosniff"
+              Referrer-Policy = "strict-origin-when-cross-origin"
+              Cache-Control = "public, max-age=300, must-revalidate"
+          EOF
+
+      - name: Deploy to Netlify
+        uses: nwtgck/actions-netlify@v3.0
+        with:
+          publish-dir: ./dist
+          production-deploy: true
+          deploy-message: "Auto: ${{ github.event.head_commit.message }}"
+          enable-pull-request-comment: false
+          enable-commit-comment: false
+          overwrites-pull-request-comment: false
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID_DR_HOOPS }}
+        timeout-minutes: 3

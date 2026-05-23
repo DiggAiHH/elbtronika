@@ -16,7 +16,10 @@
     "typecheck": "turbo run typecheck --concurrency=2",
     "format": "biome format --write .",
     "check": "biome check --write .",
-    "clean": "turbo run clean && rm -rf node_modules"
+    "clean": "turbo run clean && rm -rf node_modules",
+    "dr:setup": "node scripts/dr-blast.mjs --setup",
+    "dr:blast": "node scripts/dr-blast.mjs",
+    "dr:tiers": "node scripts/check-tiers.mjs"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.0.0",

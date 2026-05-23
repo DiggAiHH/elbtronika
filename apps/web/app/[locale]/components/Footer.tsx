@@ -1,22 +1,51 @@
 "use client";
 
 import Link from "next/link";
+import { useParams } from "next/navigation";
 
-const footerLinks = {
+type FooterLink = {
+  label: string;
+  href?: string;
+  external?: boolean;
+  action?: "reset-tour";
+  note?: string;
+};
+
+const footerLinks: {
+  platform: FooterLink[];
+  legal: FooterLink[];
+  connect: FooterLink[];
+  discover: FooterLink[];
+} = {
   platform: [
     { label: "Gallery", href: "/gallery" },
     { label: "Shop", href: "/shop" },
     { label: "Artists", href: "/about" },
   ],
   legal: [
-    { label: "Privacy", href: "#" },
-    { label: "Terms", href: "#" },
-    { label: "Imprint", href: "#" },
+    {
+      label: "Privacy by Architecture",
+      href: "/press",
+      note: "Current privacy posture and compliance status.",
+    },
+    {
+      label: "Legal Review",
+      note: "German legal texts are pending final attorney review before launch.",
+    },
+    {
+      label: "Legal Contact",
+      href: "mailto:hallo@elbtronika.de?subject=ELBTRONIKA%20Legal%20Request",
+      external: true,
+    },
   ],
   connect: [
-    { label: "Instagram", href: "#" },
-    { label: "Discord", href: "#" },
-    { label: "Newsletter", href: "#" },
+    { label: "Email", href: "mailto:hallo@elbtronika.de", external: true },
+    { label: "Press Kit", href: "/press" },
+    {
+      label: "Newsletter Interest",
+      href: "mailto:hallo@elbtronika.de?subject=ELBTRONIKA%20Newsletter",
+      external: true,
+    },
   ],
   discover: [
     { label: "Press Kit", href: "/press" },
@@ -24,7 +53,57 @@ const footerLinks = {
   ],
 };
 
+function localeHref(locale: string, href: string) {
+  return `/${locale}${href}`;
+}
+
 export default function Footer() {
+  const params = useParams<{ locale?: string }>();
+  const locale = params.locale ?? "de";
+
+  const renderFooterLink = (link: FooterLink) => {
+    const classes = "text-sm text-white/50 hover:text-[#e8a020] transition-colors duration-300";
+
+    if (link.action === "reset-tour") {
+      return (
+        <button
+          onClick={() => {
+            if (typeof window !== "undefined") {
+              localStorage.removeItem("elt-tour-dismissed");
+              window.location.reload();
+            }
+          }}
+          className={classes}
+        >
+          {link.label}
+        </button>
+      );
+    }
+
+    if (!link.href) {
+      return (
+        <div>
+          <span className="text-sm text-white/50">{link.label}</span>
+          {link.note ? <p className="mt-1 text-xs text-white/25">{link.note}</p> : null}
+        </div>
+      );
+    }
+
+    if (link.external) {
+      return (
+        <a href={link.href} className={classes}>
+          {link.label}
+        </a>
+      );
+    }
+
+    return (
+      <Link href={localeHref(locale, link.href)} className={classes}>
+        {link.label}
+      </Link>
+    );
+  };
+
   return (
     <footer className="relative border-t border-white/[0.06] bg-[#050508]">
       <div className="max-w-7xl mx-auto px-6 py-16">
@@ -51,12 +130,7 @@ export default function Footer() {
             <ul className="space-y-2">
               {footerLinks.platform.map((link) => (
                 <li key={link.label}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-white/50 hover:text-[#e8a020] transition-colors duration-300"
-                  >
-                    {link.label}
-                  </Link>
+                  {renderFooterLink(link)}
                 </li>
               ))}
             </ul>
@@ -69,12 +143,7 @@ export default function Footer() {
             <ul className="space-y-2">
               {footerLinks.legal.map((link) => (
                 <li key={link.label}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-white/50 hover:text-[#e8a020] transition-colors duration-300"
-                  >
-                    {link.label}
-                  </Link>
+                  {renderFooterLink(link)}
                 </li>
               ))}
             </ul>
@@ -87,12 +156,7 @@ export default function Footer() {
             <ul className="space-y-2">
               {footerLinks.connect.map((link) => (
                 <li key={link.label}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-white/50 hover:text-[#e8a020] transition-colors duration-300"
-                  >
-                    {link.label}
-                  </Link>
+                  {renderFooterLink(link)}
                 </li>
               ))}
             </ul>
@@ -103,23 +167,7 @@ export default function Footer() {
             <ul className="space-y-2">
               {footerLinks.discover.map((link) => (
                 <li key={link.label}>
-                  {link.action === "reset-tour" ? (
-                    <button
-                      onClick={() => {
-                        if (typeof window !== "undefined") {
-                          localStorage.removeItem("elt-tour-dismissed");
-                          window.location.reload();
-                        }
-                      }}
-                      className="text-sm text-white/50 hover:text-[#e8a020] transition-colors duration-300"
-                    >
-                      {link.label}
-                    </button>
-                  ) : (
-                    <Link href={link.href} className="text-sm text-white/50 hover:text-[#e8a020] transition-colors duration-300">
-                      {link.label}
-                    </Link>
-                  )}
+                  {renderFooterLink(link)}
                 </li>
               ))}
             </ul>

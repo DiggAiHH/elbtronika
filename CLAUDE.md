@@ -83,6 +83,16 @@ Ziel pro Projekt: voll automatisierter Geschäftsbetrieb mit minimalem Owner-Kon
 Frontend-Design-Arbeit → IMMER mit designlang-Extrakt + Claude Design Skills starten.
 Nie blank designen wenn eine Referenz-URL existiert.
 
+### DR-Blast (Deep-Research Multi-Tool Automation, 2026-05-13)
+Browser-blockierte Domains (Copilot/Sanity/Netlify-Dashboard/Supabase-Dashboard) NIE über Chrome-MCP versuchen — Chrome-Extension Manifest blockt.
+Stattdessen Playwright-Script mit persistentem Profil:
+- `pnpm dr:setup`        → einmalig in Gemini/Kimi/Copilot einloggen
+- `pnpm dr:blast 1 2 4`  → feuert Prompts parallel (IDs aus scripts/dr-prompts.mjs)
+- `pnpm dr:tiers`        → Supabase/Netlify/Sanity Plan-Check via API
+- Prompts versioniert in `scripts/dr-prompts.mjs`
+- Vor Phase-Entscheidungen: "DR vor ADR" (Best Practice)
+- Tokens für tiers: SUPABASE_ACCESS_TOKEN, NETLIFY_AUTH_TOKEN, SANITY_AUTH_TOKEN (Doppler)
+
 ## Critical Path
 Phase 0 (Legal + Stripe KYC) → Phase 3 (Infra: R2 + Supabase + Sanity) → Phase 7 (Single Canvas) — alle drei blockieren nachfolgende Phasen.
 

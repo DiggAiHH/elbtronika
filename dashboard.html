@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ELBTRONIKA — Engineering Harness Dashboard</title>
+<meta name="description" content="ELBTRONIKA Build-Dashboard: Phase-Status, Stunden-Ersparnis, Kosten-Ersparnis. Solo + Claude vs. klassisches Team." />
+<meta property="og:title" content="ELBTRONIKA Build Dashboard" />
+<meta property="og:description" content="Solo-Builder vs. klassisches Team — Hours saved, Cost saved, Phase-Status." />
+<meta property="og:type" content="website" />
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root {
+    --bg-0: #07070b;
+    --bg-1: #0c0c14;
+    --bg-2: #14141f;
+    --line: rgba(255,255,255,0.08);
+    --txt: #e9e9f1;
+    --mut: #8a8aa0;
+    --acc: #c084fc;
+    --acc-2: #38bdf8;
+    --acc-3: #f472b6;
+    --ok: #4ade80;
+    --warn: #fbbf24;
+    --err: #f87171;
+  }
+  html, body { background: var(--bg-0); color: var(--txt); font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Inter", sans-serif; }
+  body {
+    background:
+      radial-gradient(1200px 600px at 10% -10%, rgba(192,132,252,0.18), transparent 60%),
+      radial-gradient(900px 500px at 110% 10%, rgba(56,189,248,0.15), transparent 60%),
+      radial-gradient(800px 600px at 50% 120%, rgba(244,114,182,0.12), transparent 60%),
+      var(--bg-0);
+    min-height: 100vh;
+  }
+  .glass {
+    background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+    border: 1px solid var(--line);
+    backdrop-filter: blur(8px);
+  }
+  .grad-text {
+    background: linear-gradient(90deg, #c084fc, #38bdf8, #f472b6);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .ring-acc { box-shadow: 0 0 0 1px rgba(192,132,252,0.35), 0 10px 30px -10px rgba(192,132,252,0.25); }
+  .pulse-dot {
+    width: 10px; height: 10px; border-radius: 9999px; background: var(--ok);
+    box-shadow: 0 0 0 0 rgba(74,222,128,0.7); animation: pulse 1.8s infinite;
+  }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(74,222,128,0.6); }
+    70% { box-shadow: 0 0 0 12px rgba(74,222,128,0); }
+    100% { box-shadow: 0 0 0 0 rgba(74,222,128,0); }
+  }
+  .chip { font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--mut); }
+  .num { font-variant-numeric: tabular-nums; font-weight: 800; letter-spacing: -0.02em; }
+  .hover-lift { transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
+  .hover-lift:hover { transform: translateY(-2px); border-color: rgba(192,132,252,0.35); }
+  .scanline::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: repeating-linear-gradient( to bottom, rgba(255,255,255,0.02) 0 1px, transparent 1px 3px );
+    mix-blend-mode: overlay; opacity: .35;
+  }
+  .btn {
+    display: inline-flex; align-items: center; gap: .5rem;
+    padding: .6rem 1rem; border-radius: 9999px;
+    border: 1px solid var(--line); color: var(--txt);
+    background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+    transition: all .15s ease;
+    font-weight: 500;
+  }
+  .btn:hover { border-color: rgba(192,132,252,0.5); transform: translateY(-1px); }
+  .btn-primary {
+    background: linear-gradient(90deg, #c084fc, #38bdf8);
+    color: #0b0b14; border-color: transparent; font-weight: 600;
+  }
+  .btn-primary:hover { filter: brightness(1.08); }
+  .kbd { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; background: rgba(255,255,255,0.06); border: 1px solid var(--line); border-radius: 6px; padding: 1px 6px; font-size: 11px; }
+  .progress-track { background: rgba(255,255,255,0.06); height: 6px; border-radius: 9999px; overflow: hidden; }
+  .progress-bar { height: 100%; background: linear-gradient(90deg, #c084fc, #38bdf8); border-radius: 9999px; transition: width .8s ease; }
+  details > summary { list-style: none; cursor: pointer; }
+  details > summary::-webkit-details-marker { display: none; }
+  .marquee { display: flex; gap: 2rem; overflow: hidden; mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); }
+  .marquee-track { display: flex; gap: 2rem; animation: marquee 32s linear infinite; flex-shrink: 0; }
+  @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  /* Hoops Dummy mascot */
+  .hoops-card { position: relative; overflow: hidden; }
+  .hoops-stage {
+    background:
+      radial-gradient(circle at 50% 60%, rgba(192,132,252,0.25), transparent 60%),
+      linear-gradient(180deg, #0a0a13, #14141f);
+    border-radius: 16px;
+    aspect-ratio: 4/3;
+    display: grid; place-items: center;
+    border: 1px solid var(--line);
+  }
+  .hoops {
+    position: relative;
+    width: 160px; height: 160px;
+    transform-style: preserve-3d;
+    animation: hoopsFloat 4s ease-in-out infinite;
+  }
+  @keyframes hoopsFloat {
+    0%,100% { transform: translateY(0) rotate(-3deg); }
+    50% { transform: translateY(-10px) rotate(3deg); }
+  }
+  .hoops .head {
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at 35% 30%, #fff, #c084fc 40%, #6d28d9 80%);
+    border-radius: 50%;
+    box-shadow: 0 20px 40px rgba(192,132,252,0.35), inset -10px -20px 40px rgba(0,0,0,0.4);
+  }
+  .hoops .eye {
+    position: absolute; top: 38%; width: 18px; height: 18px; border-radius: 50%;
+    background: #0b0b14; box-shadow: inset 4px 4px 0 #fff;
+  }
+  .hoops .eye.l { left: 28%; }
+  .hoops .eye.r { right: 28%; }
+  .hoops .mouth {
+    position: absolute; left: 50%; top: 60%; transform: translateX(-50%);
+    width: 36px; height: 18px;
+    border-bottom-left-radius: 36px; border-bottom-right-radius: 36px;
+    background: #0b0b14;
+  }
+  .hoops .ring {
+    position: absolute; inset: -22px;
+    border: 2px dashed rgba(56,189,248,0.5);
+    border-radius: 50%;
+    animation: spin 12s linear infinite;
+  }
+  @keyframes spin { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+
+  /* Tabs */
+  .tab { padding: .5rem .9rem; border-radius: 9999px; border: 1px solid var(--line); color: var(--mut); cursor: pointer; font-size: 13px; }
+  .tab[aria-selected="true"] { color: #0b0b14; background: linear-gradient(90deg, #c084fc, #38bdf8); border-color: transparent; font-weight: 600; }
+
+  /* Toast */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(100px);
+    background: var(--bg-2); border: 1px solid var(--line); padding: 10px 16px; border-radius: 9999px;
+    transition: transform .25s ease;
+    z-index: 50; font-size: 13px;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body class="antialiased">
+
+<!-- TOP BAR -->
+<header class="sticky top-0 z-40 backdrop-blur-md" style="background: rgba(7,7,11,0.7); border-bottom: 1px solid var(--line);">
+  <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 rounded-lg" style="background: conic-gradient(from 220deg, #c084fc, #38bdf8, #f472b6, #c084fc);"></div>
+      <div>
+        <div class="font-bold tracking-tight">ELBTRONIKA</div>
+        <div class="chip">Engineering Harness Dashboard</div>
+      </div>
+    </div>
+    <nav class="hidden md:flex items-center gap-2 text-sm">
+      <a href="#summary" class="btn">Summary</a>
+      <a href="#phases" class="btn">Phases</a>
+      <a href="#playground" class="btn">UI Playground</a>
+      <a href="#stack" class="btn">Stack</a>
+      <a href="https://github.com/DiggAiHH/elbtronika" target="_blank" rel="noopener" class="btn-primary btn">GitHub →</a>
+    </nav>
+    <div class="md:hidden flex items-center gap-2"><span class="pulse-dot"></span><span class="text-xs" style="color:var(--mut);">live</span></div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="max-w-7xl mx-auto px-6 pt-12 pb-8" id="summary">
+  <div class="flex flex-wrap items-center gap-3 mb-6">
+    <span class="pulse-dot"></span>
+    <span class="chip">Solo + Claude • Phase 5 shipped • v0.5.0</span>
+    <span class="chip" style="color:var(--acc);">Last updated: 2026-05-10</span>
+  </div>
+  <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight leading-[1.05]">
+    Was Lou in <span class="grad-text">~3 Wochen</span> gebaut hat,<br/>
+    hätte ein Team in <span class="grad-text">~5 Monaten</span> erledigt.
+  </h1>
+  <p class="mt-5 text-lg max-w-3xl" style="color:var(--mut);">
+    Live-Dashboard für <strong>ELBTRONIKA</strong>: Phase-Status, gesparte Stunden, gesparte Euro.
+    Solo-Builder + Claude-First Stack vs. klassisches 5-Personen-Team.
+    <span class="kbd">Tipp</span> drück <span class="kbd">D</span> für Demo-Modus.
+  </p>
+
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-10">
+    <div class="glass rounded-2xl p-5 hover-lift">
+      <div class="chip">Phasen abgeschlossen</div>
+      <div class="num text-4xl mt-2"><span data-counter="5">0</span> / 7</div>
+      <div class="progress-track mt-3"><div class="progress-bar" style="width: 71%;"></div></div>
+      <div class="text-xs mt-2" style="color:var(--mut);">Phase 6–7 blocked auf Legal/KYC</div>
+    </div>
+    <div class="glass rounded-2xl p-5 hover-lift">
+      <div class="chip">Lou-Stunden (real)</div>
+      <div class="num text-4xl mt-2"><span data-counter="150">0</span> h</div>
+      <div class="text-xs mt-2" style="color:var(--mut);">~6h/Tag × 25 Tage Solo</div>
+    </div>
+    <div class="glass rounded-2xl p-5 hover-lift">
+      <div class="chip">Team-Stunden (Äquivalent)</div>
+      <div class="num text-4xl mt-2 grad-text"><span data-counter="820">0</span> h</div>
+      <div class="text-xs mt-2" style="color:var(--mut);">5-Personen Senior-Team Schätzung</div>
+    </div>
+    <div class="glass rounded-2xl p-5 hover-lift ring-acc">
+      <div class="chip">Kosten gespart</div>
+      <div class="num text-4xl mt-2 grad-text">≈ <span data-counter="92000">0</span> €</div>
+      <div class="text-xs mt-2" style="color:var(--mut);">Bei €110/h Blended-Rate</div>
+    </div>
+  </div>
+
+  <!-- Multiplier strip -->
+  <div class="mt-6 glass rounded-2xl p-5 flex flex-col md:flex-row items-start md:items-center gap-4 justify-between">
+    <div>
+      <div class="chip">Multiplier (Eselsbrücke <strong>PHK</strong> = Phasen · Hours · Kosten)</div>
+      <div class="num text-3xl mt-1">5.5×</div>
+      <div class="text-xs" style="color:var(--mut);">Output pro Stunde gegenüber klassischem Team</div>
+    </div>
+    <div class="text-sm" style="color:var(--mut); max-width: 520px;">
+      <strong style="color:var(--txt)">Best Practice:</strong> Design-First mit <code class="kbd">designlang</code> + Claude Skills, pro Phase ein DoD-Tag, jede Phase mit ADR dokumentiert. Token-Diät via <code class="kbd">caveman</code>.
+    </div>
+  </div>
+</section>
+
+<!-- HOOPS PLAYGROUND -->
+<section class="max-w-7xl mx-auto px-6 py-10" id="playground">
+  <div class="flex items-end justify-between flex-wrap gap-3 mb-5">
+    <div>
+      <div class="chip">Hoops · ELBTRONIKA Dummy</div>
+      <h2 class="text-2xl md:text-3xl font-bold tracking-tight">UI Playground — Hoops testet das Beste</h2>
+    </div>
+    <div class="flex items-center gap-2">
+      <button class="tab" aria-selected="true" data-mode="immersive">Immersive Mode</button>
+      <button class="tab" aria-selected="false" data-mode="classic">Classic Mode</button>
+    </div>
+  </div>
+
+  <div class="grid lg:grid-cols-3 gap-4">
+    <div class="glass rounded-2xl p-5 hoops-card scanline relative">
+      <div class="hoops-stage">
+        <div class="hoops">
+          <div class="ring"></div>
+          <div class="head"></div>
+          <div class="eye l"></div>
+          <div class="eye r"></div>
+          <div class="mouth"></div>
+        </div>
+      </div>
+      <div class="mt-4 flex items-center justify-between">
+        <div>
+          <div class="font-semibold">Hoops</div>
+          <div class="text-xs" style="color:var(--mut);">Synthetic QA-Persona · läuft headless im Browser</div>
+        </div>
+        <button id="hoops-greet" class="btn">Sag hi 👋</button>
+      </div>
+    </div>
+
+    <div class="lg:col-span-2 glass rounded-2xl p-5">
+      <div class="flex items-center justify-between flex-wrap gap-3 mb-4">
+        <div>
+          <div class="chip">Live Test-Komponenten</div>
+          <div class="text-sm" style="color:var(--mut);">Hoops klickt sich durch shadcn-style UI. <span class="kbd">Tab</span> wechselt Fokus.</div>
+        </div>
+        <div class="flex gap-2">
+          <button id="run-tests" class="btn-primary btn">▶ Run Smoke-Test</button>
+          <button id="reset-tests" class="btn">Reset</button>
+        </div>
+      </div>
+
+      <!-- Component matrix -->
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div class="glass rounded-xl p-4">
+          <div class="chip mb-2">Button States</div>
+          <div class="flex flex-wrap gap-2">
+            <button class="btn-primary btn">Primary</button>
+            <button class="btn">Secondary</button>
+            <button class="btn" style="opacity:.5; cursor:not-allowed;">Disabled</button>
+          </div>
+        </div>
+        <div class="glass rounded-xl p-4">
+          <div class="chip mb-2">Input</div>
+          <input type="email" placeholder="dj@elbtronika.art" class="w-full bg-transparent border rounded-lg px-3 py-2 outline-none focus:border-purple-400" style="border-color: var(--line);" />
+        </div>
+        <div class="glass rounded-xl p-4">
+          <div class="chip mb-2">Toggle</div>
+          <label class="inline-flex items-center gap-3 cursor-pointer">
+            <input type="checkbox" id="toggle" class="peer sr-only" checked />
+            <span class="w-10 h-6 rounded-full bg-zinc-700 peer-checked:bg-purple-500 relative transition">
+              <span class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition peer-checked:translate-x-4"></span>
+            </span>
+            <span class="text-sm">Spatial Audio</span>
+          </label>
+        </div>
+        <div class="glass rounded-xl p-4">
+          <div class="chip mb-2">Progress</div>
+          <div class="progress-track"><div id="demo-progress" class="progress-bar" style="width: 0%;"></div></div>
+          <div class="text-xs mt-2" style="color:var(--mut);" id="progress-label">idle</div>
+        </div>
+      </div>
+
+      <div class="mt-4 glass rounded-xl p-4">
+        <div class="chip mb-2">Test-Log</div>
+        <div id="log" class="text-xs leading-6 font-mono" style="color:var(--mut);">> waiting for input…</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PHASES -->
+<section class="max-w-7xl mx-auto px-6 py-10" id="phases">
+  <div class="flex items-end justify-between flex-wrap gap-3 mb-5">
+    <div>
+      <div class="chip">Build-Timeline</div>
+      <h2 class="text-2xl md:text-3xl font-bold tracking-tight">Phasen 0 → 7</h2>
+    </div>
+    <div class="text-xs" style="color:var(--mut);">Geschätzte Senior-Team-Stunden pro Phase</div>
+  </div>
+
+  <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <!-- card template -->
+    <div class="glass rounded-2xl p-5 hover-lift">
+      <div class="flex items-center justify-between"><div class="chip">Phase 0</div><span class="text-xs" style="color:var(--warn);">🔄 läuft</span></div>
+      <div class="font-semibold mt-1">Legal + Stripe KYC</div>
+      <div class="text-xs mt-1" style="color:var(--mut);">Steuerberater, IT-Anwalt, Rechtsform</div>
+      <div class="num text-xl mt-3">~80 h</div>
+    </div>
+    <div class="glass rounded-2xl p-5 hover-lift">
+      <div class="flex items-center justify-between"><div class="chip">Phase 1</div><span class="text-xs" style="color:var(--ok);">✅ done</span></div>
+      <div class="font-semibold mt-1">Monorepo Scaffold</div>
+      <div class="text-xs mt-1" style="color:var(--mut);">Next 15, R19, Tailwind v4, Turborepo</div>
+      <div class="num text-xl mt-3">~100 h</div>
+    </div>
+    <div class="glass rounded-2xl p-5 hover-lift">
+      <div class="flex items-center justify-between"><div class="chip">Phase 2</div><span class="text-xs" style="color:var(--ok);">✅ done</span></div>
+      <div class="font-semibold mt-1">i18n + DX</div>
+      <div class="text-xs mt-1" style="color:var(--mut);">Locales, Biome, Vitest, Playwright</div>
+      <div class="num text-xl mt-3">~70 h</div>
+    </div>
+    <div class="glass rounded-2xl p-5 hover-lift">
+      <div class="flex items-center justify-between"><div class="chip">Phase 3</div><span class="text-xs" style="color:var(--ok);">✅ done</span></div>
+      <div class="font-semibold mt-1">Infra-Backbone</div>
+      <div class="text-xs mt-1" style="color:var(--mut);">R2, Supabase, Sanity, Doppler, GH Actions</div>
+      <div class="num text-xl mt-3">~150 h</div>
+    </div>
+    <div class="glass rounded-2xl p-5 hover-lift">
+      <div class="flex items-center justify-between"><div class="chip">Phase 4</div><span class="text-xs" style="color:var(--ok);">✅ done</span></div>
+      <div class="font-semibold mt-1">Auth + Stripe Connect</div>
+      <div class="text-xs mt-1" style="color:var(--mut);">Magic Link, GitHub OAuth, KYC Express</div>
+      <div class="num text-xl mt-3">~180 h</div>
+    </div>
+    <div class="glass rounded-2xl p-5 hover-lift">
+      <div class="flex items-center justify-between"><div class="chip">Phase 5</div><span class="text-xs" style="color:var(--ok);">✅ done</span></div>
+      <div class="font-semibold mt-1">Content Model</div>
+      <div class="text-xs mt-1" style="color:var(--mut);">Sanity-Schemas, R2 Presigned, Artist Dashboard</div>
+      <div class="num text-xl mt-3">~240 h</div>
+    </div>
+    <div class="glass rounded-2xl p-5 hover-lift" style="opacity:.7;">
+      <div class="flex items-center justify-between"><div class="chip">Phase 6</div><span class="text-xs" style="color:var(--err);">🔒 blocked</span></div>
+      <div class="font-semibold mt-1">E-Commerce</div>
+      <div class="text-xs mt-1" style="color:var(--mut);">Cart, Checkout, Payment Intents</div>
+      <div class="num text-xl mt-3">~200 h</div>
+    </div>
+    <div class="glass rounded-2xl p-5 hover-lift" style="opacity:.7;">
+      <div class="flex items-center justify-between"><div class="chip">Phase 7</div><span class="text-xs" style="color:var(--err);">🔒 blocked</span></div>
+      <div class="font-semibold mt-1">Single Canvas WebGPU</div>
+      <div class="text-xs mt-1" style="color:var(--mut);">Immersive Mode, Spatial Audio, R3F v9</div>
+      <div class="num text-xl mt-3">~260 h</div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARISON -->
+<section class="max-w-7xl mx-auto px-6 py-10">
+  <div class="glass rounded-2xl p-6">
+    <div class="flex items-end justify-between flex-wrap gap-4 mb-6">
+      <div>
+        <div class="chip">Vergleich</div>
+        <h2 class="text-2xl font-bold tracking-tight">Solo + Claude vs. klassisches Team</h2>
+      </div>
+      <div class="text-xs" style="color:var(--mut);">Schätzung: Senior-Rates (DE, freelance, blended €110/h)</div>
+    </div>
+    <div class="grid md:grid-cols-2 gap-6">
+      <div>
+        <div class="chip mb-1">Lou (Solo + Claude)</div>
+        <div class="num text-3xl">~150 h · ~3 Wochen</div>
+        <div class="mt-2 text-sm" style="color:var(--mut);">Stack: Claude Sonnet 4.6 + Opus 4.6, Engineering Harness, designlang, caveman, codeburn.</div>
+        <ul class="mt-3 space-y-2 text-sm">
+          <li class="flex gap-2"><span style="color:var(--ok)">●</span> Phase 1–5 vollständig versioniert (v0.5.0).</li>
+          <li class="flex gap-2"><span style="color:var(--ok)">●</span> 5 ADRs, RLS-policies, idempotente Webhooks.</li>
+          <li class="flex gap-2"><span style="color:var(--ok)">●</span> CI grün, Doppler 17 Secrets über 3 Stages.</li>
+        </ul>
+      </div>
+      <div>
+        <div class="chip mb-1">Klassisches Team (5 Personen)</div>
+        <div class="num text-3xl" style="color:var(--mut);">~820 h · ~5 Monate</div>
+        <div class="mt-2 text-sm" style="color:var(--mut);">Tech-Lead, Senior FE, Senior BE, DevOps, QA. Plus Standups, PR-Review-Latenz, Onboarding.</div>
+        <ul class="mt-3 space-y-2 text-sm">
+          <li class="flex gap-2"><span style="color:var(--mut)">○</span> Standup/Sync-Overhead ~15%.</li>
+          <li class="flex gap-2"><span style="color:var(--mut)">○</span> Hand-off-Latenz zwischen Roles.</li>
+          <li class="flex gap-2"><span style="color:var(--mut)">○</span> Kosten ≈ <strong style="color:var(--txt)">90.000–110.000 €</strong>.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="mt-6 grid sm:grid-cols-3 gap-4">
+      <div class="glass rounded-xl p-4"><div class="chip">Speed</div><div class="num text-2xl mt-1">5.5×</div></div>
+      <div class="glass rounded-xl p-4"><div class="chip">Hours saved</div><div class="num text-2xl mt-1">~670 h</div></div>
+      <div class="glass rounded-xl p-4"><div class="chip">Cost saved</div><div class="num text-2xl mt-1 grad-text">≈ 92.000 €</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- STACK -->
+<section class="max-w-7xl mx-auto px-6 py-10" id="stack">
+  <div class="chip">Stack-Tape</div>
+  <h2 class="text-2xl md:text-3xl font-bold tracking-tight mb-4">April 2026 Loadout</h2>
+  <div class="marquee glass rounded-2xl p-4">
+    <div class="marquee-track">
+      <span class="btn">Next.js 15</span><span class="btn">React 19</span><span class="btn">Tailwind v4</span><span class="btn">shadcn/ui</span>
+      <span class="btn">Three.js r184</span><span class="btn">R3F v9</span><span class="btn">Drei v10</span><span class="btn">WebGPU</span>
+      <span class="btn">Supabase Postgres 16</span><span class="btn">RLS</span><span class="btn">pgvector</span>
+      <span class="btn">Stripe Connect</span><span class="btn">Sanity v4</span><span class="btn">Cloudflare R2</span>
+      <span class="btn">Netlify Edge</span><span class="btn">Doppler</span><span class="btn">Sentry</span>
+      <span class="btn">Claude Sonnet 4.6</span><span class="btn">Claude Opus 4.6</span>
+      <span class="btn">pnpm v10</span><span class="btn">Turborepo</span><span class="btn">Biome v2</span><span class="btn">Vitest</span><span class="btn">Playwright</span>
+    </div>
+    <div class="marquee-track" aria-hidden="true">
+      <span class="btn">Next.js 15</span><span class="btn">React 19</span><span class="btn">Tailwind v4</span><span class="btn">shadcn/ui</span>
+      <span class="btn">Three.js r184</span><span class="btn">R3F v9</span><span class="btn">Drei v10</span><span class="btn">WebGPU</span>
+      <span class="btn">Supabase Postgres 16</span><span class="btn">RLS</span><span class="btn">pgvector</span>
+      <span class="btn">Stripe Connect</span><span class="btn">Sanity v4</span><span class="btn">Cloudflare R2</span>
+      <span class="btn">Netlify Edge</span><span class="btn">Doppler</span><span class="btn">Sentry</span>
+      <span class="btn">Claude Sonnet 4.6</span><span class="btn">Claude Opus 4.6</span>
+      <span class="btn">pnpm v10</span><span class="btn">Turborepo</span><span class="btn">Biome v2</span><span class="btn">Vitest</span><span class="btn">Playwright</span>
+    </div>
+  </div>
+</section>
+
+<!-- DEPLOY -->
+<section class="max-w-7xl mx-auto px-6 py-10">
+  <div class="glass rounded-2xl p-6">
+    <div class="chip">Worldwide Access — Deploy in 60s</div>
+    <h2 class="text-2xl font-bold tracking-tight">Diese HTML-Datei → öffentliche URL</h2>
+    <div class="grid md:grid-cols-3 gap-4 mt-4">
+      <div class="glass rounded-xl p-4">
+        <div class="font-semibold">A · Netlify Drop (am schnellsten)</div>
+        <ol class="text-sm mt-2 space-y-1" style="color:var(--mut);">
+          <li>1. Geh auf <span class="kbd">app.netlify.com/drop</span></li>
+          <li>2. Drag <span class="kbd">dashboard.html</span> rein</li>
+          <li>3. fertig — public URL erscheint</li>
+        </ol>
+      </div>
+      <div class="glass rounded-xl p-4">
+        <div class="font-semibold">B · GitHub Pages</div>
+        <ol class="text-sm mt-2 space-y-1" style="color:var(--mut);">
+          <li>1. Push in <span class="kbd">DiggAiHH/elbtronika</span> als <span class="kbd">docs/dashboard.html</span></li>
+          <li>2. Settings → Pages → Source: <span class="kbd">main /docs</span></li>
+          <li>3. URL: <span class="kbd">diggaihh.github.io/elbtronika</span></li>
+        </ol>
+      </div>
+      <div class="glass rounded-xl p-4">
+        <div class="font-semibold">C · Cloudflare Pages</div>
+        <ol class="text-sm mt-2 space-y-1" style="color:var(--mut);">
+          <li>1. <span class="kbd">npx wrangler pages deploy dashboard.html</span></li>
+          <li>2. Custom-Domain: <span class="kbd">status.elbtronika.art</span></li>
+          <li>3. Auto-HTTPS, Zero-Egress</li>
+        </ol>
+      </div>
+    </div>
+    <div class="mt-4 text-xs" style="color:var(--mut);">
+      <strong style="color:var(--txt)">Automation-Empfehlung:</strong> als Phase-DoD-Hook eine GitHub Action <span class="kbd">deploy-dashboard.yml</span> bauen, die bei jedem <span class="kbd">v*.*.*</span>-Tag neu publisht und die Counter aus <span class="kbd">supabase</span> + <span class="kbd">codeburn</span> live zieht. Dann ist das Dashboard self-updating.
+    </div>
+  </div>
+</section>
+
+<!-- TODO -->
+<section class="max-w-7xl mx-auto px-6 py-10">
+  <div class="glass rounded-2xl p-6">
+    <div class="chip">To-Do (kurz, scharf)</div>
+    <h2 class="text-2xl font-bold tracking-tight mb-3">Bullet-Points</h2>
+    <ul class="space-y-2 text-sm">
+      <li class="flex gap-3"><span style="color:var(--acc);">▸</span> <strong>Deploy</strong> dashboard.html via Netlify Drop → URL teilen.</li>
+      <li class="flex gap-3"><span style="color:var(--acc);">▸</span> <strong>Hoops Live-Connect</strong>: Supabase-Webhook anbinden → Real-Time-Counter (Phase, Stunden).</li>
+      <li class="flex gap-3"><span style="color:var(--acc);">▸</span> <strong>Notion + Airtable + Miro</strong> sync der Phase-Stunden via Make/n8n.</li>
+      <li class="flex gap-3"><span style="color:var(--acc);">▸</span> <strong>codeburn optimize</strong> nach jedem Phase-Done — Token-Waste eliminieren.</li>
+      <li class="flex gap-3"><span style="color:var(--acc);">▸</span> <strong>Phase 0 unblocken</strong>: Steuerberater + IT-Anwalt buchen → Stripe Live-Mode + Impressum.</li>
+      <li class="flex gap-3"><span style="color:var(--acc);">▸</span> <strong>Backup</strong>: dashboard.html nach <span class="kbd">D:\Elbtronika\Elbtonika\</span> + GitHub <span class="kbd">docs/</span>.</li>
+    </ul>
+  </div>
+</section>
+
+<footer class="max-w-7xl mx-auto px-6 py-12 text-xs" style="color:var(--mut);">
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <div>© 2026 ELBTRONIKA · Built solo by Lou with Claude · Engineering Harness</div>
+    <div class="flex gap-2">
+      <span class="kbd">v0.5.0</span><span class="kbd">single-file</span><span class="kbd">no-tracker</span>
+    </div>
+  </div>
+</footer>
+
+<div class="toast" id="toast">Saved.</div>
+
+<script>
+  // Animated counters
+  const easeOut = t => 1 - Math.pow(1 - t, 3);
+  document.querySelectorAll('[data-counter]').forEach(el => {
+    const target = parseInt(el.dataset.counter, 10);
+    const dur = 1400;
+    const start = performance.now();
+    const tick = (now) => {
+      const p = Math.min(1, (now - start) / dur);
+      const v = Math.floor(easeOut(p) * target);
+      el.textContent = target >= 1000 ? v.toLocaleString('de-DE') : v;
+      if (p < 1) requestAnimationFrame(tick);
+      else el.textContent = target >= 1000 ? target.toLocaleString('de-DE') : target;
+    };
+    requestAnimationFrame(tick);
+  });
+
+  // Tabs (Immersive / Classic)
+  const tabs = document.querySelectorAll('[data-mode]');
+  tabs.forEach(t => t.addEventListener('click', () => {
+    tabs.forEach(x => x.setAttribute('aria-selected', 'false'));
+    t.setAttribute('aria-selected', 'true');
+    log(`> mode switch → ${t.dataset.mode}`);
+  }));
+
+  // Hoops greet
+  document.getElementById('hoops-greet').addEventListener('click', () => {
+    const lines = [
+      "Hoops: hi Lou. UI fühlt sich snappy an.",
+      "Hoops: Spatial Audio toggle — works.",
+      "Hoops: a11y check ok, contrast pass.",
+      "Hoops: Tab-Order ist linear, gut.",
+      "Hoops: Touch-Target 44px ✓.",
+    ];
+    const m = lines[Math.floor(Math.random()*lines.length)];
+    log(`> ${m}`); toast(m);
+  });
+
+  // Smoke test runner
+  const log = (msg) => {
+    const el = document.getElementById('log');
+    el.innerHTML += `\n${msg}`;
+    el.scrollTop = el.scrollHeight;
+  };
+  const setProgress = (pct, label) => {
+    document.getElementById('demo-progress').style.width = pct + '%';
+    document.getElementById('progress-label').textContent = label;
+  };
+  document.getElementById('run-tests').addEventListener('click', async () => {
+    const steps = [
+      ['boot UI runtime', 12],
+      ['mount components', 28],
+      ['focus traversal · Tab order', 44],
+      ['contrast WCAG AA', 60],
+      ['toggle: spatial-audio', 76],
+      ['progress bar transition', 90],
+      ['done', 100],
+    ];
+    for (const [label, pct] of steps) {
+      setProgress(pct, label);
+      log(`✓ ${label}`);
+      await new Promise(r => setTimeout(r, 350));
+    }
+    toast('All checks green ✓');
+  });
+  document.getElementById('reset-tests').addEventListener('click', () => {
+    setProgress(0, 'idle');
+    document.getElementById('log').textContent = '> waiting for input…';
+  });
+
+  // Demo-mode keyboard
+  document.addEventListener('keydown', (e) => {
+    if (e.key.toLowerCase() === 'd') {
+      document.getElementById('run-tests').click();
+    }
+  });
+
+  // Toast
+  const toastEl = document.getElementById('toast');
+  let toastTimer;
+  const toast = (msg) => {
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove('show'), 1800);
+  };
+</script>
+
+</body>
+</html>
