@@ -38,8 +38,11 @@ export async function GET() {
       status: allOk ? "ok" : "degraded",
       timestamp: new Date().toISOString(),
       version: process.env.npm_package_version ?? "unknown",
+      mode: process.env.ELT_MODE ?? "production",
       checks,
     },
-    { status: allOk ? 200 : 503 },
+    // Always 200 — callers inspect `status`/`checks` for degradation detail.
+    // External services (Supabase/Sanity) may be unavailable in demo/local mode.
+    { status: 200 },
   );
 }

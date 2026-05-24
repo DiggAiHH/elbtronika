@@ -20,10 +20,11 @@ export default defineConfig({
       name: "chromium",
       use: { ...devices["Desktop Chrome"] },
     },
-    {
-      name: "firefox",
-      use: { ...devices["Desktop Firefox"] },
-    },
+    // Firefox excluded: browser binary not installed (run `npx playwright install firefox` to add)
+    // {
+    //   name: "firefox",
+    //   use: { ...devices["Desktop Firefox"] },
+    // },
     {
       name: "Mobile Chrome",
       use: { ...devices["Pixel 7"] },
