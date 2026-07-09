@@ -1,0 +1,10 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="elb" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#e8a020"/>
+      <stop offset="1" stop-color="#2aada8"/>
+    </linearGradient>
+  </defs>
+  <rect width="32" height="32" rx="8" fill="url(#elb)"/>
+  <path d="M11 9h10v3.2h-6.4v3h5.6v3.1h-5.6v3.5H21V23H11z" fill="#050508"/>
+</svg>

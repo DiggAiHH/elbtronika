@@ -74,9 +74,12 @@ export default function Navbar() {
 
         {/* Mobile Toggle */}
         <button
+          type="button"
           onClick={() => setMobileOpen(!mobileOpen)}
           className="md:hidden w-10 h-10 flex flex-col items-center justify-center gap-1.5"
           aria-label="Toggle menu"
+          aria-expanded={mobileOpen}
+          aria-controls="mobile-menu"
         >
           <span
             className={`w-5 h-0.5 bg-white transition-all duration-300 ${mobileOpen ? "rotate-45 translate-y-2" : ""}`}
@@ -92,7 +95,10 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {mobileOpen && (
-        <div className="md:hidden glass border-t border-white/[0.06] animate-fade-in">
+        <div
+          id="mobile-menu"
+          className="md:hidden glass border-t border-white/[0.06] animate-fade-in"
+        >
           <div className="px-6 py-4 space-y-1">
             {navLinks.map((link) => (
               <Link
