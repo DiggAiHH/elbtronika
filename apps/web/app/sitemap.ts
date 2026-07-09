@@ -25,9 +25,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: route.changeFrequency,
       priority: route.priority,
       alternates: {
-        languages: Object.fromEntries(
-          locales.map((l) => [l, `${BASE_URL}/${l}${route.path}`]),
-        ),
+        languages: Object.fromEntries(locales.map((l) => [l, `${BASE_URL}/${l}${route.path}`])),
       },
     })),
   );

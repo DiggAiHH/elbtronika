@@ -8,6 +8,8 @@ import { useCartStore } from "../../src/lib/cart/store";
 vi.mock("next/image", () => ({
   default: (props: Record<string, unknown>) => {
     const { fill: _fill, ...rest } = props;
+    // biome-ignore lint/performance/noImgElement: test mock replacing next/image
+    // biome-ignore lint/a11y/useAltText: alt is forwarded via {...rest} from the component under test
     return <img {...rest} />;
   },
 }));

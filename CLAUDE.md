@@ -3,176 +3,53 @@
 Terse. Drop fluff. Technical exact. Code unchanged.
 Pattern: [thing] [action] [reason]. [next step].
 Caveman always on. Off: "normal mode". Commits/PRs: normal english.
-Use caveman-compress on memory files to cut input tokens.
 
 ---
 
-# Memory
+# ELBTRONIKA — Agent Context
 
-## Me
-Lou (diggai@tutanota.de), Solo-Builder & Full-Stack Engineer.
-Hintergrund: Medizintechnik, HAW Hamburg — gelernt, wie man ein Produkt von 0 bis Markt aufbaut.
-Stil: Engineering-Harness-Ansatz. Ideen übernehmen, komplett durchplanen, bauen, automatisieren. Claude-First AI-Stack, Pair-Programming mit Claude.
-Ziel pro Projekt: voll automatisierter Geschäftsbetrieb mit minimalem Owner-Kontakt.
+> **Stand: 2026-07-09.** Diese Datei war zuvor 2 Monate veraltet (behauptete "Phase 5").
+> **Wahrheitsquellen, in dieser Reihenfolge:** `STATUS.md` (Sessions-Log + Phasen-Ampel) →
+> `PLAN_RESTARBEITEN_2026-07-09.md` (Gap-Analyse + 6-Sprint-Plan) → Git-Log auf `main`.
 
-## Projects
+## Projekt
 
-| Name | Was |
-|------|-----|
-| **ELBTRONIKA** | Immersive 3D-Online-Galerie, verschmilzt elektronische Musik (DJs) + visuelle Kunst. Kernfeature: nahtloser Übergang zwischen "Immersive Mode" (3D + Spatial Audio) und "Classic Mode" (Shop-Grid). 60/20/20 Revenue-Split Künstler/DJ/Plattform. Stand: Plan v1.0 approved, Phase 0 läuft. |
+Immersive 3D-Online-Galerie: elektronische Musik (DJs) + visuelle Kunst.
+Kernfeature: Immersive Mode (3D + Spatial Audio) ↔ Classic Mode (Shop-Grid), Single WebGPU/WebGL-Canvas.
+Revenue-Split 60/20/20 Künstler/DJ/Plattform (ohne DJ: 60/0/40 — Klärung mit Lou offen).
+Owner: Lou (diggai@tutanota.de), Solo-Builder. Repo: github.com/DiggAiHH/elbtronika.
 
-## People
+## Ist-Zustand (kurz)
 
-| Wer | Rolle |
-|-----|-------|
-| **Lou** | Owner, Builder, diggai@tutanota.de |
-| **Steuerberater** | TBD — blockt Rechtsform-Entscheidung |
-| **Fachanwalt IT-Recht** | TBD — Impressum/Datenschutz/AGB |
-| **Kuratorin** | TBD — Review-Rolle in Sanity |
+- Phasen 1–19 done, Phase 0 (Legal/Stripe-KYC) offen = einziger Launch-Blocker. Phase 21/22 (Live-Switch/Launch) blocked darauf.
+- Sprints 1–5 der Restarbeiten (2026-07-09) done: main = Wahrheitsbranch, Checkout end-to-end verdrahtet, 3 Stripe-Bugs gefixt, Migrationen repariert + Flow-RLS, HLS-Playback, Middleware-Session-Refresh reaktiviert, Biome 0 Fehler.
+- Offen (siehe Plan §5/6): Landing-i18n, ADR-Ordner-Merge + Plan v1.5, tote Packages (config/browser/sanity-studio), echte Audio/Art-Analyse (braucht Decode-Pipeline), Supabase db push (braucht Credentials — NIE blind pushen, siehe Schema-Drift in STATUS.md!), Dependabot-Vulns, Guard-Tests → Verhaltenstests.
 
-## Terms
+## Stack
 
-| Term | Bedeutung |
-|------|-----------|
-| ELBTRONIKA | Projekt-Hauptname, 3D-Galerie + E-Commerce |
-| Immersive Mode | 3D-Raum mit Spatial Audio, WebGPU-Canvas |
-| Classic Mode | Klassische 2D-Shop-Ansicht, DOM-basiert |
-| Single Canvas | WebGPU-Canvas wird nie unmounted, Mode-Switching via Kamera + Shader |
-| 60/20/20 Split | Revenue-Verteilung Künstler / DJ / Plattform |
-| DoD | Definition of Done — Testing + Dokumentation + Compliance + Deployment-Ready |
-| ADR | Architecture Decision Record, in /docs/adr/ |
-| R3F | React Three Fiber (v9) |
-| RLS | Row Level Security (Postgres / Supabase) |
-| KYC | Know-Your-Customer — Stripe Onboarding für Plattformen |
-| HLS | HTTP Live Streaming — Audio-Ingestion Format |
-| TSL | Three.js Shading Language (für Bloom-Pipeline) |
-| GROQ | Sanity Query Language |
-| AVV | Auftragsverarbeitungsvertrag (DSGVO) |
+Next.js 15.5 App Router · React 19 · Tailwind v4 · Three.js/R3F v9 (WebGL, WebGPU nur Detection) · Web Audio + hls.js · Zustand v5 · Supabase (Postgres+RLS, EU) · Stripe Connect (Separate Charges & Transfers) · Sanity v4 (apps/cms = deployt) · Cloudflare R2 · Netlify (App) + Cloudflare Pages (coming-soon, live) · Anthropic SDK · pnpm 10 + Turborepo · Biome v2 · Vitest + Playwright.
 
-## Stack (April 2026)
-- **Frontend:** Next.js 15 App Router, React 19, Tailwind v4, shadcn/ui
-- **3D:** Three.js r184, R3F v9, Drei v10, WebGPURenderer mit WebGL2-Fallback
-- **Audio:** Web Audio API nativ + PannerNode, hls.js v1.6+ als Web Worker
-- **State:** Zustand v5 (global), TanStack Query v5 (async)
-- **Backend:** Supabase (Postgres 16 + RLS + pgvector, EU-Frankfurt)
-- **Payments:** Stripe Connect, Separate Charges and Transfers
-- **CMS:** Sanity v4 + Embedded Studio
-- **Storage:** Cloudflare R2 (Zero-Egress, cdn.elbtronika.art)
-- **Hosting:** Netlify + Edge Functions (Deno)
-- **AI:** Anthropic Claude Sonnet 4.6 / Opus 4.6
-- **DevOps:** pnpm v10 + Turborepo, Biome v2, Vitest, Playwright, Doppler, Sentry
+## Kritische Regeln (hart erarbeitet)
 
-## Engineering Harness Tools
+1. **production-deploy.yml hat KEINEN push-Trigger mehr.** Prod-Deploys nur manuell (workflow_dispatch + "DEPLOY") bis Phase-21-Runbook (`docs/runbooks/live-switch-post-lee-ok.md`) durchlaufen ist. Nicht wieder anschalten.
+2. **Supabase:** Remote-DB ≠ Repo-Baseline! `0001_init.sql`–`0003` + `seed.sql` beschreiben ein nie appliedes Fantasie-Schema. Echte offene Deltas: nur `20260429120000_flow_engine.sql` + `20260430130000_investor_role.sql`. Vorgehen steht in STATUS.md (db pull → Baseline ersetzen → Deltas pushen).
+3. **Diese Windows-Maschine hat global `NODE_ENV=production`** → vitest lädt Production-React (React.act undefined). Die vitest-Configs (web/audio/three) erzwingen deshalb NODE_ENV=test. Empfehlung an Lou: Env-Var global löschen.
+4. Stripe: `order_id` MUSS in payment_intent_data.metadata (Editions-Idempotenz). Kein `application_fee_amount` auf Sessions (Separate Charges & Transfers: Plattform-Anteil = Rest).
+5. Simulierte Features sind als `source: "simulated"` gelabelt (flow/analyze, MCP-Audio). Labels nicht entfernen ohne echte DSP-Pipeline.
+6. GDPR: `/api/account/*` ist kanonisch (anonymisiert Orders statt Löschung — Aufbewahrungspflicht).
 
-| Tool | Zweck | Befehl |
-|------|-------|--------|
-| **caveman** | Output-Token -75% (terse mode) | `claude plugin install caveman@caveman` |
-| **caveman-compress** | Input-Token -46% (CLAUDE.md komprimieren) | `/caveman:compress CLAUDE.md` |
-| **codeburn** | Token-Kosten Dashboard + Optimize-Scan | `npx codeburn` / `codeburn optimize` |
-| **designlang** | Design-System aus URL extrahieren → Tailwind/shadcn | `npx designlang <url>` |
-| **designlang MCP** | Claude liest Live-Design-Tokens direkt | `designlang mcp --output-dir ./design-extract-output` |
-| **designlang skill** | Claude Code `/extract-design <url>` | `npx skills add Manavarya09/design-extract` |
+## Cowork/Tool-Regeln (Windows-Maschine)
 
-### Design-First Workflow (Frontend)
-1. `npx designlang <referenz-url> --full --emit-agent-rules` → extrahiert komplettes Design-System
-2. Output geht nach `./design-extract-output/` → Tailwind-Config, shadcn-Theme, DTCG-Tokens, CLAUDE.md-Fragment
-3. Claude Design Skills nutzen für alle UI-Arbeit → weniger Tokens, präzisere Outputs
-4. `codeburn optimize` nach jeder Phase → Waste-Patterns eliminieren
+- Shell → IMMER `cmd` (PowerShell blockt pnpm). Desktop Commander bevorzugt; Workspace-Sandbox-Mount ist langsam + Write-Tools truncaten >2KB.
+- Git-Commit-Messages: `(echo zeile1& echo.& echo zeile2) > D:\msg.txt && git commit -F D:\msg.txt` — **msg.txt IMMER in derselben Befehlskette neu schreiben** (stale Datei wurde schon mal falsch committet). Kein `|` in echo-Ketten.
+- Lange Prozesse (build/install/test) DETACHED starten: `start "x" /min cmd /c "… > log 2>&1"`, dann Log pollen — MCP-Timeouts killen sonst Kindprozesse.
+- Build-Script nutzt `node_modules/next/dist/bin/next` (der `.bin`-Shim ist unter Windows nicht node-ausführbar).
+- Biome → `node_modules\.bin\biome.CMD` (nie npx). `[locale]`-Ordner nur per Node `fs.mkdirSync` anlegen.
+- CI-Check: `gh run list --repo DiggAiHH/elbtronika`.
 
-### Token-Effizienz-Regel
-Frontend-Design-Arbeit → IMMER mit designlang-Extrakt + Claude Design Skills starten.
-Nie blank designen wenn eine Referenz-URL existiert.
+## Konventionen
 
-### DR-Blast (Deep-Research Multi-Tool Automation, 2026-05-13)
-Browser-blockierte Domains (Copilot/Sanity/Netlify-Dashboard/Supabase-Dashboard) NIE über Chrome-MCP versuchen — Chrome-Extension Manifest blockt.
-Stattdessen Playwright-Script mit persistentem Profil:
-- `pnpm dr:setup`        → einmalig in Gemini/Kimi/Copilot einloggen
-- `pnpm dr:blast 1 2 4`  → feuert Prompts parallel (IDs aus scripts/dr-prompts.mjs)
-- `pnpm dr:tiers`        → Supabase/Netlify/Sanity Plan-Check via API
-- Prompts versioniert in `scripts/dr-prompts.mjs`
-- Vor Phase-Entscheidungen: "DR vor ADR" (Best Practice)
-- Tokens für tiers: SUPABASE_ACCESS_TOKEN, NETLIFY_AUTH_TOKEN, SANITY_AUTH_TOKEN (Doppler)
-
-## Critical Path
-Phase 0 (Legal + Stripe KYC) → Phase 3 (Infra: R2 + Supabase + Sanity) → Phase 7 (Single Canvas) — alle drei blockieren nachfolgende Phasen.
-
-## Phase Status
-| Phase | Status | Tag |
-|-------|--------|-----|
-| Phase 0 | 🔄 Läuft (legal TBD) | — |
-| Phase 1 | ✅ Done | v0.1.0 |
-| Phase 2 | ✅ Done | v0.2.0 |
-| Phase 3 | ✅ Done | v0.3.0 |
-| Phase 4 | ✅ Done | v0.4.0 |
-| Phase 5 | ✅ Done | v0.5.0 |
-| Phase 6–7 | 🔒 Blocked | — |
-
-## Phase 3 Manual Steps (ausstehend)
-- ✅ R2 bucket `elbtronika-assets` — done
-- ✅ Sanity project `xbjul8yd` (org oX1ou8dCN) + API token `elbtronika-server` — done 2026-04-27
-- ✅ Doppler 17 secrets populated (dev/stg/prd) — done
-- ✅ GitHub Actions: DOPPLER_TOKEN_PRD + DOPPLER_TOKEN_STG — done 2026-04-27
-- ✅ Anthropic API key: set in Doppler dev/preview/prd — done 2026-04-27
-- ⏳ Stripe test keys: 3 PLACEHOLDERs → `docs/phase-3-doppler-github-netlify-setup.md` — manuell von dashboard.stripe.com/test/apikeys
-- ⏳ Netlify → Doppler sync → `docs/phase-3-doppler-github-netlify-setup.md` §3
-
-## Phase 4 Deliverables (Done 2026-04-26)
-- `apps/web/app/[locale]/(auth)/login/page.tsx` — magic link + GitHub OAuth UI
-- `apps/web/app/auth/callback/route.ts` — OAuth/magic-link exchange, new-user detect
-- `apps/web/app/[locale]/dashboard/layout.tsx` — server component auth guard
-- `apps/web/app/[locale]/dashboard/page.tsx` — creator KYC banner, status cards
-- `apps/web/app/[locale]/profile/setup/page.tsx` — post-signup display_name + role
-- `apps/web/app/[locale]/artist-onboarding/stripe/page.tsx` — Stripe KYC redirect
-- `apps/web/app/api/stripe/connect/route.ts` — create/reuse Express account
-- `apps/web/app/api/stripe/webhook/route.ts` — idempotent account.updated handler
-- `apps/web/src/lib/supabase/auth-actions.ts` — server actions for auth + profiles
-- `docs/adr/0004-auth-phase4.md`
-
-## Phase 5 Deliverables (Done 2026-04-29)
-- `apps/cms/schemas/room.ts` — Room-Schema (ersetzt exhibition)
-- `apps/cms/schemas/set.ts` — DJ Audio Set Schema
-- `apps/cms/schemas/artwork.ts` — +story, +textures[], +associatedSet, +room refs
-- `supabase/migrations/20260427000001_phase5_content_model.sql` — rooms table + set_id/room_id FKs + RLS
-- `apps/web/src/lib/supabase/admin.ts` — Service-Role Client (bypass RLS)
-- `apps/web/app/api/webhooks/sanity/route.ts` — HMAC-verified Sanity→Supabase sync
-- `apps/web/app/api/assets/upload/route.ts` — Presigned R2 PUT URL (image/model/audio)
-- `apps/web/app/[locale]/dashboard/artist/page.tsx` — Artist Dashboard (Server Component)
-- `apps/web/app/[locale]/dashboard/artist/new/page.tsx` — New Artwork form (RHF + Zod)
-- `apps/web/app/[locale]/dashboard/artist/new/actions.ts` — createArtworkDraft Server Action
-- `supabase/seed.sql` — Dev-Seed (deterministisch, idempotent)
-- `apps/web/__fixtures__/seed.ts` — TypeScript UUID-Fixtures
-- `docs/adr/0005-content-model.md` — ADR: dual-layer, room, R2 presigned PUT
-
-## Phase 6 Entry — Nächste Schritte
-Phase 6–7 blocked on Phase 0 (legal/KYC). When unblocked:
-1. Phase 6: E-commerce (cart, checkout, Stripe Payment Intents)
-2. Phase 7: Single Canvas (WebGPU Immersive Mode)
-
-## Cowork Tool Rules (gelernt in Phase 1)
-**Vollständig:** `docs/agent-preflight-protocol.md` — IMMER lesen beim Session-Start.
-
-Kurzfassung:
-- Shell → IMMER `cmd` (PowerShell blockt pnpm)
-- Git commit → `echo msg > D:\msg.txt && git commit -F D:\msg.txt`
-- CI prüfen → `gh run list --repo DiggAiHH/elbtronika` (kein Browser nötig)
-- Biome → `node_modules\.bin\biome` (nie `npx biome` → falsche Version)
-- upload-artifact `.next/` → `include-hidden-files: true` (dotdir!)
-- `pnpm.onlyBuiltDependencies: ["esbuild", "sharp"]` in root package.json
-- Workspace bash oft nicht verfügbar → Desktop Commander als Fallback
-- Tools bulk laden: `ToolSearch({ query: "computer-use", max_results: 30 })`
-- `[locale]`-Verzeichnisse → nur per Node.js `fs.mkdirSync` erstellen (CMD + PS scheitern an Brackets)
-- `noNonNullAssertion`: process.env in lazy `getStripe()`-Getter kapseln, nie `!` auf Modulebene
-- `useTransition.startTransition` ist stabil → nie in useCallback/useEffect-Deps aufnehmen
-
-## Repo
-- Org: DiggAiHH | Repo: elbtronika | Branch: main
-- CI: github.com/DiggAiHH/elbtronika/actions
-- Aktueller Tag: v0.4.0 (Phase 4)
-
-## Preferences
-- Deutsch als primäre Arbeitssprache, Code + Commits auf Englisch
-- Claude-First: Anthropic SDK, Sonnet 4.6 als Default
-- Privacy by Architecture: jedes External-API läuft über Edge-Proxy oder cookieless
-- Solo-Dev, Pair mit Claude — Freigabe-Gate vor jedem Code-Commit
-- Netlify-Hosting (User-Vorgabe), pnpm-Monorepo
-- Dokumentation nach jedem Phase-DoD: Notion + Airtable + Miro + lokal D:\ + GitHub
+- Deutsch als Arbeitssprache, Code/Commits Englisch (conventional commits).
+- main = Wahrheit; kurze Feature-Branches, nach Merge löschen. Tags nie umschreiben.
+- Vor jedem Merge lokal: vitest (web + betroffene Packages) + `tsc --noEmit` + bei App-Änderungen `pnpm run build`.
+- Doku-Update nach jeder Session in STATUS.md ("Heutige Aktion" oben anfügen).

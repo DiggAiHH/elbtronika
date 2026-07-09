@@ -53,8 +53,9 @@ test.describe("FPS Budget", () => {
     await page.waitForTimeout(3000);
 
     const memory = (await page.evaluate(() => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const perf = performance as any;
+      const perf = performance as Performance & {
+        measureUserAgentSpecificMemory?: () => Promise<{ bytes: number }>;
+      };
       return perf.measureUserAgentSpecificMemory?.();
     })) as { bytes: number } | undefined;
 

@@ -34,11 +34,7 @@ const nextConfig: NextConfig = {
     // Tree-shake barrel exports: only the icons/components actually used get
     // bundled instead of the whole package. Cuts first-load JS on icon-heavy
     // and UI-heavy routes.
-    optimizePackageImports: [
-      "lucide-react",
-      "framer-motion",
-      "@elbtronika/ui",
-    ],
+    optimizePackageImports: ["lucide-react", "framer-motion", "@elbtronika/ui"],
   },
 
   // Image domains (R2 CDN + Sanity)

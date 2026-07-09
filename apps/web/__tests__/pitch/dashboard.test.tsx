@@ -71,6 +71,7 @@ describe("InvestorWelcomeModal", () => {
 
   it("keeps tour-reset plus locale redirect logic in Take the Tour path", () => {
     expect(investorModalSource).toContain('localStorage.removeItem("elt-tour-dismissed")');
+    // biome-ignore lint/suspicious/noTemplateCurlyInString: intentional — asserting the literal template-string source text
     expect(investorModalSource).toContain("window.location.href = `/${locale}`");
   });
 });

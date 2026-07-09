@@ -67,6 +67,7 @@ export default function Footer() {
     if (link.action === "reset-tour") {
       return (
         <button
+          type="button"
           onClick={() => {
             if (typeof window !== "undefined") {
               localStorage.removeItem("elt-tour-dismissed");
@@ -129,9 +130,7 @@ export default function Footer() {
             </h4>
             <ul className="space-y-2">
               {footerLinks.platform.map((link) => (
-                <li key={link.label}>
-                  {renderFooterLink(link)}
-                </li>
+                <li key={link.label}>{renderFooterLink(link)}</li>
               ))}
             </ul>
           </div>
@@ -142,9 +141,7 @@ export default function Footer() {
             </h4>
             <ul className="space-y-2">
               {footerLinks.legal.map((link) => (
-                <li key={link.label}>
-                  {renderFooterLink(link)}
-                </li>
+                <li key={link.label}>{renderFooterLink(link)}</li>
               ))}
             </ul>
           </div>
@@ -155,20 +152,18 @@ export default function Footer() {
             </h4>
             <ul className="space-y-2">
               {footerLinks.connect.map((link) => (
-                <li key={link.label}>
-                  {renderFooterLink(link)}
-                </li>
+                <li key={link.label}>{renderFooterLink(link)}</li>
               ))}
             </ul>
           </div>
 
           <div>
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-white/30 mb-4">Discover</h4>
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-white/30 mb-4">
+              Discover
+            </h4>
             <ul className="space-y-2">
               {footerLinks.discover.map((link) => (
-                <li key={link.label}>
-                  {renderFooterLink(link)}
-                </li>
+                <li key={link.label}>{renderFooterLink(link)}</li>
               ))}
             </ul>
           </div>

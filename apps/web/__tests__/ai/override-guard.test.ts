@@ -9,7 +9,7 @@ describe("AI override trust boundary guardrails", () => {
   it("enforces auth and ownership/admin boundary checks", () => {
     expect(overrideSource).toContain('{ error: "Unauthorized" }');
     expect(overrideSource).toContain('{ error: "Forbidden" }');
-    expect(overrideSource).toContain('Decision not found');
+    expect(overrideSource).toContain("Decision not found");
   });
 
   it("applies rate limit checks before mutation", () => {
@@ -19,7 +19,9 @@ describe("AI override trust boundary guardrails", () => {
   });
 
   it("preserves existing metadata while marking override", () => {
-    expect(overrideSource).toContain("...((decision.metadata as Record<string, unknown> | null) ?? {})");
+    expect(overrideSource).toContain(
+      "...((decision.metadata as Record<string, unknown> | null) ?? {})",
+    );
     expect(overrideSource).toContain("override: true");
     expect(overrideSource).toContain("overriddenBy: user.id");
     expect(overrideSource).toContain("overriddenAt: new Date().toISOString()");

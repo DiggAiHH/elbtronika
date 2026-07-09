@@ -22,6 +22,7 @@ const spaceGrotesk = Space_Grotesk({
   display: "swap",
   preload: true,
 });
+
 import { DemoBanner, WalkthroughTour } from "@elbtronika/ui";
 import { EnvProvider } from "@/src/components/providers/EnvProvider";
 import { getEnv } from "@/src/lib/env";

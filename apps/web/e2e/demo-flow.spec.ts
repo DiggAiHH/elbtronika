@@ -58,8 +58,13 @@ test.describe("Demo Mode — Complete Investor Flow", () => {
     await expect(page).toHaveURL(/\/de\/gallery/);
 
     // Gallery canvas or scroll container visible
-    const canvas = page.locator("canvas").or(page.locator("[data-testid='gallery-canvas']").first());
-    const hasCanvas = await canvas.first().isVisible().catch(() => false);
+    const canvas = page
+      .locator("canvas")
+      .or(page.locator("[data-testid='gallery-canvas']").first());
+    const hasCanvas = await canvas
+      .first()
+      .isVisible()
+      .catch(() => false);
     if (!hasCanvas) {
       test.info().annotations.push({
         type: "skip-reason",
@@ -155,7 +160,10 @@ test.describe("Demo Mode — Complete Investor Flow", () => {
       .locator('[data-testid="walkthrough-tour"]')
       .or(newPage.getByText(/Welcome to ELBTRONIKA/i));
 
-    const hasTour = await tour.first().isVisible().catch(() => false);
+    const hasTour = await tour
+      .first()
+      .isVisible()
+      .catch(() => false);
     if (!hasTour) {
       test.info().annotations.push({
         type: "skip-reason",
@@ -190,7 +198,10 @@ test.describe("Demo Mode — Complete Investor Flow", () => {
       const dashboard = page
         .locator('[data-testid="pitch-dashboard"]')
         .or(page.getByText(/investor|dashboard/i));
-      const hasDashboard = await dashboard.first().isVisible().catch(() => false);
+      const hasDashboard = await dashboard
+        .first()
+        .isVisible()
+        .catch(() => false);
       if (!hasDashboard) {
         test.info().annotations.push({
           type: "skip-reason",
@@ -240,13 +251,23 @@ test.describe("Spatial Audio — HLS Mock", () => {
     const audioError = page
       .locator('[data-testid="audio-error"]')
       .or(page.getByText(/audio.*failed|audio.*fehler/i));
-    expect(await audioError.first().isVisible().catch(() => false)).toBe(false);
+    expect(
+      await audioError
+        .first()
+        .isVisible()
+        .catch(() => false),
+    ).toBe(false);
 
     // If AudioContext unlock button exists, click it
     const audioUnlock = page
       .locator('[data-testid="audio-unlock"]')
       .or(page.getByRole("button", { name: /enable audio|audio aktivieren/i }));
-    if (await audioUnlock.first().isVisible().catch(() => false)) {
+    if (
+      await audioUnlock
+        .first()
+        .isVisible()
+        .catch(() => false)
+    ) {
       await audioUnlock.first().click();
       // AudioContext should resume — no crash
       const stillError = page.locator('[data-testid="audio-error"]');
@@ -279,9 +300,7 @@ test.describe("Stripe Checkout — Demo Test-Card Flow", () => {
     await expect(page.locator('[data-testid="test-card-hint"]')).toBeVisible();
   });
 
-  test("D3.6b: add-to-cart → drawer → checkout requires login (full wiring)", async ({
-    page,
-  }) => {
+  test("D3.6b: add-to-cart → drawer → checkout requires login (full wiring)", async ({ page }) => {
     // Walk the real funnel: shop grid → artwork detail → add to cart →
     // drawer → checkout button. Unauthenticated users must land on /login.
     await page.goto("/de/shop");
@@ -348,6 +367,8 @@ test.describe("Stripe Checkout — Demo Test-Card Flow", () => {
     await page.goto("/de/checkout/cancel");
     await page.waitForLoadState("networkidle");
 
-    await expect(page.getByRole("link", { name: /Zurück zur Kasse|Back to checkout/i })).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: /Zurück zur Kasse|Back to checkout/i }),
+    ).toBeVisible();
   });
 });

@@ -35,7 +35,25 @@
 
 ---
 
-## 🔄 Heutige Aktion (09.07.2026 — Sprint 3: Datenbank & Typen)
+## 🔄 Heutige Aktion (09.07.2026 — Sprint 4+5: Audio/Ehrlichkeit + Politur)
+
+**Sprint 4:**
+- HLS-Playback im Shop: `attachHlsToElement` in @elbtronika/audio, ArtworkAudioPlayer HLS-fähig — `.m3u8` war in Chrome/Firefox stumm (nacktes `<audio src>`)
+- DJ-Profil zeigt endlich Werke (Filter war hartkodiert `false`; GROQ um `djSlug` via associatedSet→dj erweitert)
+- **Middleware-Befund:** `src/middleware.ts` (mit Supabase-Session-Refresh) war TOT — Next liest nur die Root-Datei. Sessions wurden nie refresht. Konsolidiert in Root-middleware.ts, src-Variante gelöscht
+- MCP-Audio-Server: alle Ergebnisse `source: "simulated"`, hartkodierte Fake-Matches („Neon Ritual"/„Subway Frequencies") entschärft → Verweis auf /api/flow/match
+- Dashboard „Phase 7"-Platzhalter → Gallery-Link; NODE_ENV-Guard auch für packages audio+three
+
+**Sprint 5 (Teil 1):**
+- **Biome: 0 Fehler, 0 Warnungen** auf apps/web (145 Dateien) — a11y-Fixes (button type, labels, alt), Env-Guards statt `!`-Assertions in allen Supabase-Clients, begründete ignores für Testmocks/OG-Image
+- **messages/de+en.json: `press` und `pitch` waren je DOPPELT definiert** (zwei unabhängige Versionen; JSON-parse nahm stillschweigend die zweite) — dedupliziert, Verhalten identisch
+- CLAUDE.md komplett neu geschrieben (war 2 Monate veraltet): Ist-Zustand, kritische Regeln (prod-deploy manuell! Schema-Drift! NODE_ENV!), Tool-Regeln
+
+**Sprint 5 Rest (nächste Session):** Landing-Page i18n (braucht Testanpassung), ADR-Ordner-Merge + Architekturplan v1.5, tote Packages (config/browser/sanity-studio), Monitoring-Vitals-Persistenz.
+
+---
+
+## 🔄 Frühere Aktion (09.07.2026 — Sprint 3: Datenbank & Typen)
 
 **Erledigt (repo-seitig):**
 - `investor_role`-Migration neu geschrieben: `ALTER TYPE profile_role ADD VALUE 'investor'` statt des kaputten CHECK-Constraints (falsche Werte gegen ENUM-Spalte — wäre an bestehenden Rows gescheitert)

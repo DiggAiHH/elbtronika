@@ -12,7 +12,7 @@ describe("MCP invoke route guardrails", () => {
   it("enforces auth and role checks", () => {
     expect(invokeSource).toContain('{ error: "Unauthorized" }');
     expect(invokeSource).toContain("status: 401");
-    expect(invokeSource).toContain('Forbidden: curators and admins only');
+    expect(invokeSource).toContain("Forbidden: curators and admins only");
     expect(invokeSource).toContain("status: 403");
   });
 
@@ -35,14 +35,16 @@ describe("MCP invoke route guardrails", () => {
   it("does not leak internal error details to clients", () => {
     expect(invokeSource).toContain('{ error: "Tool execution failed" }');
     expect(invokeSource).toContain('{ error: "Internal server error" }');
-    expect(invokeSource).not.toContain("return NextResponse.json({ error: message }, { status: 500 });");
+    expect(invokeSource).not.toContain(
+      "return NextResponse.json({ error: message }, { status: 500 });",
+    );
   });
 });
 
 describe("MCP tools route guardrails", () => {
   it("enforces auth and role checks", () => {
     expect(toolsSource).toContain('{ error: "Unauthorized" }');
-    expect(toolsSource).toContain('Forbidden: curators and admins only');
+    expect(toolsSource).toContain("Forbidden: curators and admins only");
   });
 
   it("exposes the expected MCP server set", () => {
@@ -54,6 +56,8 @@ describe("MCP tools route guardrails", () => {
 
   it("returns generic 500 error payload on internal failures", () => {
     expect(toolsSource).toContain('{ error: "Internal server error" }');
-    expect(toolsSource).not.toContain("return NextResponse.json({ error: message }, { status: 500 });");
+    expect(toolsSource).not.toContain(
+      "return NextResponse.json({ error: message }, { status: 500 });",
+    );
   });
 });

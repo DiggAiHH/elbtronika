@@ -225,7 +225,7 @@ export default function NewArtworkPage() {
             {/* Image preview — TODO Phase 7: replace with mini R3F canvas */}
             {imagePreview && (
               <div className="mt-3 relative aspect-video w-full max-w-xs overflow-hidden rounded-md border border-zinc-700">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
+                {/* biome-ignore lint/performance/noImgElement: local blob/data-URL preview of a just-picked file — next/image cannot optimize it */}
                 <img src={imagePreview} alt="Preview" className="object-cover w-full h-full" />
                 <p className="absolute bottom-1 right-1 text-[10px] text-zinc-500 bg-black/60 px-1 rounded">
                   Preview (3D in Phase 7)

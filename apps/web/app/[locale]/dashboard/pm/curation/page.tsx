@@ -86,8 +86,11 @@ export default function PMCurationPage() {
         <h2 className="text-lg font-semibold mb-4">Matching starten</h2>
         <div className="flex gap-4 flex-wrap items-end">
           <div className="flex-1 min-w-[200px]">
-            <label className="block text-xs text-neutral-400 mb-1">Set ID</label>
+            <label htmlFor="curation-set-id" className="block text-xs text-neutral-400 mb-1">
+              Set ID
+            </label>
             <input
+              id="curation-set-id"
               type="text"
               value={setId}
               onChange={(e) => setSetId(e.target.value)}
@@ -96,8 +99,11 @@ export default function PMCurationPage() {
             />
           </div>
           <div>
-            <label className="block text-xs text-neutral-400 mb-1">Limit</label>
+            <label htmlFor="curation-limit" className="block text-xs text-neutral-400 mb-1">
+              Limit
+            </label>
             <input
+              id="curation-limit"
               type="number"
               value={limit}
               onChange={(e) => setLimit(Number(e.target.value))}

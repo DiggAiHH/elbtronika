@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useMemo, type ReactNode } from "react";
+import { createContext, type ReactNode, useContext, useMemo } from "react";
 
 export type ElbMode = "demo" | "staging" | "live";
 
@@ -13,13 +13,7 @@ interface EnvContextValue {
 
 const EnvContext = createContext<EnvContextValue | null>(null);
 
-export function EnvProvider({
-  children,
-  mode,
-}: {
-  children: ReactNode;
-  mode: ElbMode;
-}) {
+export function EnvProvider({ children, mode }: { children: ReactNode; mode: ElbMode }) {
   const value = useMemo<EnvContextValue>(
     () => ({
       mode,

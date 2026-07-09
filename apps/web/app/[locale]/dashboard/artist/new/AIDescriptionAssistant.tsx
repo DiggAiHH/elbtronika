@@ -63,6 +63,7 @@ export function AIDescriptionAssistant({ locale = "de", onSelect }: Props) {
 
       <div className="flex flex-col gap-2">
         {bullets.map((b, i) => (
+          // biome-ignore lint/suspicious/noArrayIndexKey: bullets are positional editable slots without stable ids
           <div key={i} className="flex gap-2">
             <Input
               value={b}
@@ -88,10 +89,11 @@ export function AIDescriptionAssistant({ locale = "de", onSelect }: Props) {
       </div>
 
       <div className="flex items-center gap-2">
-        <label className="text-xs text-[var(--color-text-secondary)]">
+        <label htmlFor="ai-tone-select" className="text-xs text-[var(--color-text-secondary)]">
           {locale === "de" ? "Tonfall:" : "Tone:"}
         </label>
         <select
+          id="ai-tone-select"
           value={tone}
           onChange={(e) => setTone(e.target.value as typeof tone)}
           className="h-8 rounded-[var(--radius-md)] border border-[var(--color-border)] bg-transparent px-2 text-xs text-[var(--color-text-primary)]"
@@ -130,7 +132,9 @@ export function AIDescriptionAssistant({ locale = "de", onSelect }: Props) {
         <div className="flex flex-col gap-3">
           {variants.map((v, i) => (
             <button
+              // biome-ignore lint/suspicious/noArrayIndexKey: generated variants are positional and regenerated as a whole
               key={i}
+              type="button"
               onClick={() => onSelect?.(v)}
               className="rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-bg)] p-3 text-left text-sm text-[var(--color-text-primary)] transition hover:border-[var(--color-primary)]"
             >

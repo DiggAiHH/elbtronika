@@ -86,6 +86,7 @@ export default async function OpenGraphImage({ params }: Props) {
               background: "#0f172a",
             }}
           >
+            {/* biome-ignore lint/performance/noImgElement: ImageResponse (Satori) renders JSX to a PNG — next/image cannot be used here */}
             <img
               src={imageUrl}
               alt={title}

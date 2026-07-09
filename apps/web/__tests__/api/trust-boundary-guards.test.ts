@@ -14,10 +14,18 @@ const mcpInvokeSource = fs.readFileSync(mcpInvokePath, "utf-8");
 
 describe("Flow trust boundary guardrails", () => {
   it("uses non-disclosure not-found response for unauthorized set access", () => {
-    expect(flowAnalyzeSource).toContain('Non-disclosure: treat unauthorized access to existing sets as not found');
-    expect(flowAnalyzeSource).toContain('return NextResponse.json({ error: "Set not found" }, { status: 404 });');
-    expect(flowMatchSource).toContain('Non-disclosure: do not reveal set existence to unauthorized users');
-    expect(flowMatchSource).toContain('return NextResponse.json({ error: "Set not found" }, { status: 404 });');
+    expect(flowAnalyzeSource).toContain(
+      "Non-disclosure: treat unauthorized access to existing sets as not found",
+    );
+    expect(flowAnalyzeSource).toContain(
+      'return NextResponse.json({ error: "Set not found" }, { status: 404 });',
+    );
+    expect(flowMatchSource).toContain(
+      "Non-disclosure: do not reveal set existence to unauthorized users",
+    );
+    expect(flowMatchSource).toContain(
+      'return NextResponse.json({ error: "Set not found" }, { status: 404 });',
+    );
   });
 
   it("allows curator/admin override in analyze and match flows", () => {
