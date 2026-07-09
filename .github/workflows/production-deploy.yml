@@ -1,8 +1,9 @@
 name: Production Deploy
 
 on:
-  push:
-    branches: [main]
+  # NOTE: auto-deploy on push to main is intentionally DISABLED until the
+  # Phase-21 live-switch (docs/runbooks/live-switch-post-lee-ok.md) has been
+  # executed. Production deploys are a manual, confirmed choreography.
   workflow_dispatch:
     inputs:
       confirm:
