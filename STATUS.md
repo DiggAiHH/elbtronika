@@ -2,7 +2,7 @@
 
 > **Single Source of Truth.** Lou + alle AI-Agenten lesen diese File zuerst.
 > **Pflichtaktion vor jeder Session:** Lese diese File. Aktualisiere nach jedem Phasen-Schritt.
-> **Letztes Update:** 2026-05-01 (GPT-5.3-Codex + Opus 4.7 Audit — ML-Guard-Wave verifiziert und dokumentiert)
+> **Letztes Update:** 2026-06-26 (Opus 4.8 Audit & Cleanup — console→logger Migration, Lint-Fix, Branch-Analyse. Siehe `OPTIMIZATION_REPORT_2026-06-26.md`)
 
 ---
 
@@ -28,10 +28,28 @@
 | 15 | Testing & QA | ✅ done | Kimi K-NN | 104 Tests passing, Lighthouse, ZAP, Deploy-Workflows |
 | 16 | Launch | 🟡 bereit | Kimi K-NN | Lighthouse CI, ZAP, Staging/Prod Deploy, 48h Monitoring |
 | 17 | Hermes Trust (Waves 0–8) | ✅ done | Sonnet 4.6 | 2026-04-30 — alle Trust-Boundaries implementiert |
-| 18 | Unit Tests Recovery | 🟡 in progress | Opus 4.8 | 62 tests recovered, all 13 suites passing |
-| 19 | Lint & Tooling Health | 🟡 in progress | Opus 4.8 | lint green, biome rules relaxed |
+| 18 | Unit Tests Recovery | ✅ done | Opus 4.8 | 32 Unit + 6 E2E files, 26/26 E2E grün, keine Stubs/Skips |
+| 19 | Lint & Tooling Health | ✅ done | Opus 4.8 | API-Routes console→logger, 0 Biome-Fehler (2.4.13) |
 
 **Legende:** ✅ done | 🟢 grün | 🟡 läuft | 🔴 blocked | 🔄 kontinuierlich | ⬜ tbd
+
+---
+
+## 🔄 Heutige Aktion (26.06.2026 — Opus 4.8 Audit & Cleanup)
+
+**Realer Stand vs. Doku:** Die in `STATUS_INVENTUR.md` als P0-offen gelisteten Bugs sind alle gefixt (Room.tsx-TS-Fehler, hero/dashboard Test-Stubs, InvestorWelcomeModal eingebunden). Working tree clean, E2E 26/26 grün, `phase-11-ai` voll zu origin gepusht.
+
+**Erledigt (verifiziert mit Biome 2.4.13 — exakt gelockte Version):**
+- 27 rohe `console.*`-Calls in 17 API-Routes → zentrales `logger`-Modul migriert (strukturiertes Logging, Context-Objekte)
+- Lint-Fehler `mulberry32` (`noAssignInExpressions`) behaviour-preserving behoben → API-Ordner **0 Fehler**
+- Branch-Analyse: 6 Branches (0 eigene Commits) sicher löschbar; `main` hat 1 abweichenden Commit (`3c5b021 go-live prep`) → muss reconciled werden
+
+**Offen / nächste Schritte (Details: `OPTIMIZATION_REPORT_2026-06-26.md`):**
+- 4× `as any` bei Supabase → braucht `gen types` (P2)
+- `console.*` in `packages/` → isomorpher Logger nötig (P2)
+- Lighthouse-Reports (1. Mai) sind **leer/fehlgeschlagen** → echten Lauf nötig (P1)
+
+> ⚠️ **Build/Test-Baseline lokal bestätigen:** `pnpm typecheck && pnpm test && pnpm build`
 
 ---
 
