@@ -6,6 +6,7 @@ import { useState, useTransition } from "react";
 
 interface Suggestion {
   artworkId: string;
+  slug: string;
   title: string;
   artist: string;
   reason: string;
@@ -86,7 +87,7 @@ export function MoodRecommender({ locale = "de" }: Props) {
           {suggestions.map((s) => (
             <a
               key={s.artworkId}
-              href={`/artwork/${s.artworkId}`}
+              href={`/${locale}/shop/artwork/${s.slug}`}
               className="rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-bg)] p-3 transition hover:border-[var(--color-primary)]"
             >
               <div className="text-sm font-medium text-[var(--color-text-primary)]">{s.title}</div>

@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
   // Fetch catalog context from Supabase (last 20 published artworks)
   const { data: artworks } = await supabase
     .from("artworks")
-    .select("id, title, artists(name), medium, description")
+    .select("id, slug, title, artists(name), medium, description")
     .eq("is_published", true)
     .order("created_at", { ascending: false })
     .limit(20);
@@ -101,9 +101,16 @@ export async function POST(request: NextRequest) {
       /* best-effort */
     });
 
+    // Enrich with the real slug from the catalog (server truth, not LLM echo)
+    // and silently drop suggestions whose artworkId the model hallucinated.
+    const slugById = new Map((artworks ?? []).map((aw) => [aw.id, aw.slug]));
+    const suggestions = data.suggestions
+      .filter((s) => slugById.has(s.artworkId))
+      .map((s) => ({ ...s, slug: slugById.get(s.artworkId) as string }));
+
     return NextResponse.json(
       {
-        suggestions: data.suggestions,
+        suggestions,
         meta: {
           model: response.model,
           latencyMs: response.latencyMs,

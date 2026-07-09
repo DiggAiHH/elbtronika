@@ -102,24 +102,16 @@ test.describe("Demo Mode — Complete Investor Flow", () => {
   });
 
   test("Step 5: Checkout shows test card hint in demo mode", async ({ page }) => {
-    // Direct checkout navigation (or via artwork CTA when implemented)
     await page.goto("/de/checkout");
     await page.waitForLoadState("networkidle");
 
-    // Test card hint visible in demo mode
-    const testCardHint = page
-      .locator('[data-testid="test-card-hint"]')
-      .or(page.getByText(/4242/));
-
-    // If checkout is fully implemented, this should be visible
-    // If stubbed, we at least verify no crash
-    const hasHint = await testCardHint.first().isVisible().catch(() => false);
-    if (!hasHint) {
-      test.info().annotations.push({
-        type: "skip-reason",
-        description: "Checkout test-card hint not yet implemented (Phase 19)",
-      });
-    }
+    // HARD assertion (Sprint 2): checkout page is implemented — in demo mode
+    // the 4242 test-card hint must render, plus summary or empty-cart state.
+    await expect(page.locator('[data-testid="test-card-hint"]')).toBeVisible();
+    const summaryOrEmpty = page
+      .locator('[data-testid="checkout-pay-button"]')
+      .or(page.locator('[data-testid="checkout-empty"]'));
+    await expect(summaryOrEmpty.first()).toBeVisible();
   });
 
   test("Step 6: Health endpoint reports demo mode", async ({ request }) => {
@@ -283,19 +275,50 @@ test.describe("Stripe Checkout — Demo Test-Card Flow", () => {
     await page.goto("/de/checkout");
     await page.waitForLoadState("networkidle");
 
-    // Test-Card hint (4242 4242 4242 4242) visible in demo mode
-    const testCardHint = page
-      .locator('[data-testid="test-card-hint"]')
-      .or(page.getByText(/4242/));
-    const hasHint = await testCardHint.first().isVisible().catch(() => false);
-    if (!hasHint) {
+    // HARD assertion (Sprint 2): 4242-hint always renders in demo mode.
+    await expect(page.locator('[data-testid="test-card-hint"]')).toBeVisible();
+  });
+
+  test("D3.6b: add-to-cart → drawer → checkout requires login (full wiring)", async ({
+    page,
+  }) => {
+    // Walk the real funnel: shop grid → artwork detail → add to cart →
+    // drawer → checkout button. Unauthenticated users must land on /login.
+    await page.goto("/de/shop");
+    await page.waitForLoadState("networkidle");
+
+    const firstCard = page.locator('a[href*="/shop/artwork/"]').first();
+    const hasArtworks = await firstCard.isVisible().catch(() => false);
+    if (!hasArtworks) {
       test.info().annotations.push({
-        type: "info",
-        description:
-          "Test-card hint not rendered at /checkout (may require artwork in cart). " +
-          "Manual verification: navigate to artwork → Acquire → checkout shows 4242 hint.",
+        type: "skip-reason",
+        description: "No artworks seeded in this environment — funnel not walkable.",
       });
+      return;
     }
+
+    await firstCard.click();
+    await page.waitForLoadState("networkidle");
+
+    const addButton = page.getByRole("button", { name: /In den Warenkorb|Add to cart/i });
+    if (!(await addButton.isVisible().catch(() => false)) || (await addButton.isDisabled())) {
+      test.info().annotations.push({
+        type: "skip-reason",
+        description: "Seeded artwork lacks price/artist commerce data — add-to-cart disabled.",
+      });
+      return;
+    }
+
+    await addButton.click();
+
+    // Drawer opens with an ENABLED checkout button (no more Phase-10 stub)
+    const checkoutButton = page.locator('[data-testid="cart-checkout-button"]');
+    await expect(checkoutButton).toBeVisible();
+    await expect(checkoutButton).toBeEnabled();
+
+    // Unauthenticated → API returns 401 → client redirects to login
+    await checkoutButton.click();
+    await expect(page).toHaveURL(/\/de\/login/, { timeout: 15000 });
   });
 
   test("D3.7: success page renders download code after purchase", async ({ page }) => {
@@ -307,20 +330,24 @@ test.describe("Stripe Checkout — Demo Test-Card Flow", () => {
     const errorText = page.locator("text=/error|failed|fehler/i");
     expect(await errorText.isVisible().catch(() => false)).toBe(false);
 
-    // Success indicator OR download code visible (exact selector depends on impl)
-    const successIndicator = page
-      .locator('[data-testid="success-page"]')
-      .or(page.locator('[data-testid="download-code"]'))
-      .or(page.getByText(/download|vielen dank|thank you/i));
+    // HARD assertion (Sprint 2): the success page exists and renders its
+    // confirmation shell even for an unverifiable session_id (shown as
+    // "processing" — webhook/order status stays the source of truth).
+    await expect(page.locator('[data-testid="checkout-success"]')).toBeVisible();
+  });
 
-    const hasSuccess = await successIndicator.first().isVisible().catch(() => false);
-    if (!hasSuccess) {
-      test.info().annotations.push({
-        type: "info",
-        description:
-          "Success page / download-code not yet rendered with stub session_id. " +
-          "Requires: real Stripe webhook callback to generate order + download token.",
-      });
-    }
+  test("D3.7b: demo checkout success renders demo confirmation", async ({ page }) => {
+    await page.goto("/de/checkout/success?demo=1");
+    await page.waitForLoadState("networkidle");
+
+    await expect(page.locator('[data-testid="checkout-success"]')).toBeVisible();
+    await expect(page.getByText(/Demo-Modus|Demo mode/i)).toBeVisible();
+  });
+
+  test("D3.7c: cancel page offers way back to checkout", async ({ page }) => {
+    await page.goto("/de/checkout/cancel");
+    await page.waitForLoadState("networkidle");
+
+    await expect(page.getByRole("link", { name: /Zurück zur Kasse|Back to checkout/i })).toBeVisible();
   });
 });

@@ -35,7 +35,20 @@
 
 ---
 
-## 🔄 Heutige Aktion (09.07.2026 — Sprint 1: Sichern & Aufräumen)
+## 🔄 Heutige Aktion (09.07.2026 — Sprint 2: Checkout end-to-end)
+
+**Der Kauf-Flow ist jetzt klickbar:** Shop-Grid → Artwork-Detail → „In den Warenkorb" → Drawer → „Zur Kasse" → Stripe (live) bzw. Success-Page (demo). Kein disabled-CTA, kein „Phase 10"-Stub mehr.
+
+- **3 Stripe-Bugs gefixt:** (1) `order_id` fehlte in `payment_intent_data.metadata` → Transfer-Idempotenz kollidierte bei Editionsverkäufen (2. Payout wäre verschluckt worden); Webhook wirft jetzt statt auf artworkId zurückzufallen. (2) `application_fee_amount` war ungültiger Top-Level-Session-Param (hätte JEDE echte Session abgelehnt) — entfernt, Plattform-Anteil bleibt bei Separate Charges & Transfers implizit. (3) API-Kontrakt: Client schickt nur noch artworkId+priceCents+locale, Redirect-URLs werden serverseitig abgeleitet.
+- **Neu:** `/checkout` (Cart-Summary + Pay), `/checkout/success` (Stripe-Session-Verify, demo-aware, force-dynamic), `/checkout/cancel`; CartDrawer global, CartOpenButton in Navbar; Demo-Mode checkout ohne Stripe-Call.
+- **Aufgeräumt:** `/api/user/*` entfernt (account/* ist kanonisch — anonymisiert statt hart zu löschen, ADR-0013 aktualisiert); verwaiste `/artwork/[slug]`-Route → Redirect; MoodRecommender-Links repariert (echte Slugs, halluzinierte IDs gefiltert); `@elbtronika/three`+`audio` endlich als Deps deklariert; tote i18n-Keys raus.
+- **Wichtiger lokaler Fund:** Diese Maschine hat global `NODE_ENV=production` gesetzt → vitest lud Production-React (`React.act` undefined) → 18 Tests rot. Fix: vitest.config erzwingt `NODE_ENV=test`. **Empfehlung: die globale Variable vom System entfernen.**
+- **Verifiziert:** payments 23/23, web 16/16 Suiten grün, tsc 0 Fehler, Build 65 Seiten, Success-Page dynamisch getestet (demo=1 + ohne Params via curl), Checkout-API 401 ohne Login.
+- E2E gehärtet: harte Assertions statt skip-reasons für Checkout-Pfade + neuer Full-Funnel-Test (Cart→Login-Redirect).
+
+---
+
+## 🔄 Frühere Aktion (09.07.2026 — Sprint 1: Sichern & Aufräumen)
 
 **Erledigt (siehe `PLAN_RESTARBEITEN_2026-07-09.md` für den Gesamtplan):**
 - Juni-Session committet (3 Commits: logger-Migration, SEO/a11y/DeferredCanvas, Docs) — Working Tree war 44 Tage dirty

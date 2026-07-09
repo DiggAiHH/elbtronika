@@ -1,14 +1,23 @@
 // Checkout Session — creates Stripe Checkout for artwork purchase
-// Eselbrücke: "Die Kasse" — Kunde klickt "Acquire", Stripe übernimmt Bezahlung
+// Eselsbrücke: "Die Kasse" — Kunde klickt "Acquire", Stripe übernimmt Bezahlung
+//
+// Contract (Sprint 2): the client sends ONLY { artworkId, priceCents, locale }.
+// Everything else (title, image, split, success/cancel URLs, orderId) is
+// derived server-side — the client can no longer influence redirect targets
+// or fee amounts. In demo mode no Stripe call is made at all.
 
-import {
-  CheckoutRequestSchema,
-  computeRevenueSplit,
-  createCheckoutSession,
-} from "@elbtronika/payments";
+import { computeRevenueSplit, createCheckoutSession } from "@elbtronika/payments";
 import { type NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { logger } from "@/src/lib/logger";
+import { isDemoMode } from "@/src/lib/stripe/demo";
 import { createClient } from "@/src/lib/supabase/server";
+
+const BodySchema = z.object({
+  artworkId: z.string().uuid(),
+  priceCents: z.number().int().positive(),
+  locale: z.enum(["de", "en"]).default("de"),
+});
 
 // ---------------------------------------------------------------------------
 // POST /api/checkout/session
@@ -32,7 +41,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const parsed = CheckoutRequestSchema.safeParse(body);
+  const parsed = BodySchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json(
       { error: "Invalid request", issues: parsed.error.issues },
@@ -56,6 +65,23 @@ export async function POST(request: NextRequest) {
   // Verify price matches (anti-tampering)
   if (Math.round(artwork.price_eur * 100) !== req.priceCents) {
     return NextResponse.json({ error: "Price mismatch" }, { status: 422 });
+  }
+
+  // Server-derived redirect targets — never trust client-provided URLs.
+  const origin = request.nextUrl.origin;
+  const successUrl = `${origin}/${req.locale}/checkout/success?session_id={CHECKOUT_SESSION_ID}`;
+  const cancelUrl = `${origin}/${req.locale}/checkout/cancel`;
+
+  // Demo mode: validate everything above, but never touch Stripe.
+  // The demo connected accounts (acct_demo_*) are not real Stripe accounts.
+  if (isDemoMode()) {
+    return NextResponse.json(
+      {
+        sessionId: `demo_cs_${artwork.id}`,
+        url: `${origin}/${req.locale}/checkout/success?demo=1`,
+      },
+      { status: 200 },
+    );
   }
 
   // Get artist Stripe account
@@ -125,8 +151,8 @@ export async function POST(request: NextRequest) {
       priceCents: req.priceCents,
       title: artwork.title,
       imageUrl: artwork.image_url ?? undefined,
-      successUrl: req.successUrl,
-      cancelUrl: req.cancelUrl,
+      successUrl,
+      cancelUrl,
       platformFeeCents: split.platformCents,
       orderId: order.id,
       ...(user.email ? { buyerEmail: user.email } : {}),

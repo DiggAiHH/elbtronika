@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { getEnv } from "@/src/lib/env";
+import { CheckoutSummary } from "./CheckoutSummary";
 
 interface Props {
   params: Promise<{ locale: string }>;
@@ -19,11 +20,11 @@ export default async function CheckoutPage({ params }: Props) {
         </h1>
 
         <div className="p-6 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)]">
-          <p className="text-[var(--color-text-secondary)] text-center mb-6">{t("comingSoon")}</p>
+          <CheckoutSummary locale={locale} />
 
           {isDemo && (
             <div
-              className="p-4 rounded-lg border border-[var(--color-primary)]/20 bg-[var(--color-primary)]/5 text-center"
+              className="mt-6 p-4 rounded-lg border border-[var(--color-primary)]/20 bg-[var(--color-primary)]/5 text-center"
               data-testid="test-card-hint"
             >
               <p className="text-sm text-[var(--color-text-primary)] font-medium">
