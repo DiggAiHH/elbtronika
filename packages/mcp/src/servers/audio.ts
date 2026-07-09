@@ -1,5 +1,12 @@
 /**
  * MCP Server for Audio Analysis & Music-Art Matching
+ *
+ * HONESTY CONTRACT (Sprint 4, 2026-07-09): every analysis result carries
+ * `source: "simulated"` — values are deterministic PRNG output keyed on the
+ * trackId, NOT measured from real audio. The real DSP lives in
+ * packages/flow/src/audio/analyzer.ts and needs a decode pipeline (ffmpeg or
+ * client-side decoding) before it can run server-side. Do not remove the
+ * labels without wiring real analysis.
  */
 
 import { MCPServer } from "../server";
@@ -77,6 +84,7 @@ function analyzeTrack(trackId: string) {
     estimatedGenre,
     moodTags,
     analyzedAt: new Date().toISOString(),
+    source: "simulated" as const,
   };
 }
 
@@ -84,7 +92,7 @@ const tools: ToolDefinition[] = [
   {
     name: "audio_analyze_track",
     description:
-      "Analyze an audio track and extract features (BPM, key, mood tags). Returns structured analysis.",
+      "Analyze an audio track and extract features (BPM, key, mood tags). SIMULATED: returns deterministic placeholder values (source: 'simulated'), not measured audio.",
     schema: {
       type: "object",
       properties: {
@@ -110,8 +118,13 @@ const tools: ToolDefinition[] = [
     },
     handler: async (params) => {
       const trackId = String(params.trackId);
-        const analysis = analyzeTrack(trackId);
-        return { trackId, bpm: analysis.bpm, confidence: Number((0.85 + mulberry32(seedFromString(trackId))() * 0.14).toFixed(3)) };
+      const analysis = analyzeTrack(trackId);
+      return {
+        trackId,
+        bpm: analysis.bpm,
+        confidence: Number((0.85 + mulberry32(seedFromString(trackId))() * 0.14).toFixed(3)),
+        source: "simulated" as const,
+      };
     },
   },
   {
@@ -126,8 +139,14 @@ const tools: ToolDefinition[] = [
     },
     handler: async (params) => {
       const trackId = String(params.trackId);
-        const analysis = analyzeTrack(trackId);
-        return { trackId, key: analysis.key, camelot: analysis.camelot, confidence: Number((0.80 + mulberry32(seedFromString(trackId + "_key"))() * 0.18).toFixed(3)) };
+      const analysis = analyzeTrack(trackId);
+      return {
+        trackId,
+        key: analysis.key,
+        camelot: analysis.camelot,
+        confidence: Number((0.8 + mulberry32(seedFromString(`${trackId}_key`))() * 0.18).toFixed(3)),
+        source: "simulated" as const,
+      };
     },
   },
   {
@@ -163,7 +182,7 @@ const tools: ToolDefinition[] = [
   {
     name: "audio_match_artwork_to_track",
     description:
-      "Find artworks that match a DJ set/track based on audio features. Returns ranked matches with similarity scores.",
+      "Find artworks that match a DJ set/track. NOT IMPLEMENTED here: this MCP server has no database access — use POST /api/flow/match instead. Returns an empty match list with a pointer.",
     schema: {
       type: "object",
       properties: {
@@ -174,26 +193,15 @@ const tools: ToolDefinition[] = [
     },
     handler: async (params) => {
       const p = MatchArtworkSchema.parse(params);
-      // Placeholder: returns structure for the flow engine
+      // Previously this returned two HARDCODED fake artworks ("Neon Ritual",
+      // "Subway Frequencies") regardless of input — removed in Sprint 4.
+      // Real matching needs catalog access, which lives in /api/flow/match.
       return {
         setId: p.setId,
-        matches: [
-          {
-            artworkId: "art-demo-1",
-            title: "Neon Ritual",
-            artist: "Studio Lumen",
-            similarityScore: 0.92,
-            matchReason: "Dark palette and geometric tension match the track's hypnotic energy",
-          },
-          {
-            artworkId: "art-demo-2",
-            title: "Subway Frequencies",
-            artist: "Urban Echo",
-            similarityScore: 0.87,
-            matchReason: "Industrial textures resonate with the driving bassline",
-          },
-        ],
+        matches: [],
         limit: p.limit,
+        implemented: false,
+        note: "Matching requires catalog access — call POST /api/flow/match. This tool previously returned hardcoded demo artworks and has been defused.",
       };
     },
   },

@@ -34,17 +34,16 @@ export default async function DjProfilePage({ params }: Props) {
 
   if (!dj) notFound();
 
-  // Artworks that feature this DJ
+  // Artworks whose associated set belongs to this DJ
   const djWorks = (
     allArtworks as Array<{
       _id: string;
       slug: { current: string };
       title: string;
+      djSlug?: string | null;
       image?: { asset?: { url: string; metadata?: { lqip?: string } }; alt?: string };
     }>
-  ).filter(
-    (_a) => false, // DJ link not in allArtworksQuery – would need extended query in Phase 8
-  );
+  ).filter((artwork) => artwork.djSlug === slug);
 
   const avatarUrl = dj.avatar?.asset?.url;
   const lqip = dj.avatar?.asset?.metadata?.lqip;

@@ -57,7 +57,8 @@ export const allArtworksQuery = groq`
     medium,
     year,
     genreTags,
-    isDemo
+    isDemo,
+    "djSlug": associatedSet->dj->slug.current
   }
 `;
 

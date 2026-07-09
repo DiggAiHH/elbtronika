@@ -1,6 +1,7 @@
 // Dashboard — auth-gated user home
 // Eselbrücke: "control room" — logged-in user sees their status + quick actions
 
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import {
   getCreatorPayoutStatus,
@@ -96,11 +97,12 @@ export default async function DashboardPage({ params }: Props) {
         </div>
 
         <div className="mt-12 rounded-lg border border-zinc-800 bg-zinc-900 p-6 text-center">
-          <p className="text-zinc-500 text-sm">
-            {locale === "de"
-              ? "Die Galerie wird in Phase 7 freigeschaltet."
-              : "The gallery unlocks in Phase 7."}
-          </p>
+          <Link
+            href={`/${locale}/gallery`}
+            className="text-sm text-[var(--color-primary)] hover:underline"
+          >
+            {locale === "de" ? "→ Zur immersiven 3D-Galerie" : "→ Enter the immersive 3D gallery"}
+          </Link>
         </div>
       </div>
     </div>

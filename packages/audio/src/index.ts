@@ -3,6 +3,7 @@
 export { AudioUnlockOverlay } from "./components/AudioUnlockOverlay";
 export { NowPlayingHUD } from "./components/NowPlayingHUD";
 export { getAudioContext, isUnlocked, tryResumeFromSession, unlockAudioContext } from "./context";
+export { attachHlsToElement, isHlsUrl } from "./engine/attachHls";
 export { HLSLoader } from "./engine/HLSLoader";
 export { RoomReverb } from "./engine/RoomReverb";
 export { computeGain, SpatialAudioEngine } from "./engine/SpatialAudioEngine";

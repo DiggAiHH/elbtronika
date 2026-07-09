@@ -4,9 +4,12 @@
  * ArtworkAudioPlayer – simple preview player for the shop detail page.
  *
  * NOT spatial audio (that lives in packages/audio for immersive mode).
- * Pure HTMLAudio with Play/Pause and a progress bar.
+ * HTMLAudio with Play/Pause and a progress bar. HLS manifests (.m3u8) are
+ * wired through hls.js via @elbtronika/audio — a bare `src` only works in
+ * Safari; Chrome/Firefox stayed silent before this.
  */
 
+import { attachHlsToElement, isHlsUrl } from "@elbtronika/audio";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 interface Props {
@@ -19,6 +22,24 @@ export function ArtworkAudioPlayer({ artworkId, previewUrl }: Props) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [sourceError, setSourceError] = useState(false);
+
+  // Wire the source: hls.js for .m3u8 (except native-HLS browsers), plain src otherwise.
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio || !previewUrl) return;
+
+    setSourceError(false);
+    if (isHlsUrl(previewUrl)) {
+      const detach = attachHlsToElement(audio, previewUrl, () => setSourceError(true));
+      return detach;
+    }
+    audio.src = previewUrl;
+    return () => {
+      audio.removeAttribute("src");
+      audio.load();
+    };
+  }, [previewUrl]);
 
   const toggle = useCallback(() => {
     const audio = audioRef.current;
@@ -54,14 +75,15 @@ export function ArtworkAudioPlayer({ artworkId, previewUrl }: Props) {
 
   const percent = duration > 0 ? (progress / duration) * 100 : 0;
 
-  if (!previewUrl) {
+  if (!previewUrl || sourceError) {
     return (
       <div
         className="flex items-center gap-3 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3"
-        aria-label="No audio preview available"
         data-artwork-id={artworkId}
       >
-        <p className="text-xs text-[var(--color-text-muted)]">No audio preview available</p>
+        <p role="status" className="text-xs text-[var(--color-text-muted)]">
+          {sourceError ? "Audio preview unavailable in this browser" : "No audio preview available"}
+        </p>
       </div>
     );
   }
@@ -73,6 +95,7 @@ export function ArtworkAudioPlayer({ artworkId, previewUrl }: Props) {
     >
       <div className="flex items-center gap-3">
         <button
+          type="button"
           onClick={toggle}
           aria-label={isPlaying ? "Pause" : "Play"}
           className="flex h-8 w-8 items-center justify-center rounded-full border border-[var(--color-border)] text-[var(--color-text)] hover:text-[var(--color-primary)]"
@@ -101,7 +124,8 @@ export function ArtworkAudioPlayer({ artworkId, previewUrl }: Props) {
         />
       </div>
 
-      <audio ref={audioRef} src={previewUrl} preload="metadata" />
+      {/* biome-ignore lint/a11y/useMediaCaption: DJ-set music preview — no speech to caption */}
+      <audio ref={audioRef} preload="metadata" />
     </div>
   );
 }

@@ -12,6 +12,7 @@ import {
 } from "@/lib/shop";
 import { createClient as createSupabaseClient } from "@/src/lib/supabase/server";
 import { AddToCartButton } from "../../../components/AddToCartButton";
+import { ArtworkAudioPlayer } from "../../../components/ArtworkAudioPlayer";
 
 type Props = {
   params: Promise<{ locale: string; slug: string }>;
@@ -306,10 +307,11 @@ export default async function ArtworkDetailPage({ params }: Props) {
                     (locale === "de" ? "Noch kein Set verknuepft" : "No set linked yet")}
                 </p>
               </div>
-              {commerceSet?.hls_url && (
-                <audio className="w-full" controls preload="none" src={commerceSet.hls_url}>
-                  <track kind="captions" />
-                </audio>
+              {commerceSet?.hls_url && commerceArtwork && (
+                <ArtworkAudioPlayer
+                  artworkId={commerceArtwork.id}
+                  previewUrl={commerceSet.hls_url}
+                />
               )}
             </div>
 
