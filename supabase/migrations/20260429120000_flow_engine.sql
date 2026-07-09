@@ -57,12 +57,59 @@ CREATE INDEX IF NOT EXISTS idx_matches_set ON music_art_matches(set_id);
 CREATE INDEX IF NOT EXISTS idx_matches_artwork ON music_art_matches(artwork_id);
 CREATE INDEX IF NOT EXISTS idx_matches_score ON music_art_matches(similarity_score DESC);
 
--- RLS policies (enable if needed)
--- ALTER TABLE audio_features ENABLE ROW LEVEL SECURITY;
--- ALTER TABLE artwork_features ENABLE ROW LEVEL SECURITY;
--- ALTER TABLE music_art_matches ENABLE ROW LEVEL SECURITY;
--- ALTER TABLE agent_tasks ENABLE ROW LEVEL SECURITY;
--- ALTER TABLE agent_episodes ENABLE ROW LEVEL SECURITY;
+-- ---------------------------------------------------------------------------
+-- RLS (enabled in Sprint 3, 2026-07-09 — was the only schema area without it)
+-- Feature rows are derived catalog data: public read; writes mirror the
+-- /api/flow/* RBAC (curator/admin, plus the owning DJ for audio_features).
+-- The service role bypasses RLS for pipeline writes. agent_tasks has its own
+-- RLS in its own migration.
+-- ---------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION is_curator_or_admin()
+RETURNS BOOLEAN
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM profiles
+    WHERE id = auth.uid()
+      AND role IN ('curator'::profile_role, 'admin'::profile_role)
+  );
+$$;
+
+ALTER TABLE audio_features ENABLE ROW LEVEL SECURITY;
+ALTER TABLE artwork_features ENABLE ROW LEVEL SECURITY;
+ALTER TABLE music_art_matches ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY audio_features_public_read ON audio_features
+  FOR SELECT USING (true);
+CREATE POLICY audio_features_writer_insert ON audio_features
+  FOR INSERT WITH CHECK (
+    is_curator_or_admin()
+    OR EXISTS (SELECT 1 FROM sets WHERE sets.id = set_id AND sets.dj_id = auth.uid())
+  );
+CREATE POLICY audio_features_writer_update ON audio_features
+  FOR UPDATE USING (
+    is_curator_or_admin()
+    OR EXISTS (SELECT 1 FROM sets WHERE sets.id = set_id AND sets.dj_id = auth.uid())
+  ) WITH CHECK (
+    is_curator_or_admin()
+    OR EXISTS (SELECT 1 FROM sets WHERE sets.id = set_id AND sets.dj_id = auth.uid())
+  );
+
+CREATE POLICY artwork_features_public_read ON artwork_features
+  FOR SELECT USING (true);
+CREATE POLICY artwork_features_curator_insert ON artwork_features
+  FOR INSERT WITH CHECK (is_curator_or_admin());
+CREATE POLICY artwork_features_curator_update ON artwork_features
+  FOR UPDATE USING (is_curator_or_admin()) WITH CHECK (is_curator_or_admin());
+
+CREATE POLICY music_art_matches_public_read ON music_art_matches
+  FOR SELECT USING (true);
+CREATE POLICY music_art_matches_curator_insert ON music_art_matches
+  FOR INSERT WITH CHECK (is_curator_or_admin());
+CREATE POLICY music_art_matches_curator_update ON music_art_matches
+  FOR UPDATE USING (is_curator_or_admin()) WITH CHECK (is_curator_or_admin());
 
 -- Update trigger for updated_at
 CREATE OR REPLACE FUNCTION update_updated_at_column()
