@@ -38,7 +38,7 @@ export function AddToCartButton({
           artistId,
           slug,
           title,
-          imageUrl: imageUrl ?? undefined,
+          ...(imageUrl ? { imageUrl } : {}),
           priceCents: Math.round(priceEur * 100),
           currency: "EUR",
         });

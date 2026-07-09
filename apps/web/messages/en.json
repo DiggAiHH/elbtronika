@@ -61,10 +61,6 @@
     "medium": "Medium",
     "year": "Year",
     "room": "Room",
-    "acquire": "Acquire",
-    "acquireNote": "Certificate included",
-    "acquireDisabled": "Acquisition available in Phase 10",
-    "comingSoon": "Coming Soon",
     "exclusive": "Exclusive Edition"
   },
   "gallery": {
@@ -74,7 +70,6 @@
   },
   "checkout": {
     "title": "Checkout",
-    "comingSoon": "Checkout flow coming in Phase 10.",
     "testCardTitle": "Test Card",
     "testCardHint": "Any future date and any CVC."
   },

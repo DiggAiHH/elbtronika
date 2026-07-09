@@ -61,10 +61,6 @@
     "medium": "Medium",
     "year": "Jahr",
     "room": "Raum",
-    "acquire": "Erwerben",
-    "acquireNote": "Zertifikat inklusive",
-    "acquireDisabled": "Erwerb folgt in Phase 10",
-    "comingSoon": "Demnächst",
     "exclusive": "Exklusive Edition"
   },
   "gallery": {
@@ -74,7 +70,6 @@
   },
   "checkout": {
     "title": "Kasse",
-    "comingSoon": "Kassen-Flow folgt in Phase 10.",
     "testCardTitle": "Test-Karte",
     "testCardHint": "Beliebiges Datum in der Zukunft und beliebige CVC."
   },

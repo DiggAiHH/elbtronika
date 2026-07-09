@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { CartOpenButton } from "../(shop)/components/CartOpenButton";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -64,6 +65,7 @@ export default function Navbar() {
 
         {/* CTA */}
         <div className="hidden md:flex items-center gap-3">
+          <CartOpenButton />
           <Link
             href="/shop"
             className="px-5 py-2 text-sm font-semibold text-[#050508] bg-[#e8a020] rounded-full hover:bg-[#d38e12] hover:shadow-[0_0_20px_rgba(232,160,32,0.3)] transition-all duration-300 hover:scale-105"
@@ -110,6 +112,9 @@ export default function Navbar() {
                 {link.label}
               </Link>
             ))}
+            <div className="px-4 py-2">
+              <CartOpenButton />
+            </div>
             <Link
               href="/shop"
               onClick={() => setMobileOpen(false)}

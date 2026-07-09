@@ -1,10 +1,34 @@
 "use client";
 
 import Image from "next/image";
+import { useState, useTransition } from "react";
+import { startCheckout } from "@/src/lib/cart/checkout-client";
 import { useCartStore } from "@/src/lib/cart/store";
 
 export function CartDrawer({ locale = "en" }: { locale?: string }) {
   const { item, isOpen, closeCart, removeItem } = useCartStore();
+  const [error, setError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
+
+  const handleCheckout = () => {
+    if (!item) return;
+    setError(null);
+    startTransition(async () => {
+      const result = await startCheckout(item, locale);
+      if (!result.ok) {
+        if (result.reason === "unauthorized") {
+          window.location.assign(`/${locale}/login`);
+          return;
+        }
+        setError(
+          result.message ??
+            (locale === "de"
+              ? "Checkout konnte nicht gestartet werden. Bitte erneut versuchen."
+              : "Could not start checkout. Please try again."),
+        );
+      }
+    });
+  };
 
   if (!isOpen) return null;
 
@@ -101,13 +125,25 @@ export function CartDrawer({ locale = "en" }: { locale?: string }) {
                 })}
               </span>
             </div>
-            {/* Checkout CTA – wired in Phase 10 */}
+            {error && (
+              <p className="mb-3 text-xs text-[var(--color-error)]" role="alert">
+                {error}
+              </p>
+            )}
             <button
               type="button"
-              disabled
-              className="w-full rounded-lg bg-[var(--color-primary)] px-6 py-3 font-semibold text-[var(--color-text-inverse)] opacity-50 cursor-not-allowed"
+              onClick={handleCheckout}
+              disabled={isPending}
+              data-testid="cart-checkout-button"
+              className="w-full rounded-lg bg-[var(--color-primary)] px-6 py-3 font-semibold text-[var(--color-text-inverse)] transition-opacity hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
             >
-              {locale === "de" ? "Zur Kasse → Phase 10" : "Checkout → Phase 10"}
+              {isPending
+                ? locale === "de"
+                  ? "Wird geladen …"
+                  : "Loading …"
+                : locale === "de"
+                  ? "Zur Kasse"
+                  : "Checkout"}
             </button>
           </div>
         )}

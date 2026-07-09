@@ -11,6 +11,7 @@ import {
   portableTextToPlainText,
 } from "@/lib/shop";
 import { createClient as createSupabaseClient } from "@/src/lib/supabase/server";
+import { AddToCartButton } from "../../../components/AddToCartButton";
 
 type Props = {
   params: Promise<{ locale: string; slug: string }>;
@@ -62,6 +63,7 @@ type RelatedArtwork = {
 type CommerceArtwork = {
   id: string;
   slug: string;
+  artist_id: string | null;
   price_eur: number | null;
   edition_size: number | null;
   editions_sold: number | null;
@@ -136,7 +138,9 @@ export default async function ArtworkDetailPage({ params }: Props) {
       }),
     supabase
       .from("artworks")
-      .select("id, slug, price_eur, edition_size, editions_sold, image_url, model_url, set_id")
+      .select(
+        "id, slug, artist_id, price_eur, edition_size, editions_sold, image_url, model_url, set_id",
+      )
       .eq("slug", slug)
       .maybeSingle(),
   ]);
@@ -336,12 +340,15 @@ export default async function ArtworkDetailPage({ params }: Props) {
             </div>
 
             <div className="flex flex-wrap gap-3">
-              <Link
-                href={`/${locale}/checkout?artwork=${artwork.slug.current}`}
-                className="inline-flex min-h-11 items-center justify-center rounded-full bg-[var(--color-primary)] px-5 py-3 text-sm font-medium text-[var(--color-text-inverse)] transition-colors hover:opacity-90"
-              >
-                {locale === "de" ? "Kunstwerk erwerben" : "Acquire Artwork"}
-              </Link>
+              <AddToCartButton
+                locale={locale}
+                artworkId={commerceArtwork?.id ?? null}
+                artistId={commerceArtwork?.artist_id ?? null}
+                slug={artwork.slug.current}
+                title={artwork.title}
+                imageUrl={primaryImageUrl}
+                priceEur={commerceArtwork?.price_eur ?? null}
+              />
               {commerceArtwork?.model_url && (
                 <a
                   href={commerceArtwork.model_url}
