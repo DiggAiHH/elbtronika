@@ -35,7 +35,22 @@
 
 ---
 
-## 🔄 Heutige Aktion (26.06.2026 — Opus 4.8 Audit & Cleanup)
+## 🔄 Heutige Aktion (09.07.2026 — Sprint 1: Sichern & Aufräumen)
+
+**Erledigt (siehe `PLAN_RESTARBEITEN_2026-07-09.md` für den Gesamtplan):**
+- Juni-Session committet (3 Commits: logger-Migration, SEO/a11y/DeferredCanvas, Docs) — Working Tree war 44 Tage dirty
+- 3 Stashes als Patches nach `D:\Elbtronika\_backup` exportiert, dann gedroppt
+- `main` reconciled (`-s ours`-Merge, Squash `3c5b021` superseded) → **main = Wahrheit**, Tag `v0.14.0-prepitch`
+- 5 tote Remote-Branches gelöscht (phase-7/8/18/18-19/19)
+- **production-deploy.yml: Auto-Deploy auf main-Push DEAKTIVIERT** (manuell via workflow_dispatch + DEPLOY-Confirm, bis Phase-21-Runbook läuft)
+- Build-Script Windows-Fix (`node_modules/next/dist/bin/next` statt `.bin`-Shim) → Build lokal grün: 63 Seiten, 103 kB shared First-Load
+- Verifiziert: 165/165 Unit-Tests, tsc 0 Fehler; Biome 18 Fehler/31 Warnungen (offen, Sprint 5)
+- pnpm `onlyBuiltDependencies` += @parcel/watcher, @swc/core
+- ⚠️ GitHub meldet 45 Dependabot-Vulnerabilities (16 high) → Dependency-Update-Pass einplanen
+
+---
+
+## 🔄 Letzte Aktion (26.06.2026 — Opus 4.8 Audit & Cleanup)
 
 **Realer Stand vs. Doku:** Die in `STATUS_INVENTUR.md` als P0-offen gelisteten Bugs sind alle gefixt (Room.tsx-TS-Fehler, hero/dashboard Test-Stubs, InvestorWelcomeModal eingebunden). Working tree clean, E2E 26/26 grün, `phase-11-ai` voll zu origin gepusht.
 
