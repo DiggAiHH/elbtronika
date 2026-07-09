@@ -3,9 +3,10 @@
 
 import { getStripe } from "@elbtronika/payments";
 import { type NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/src/lib/supabase/server";
 import { getEnv } from "@/src/lib/env";
+import { logger } from "@/src/lib/logger";
 import { getDemoArtistAccountId } from "@/src/lib/stripe/demo";
+import { createClient } from "@/src/lib/supabase/server";
 
 export async function POST(request: NextRequest) {
   const { ELT_MODE } = getEnv();
@@ -90,7 +91,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ url: accountLink.url, accountId });
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    console.error("[stripe/connect] error:", message);
+    logger.error("[stripe/connect] error", { error: message });
     return NextResponse.json({ error: "Stripe error" }, { status: 500 });
   }
 }

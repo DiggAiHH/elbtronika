@@ -11,6 +11,7 @@ import {
   createSupabaseMCPServer,
 } from "@elbtronika/mcp";
 import { NextResponse } from "next/server";
+import { logger } from "@/src/lib/logger";
 import { createClient } from "@/src/lib/supabase/server";
 
 export async function GET() {
@@ -83,7 +84,7 @@ export async function GET() {
     return NextResponse.json({ tools: allTools, total: allTools.length }, { status: 200 });
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    console.error("[mcp/tools] error:", message);
+    logger.error("[mcp/tools] error", { error: message });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

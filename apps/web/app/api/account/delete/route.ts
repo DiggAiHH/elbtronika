@@ -4,6 +4,7 @@
  */
 
 import { type NextRequest, NextResponse } from "next/server";
+import { logger } from "@/src/lib/logger";
 import { createClient } from "@/src/lib/supabase/server";
 
 // ---------------------------------------------------------------------------
@@ -40,7 +41,7 @@ export async function POST(_request: NextRequest) {
     .eq("buyer_id", userId);
 
   if (orderError) {
-    console.error("[account/delete] order anonymization failed:", orderError.message);
+    logger.error("[account/delete] order anonymization failed", { error: orderError.message });
     return NextResponse.json({ error: "Failed to anonymize orders" }, { status: 500 });
   }
 
@@ -66,7 +67,7 @@ export async function POST(_request: NextRequest) {
 
   // Non-fatal errors: some tables may not have rows for this user
   if (deletionErrors.length > 0) {
-    console.warn("[account/delete] non-fatal deletion issues:", deletionErrors);
+    logger.warn("[account/delete] non-fatal deletion issues", { detail: deletionErrors });
   }
 
   // Step 3: Delete auth user (idempotent — Supabase returns error if user doesn't exist)
@@ -80,7 +81,7 @@ export async function POST(_request: NextRequest) {
         { status: 200 },
       );
     }
-    console.error("[account/delete] auth deletion failed:", authDeleteError.message);
+    logger.error("[account/delete] auth deletion failed", { error: authDeleteError.message });
     return NextResponse.json({ error: "Failed to delete auth user" }, { status: 500 });
   }
 

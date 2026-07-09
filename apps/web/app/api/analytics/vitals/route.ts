@@ -1,4 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
+import { logger } from "@/src/lib/logger";
 
 /**
  * POST /api/analytics/vitals
@@ -17,7 +18,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     // Log to server console (structured logging)
-    console.log("[vitals]", JSON.stringify(body));
+    logger.info("[vitals]", { detail: JSON.stringify(body) });
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json({ error: "Invalid payload" }, { status: 400 });

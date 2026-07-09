@@ -16,6 +16,7 @@ import {
 } from "@elbtronika/mcp";
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { logger } from "@/src/lib/logger";
 import { logAuditEvent } from "@/src/lib/mcp/audit";
 import { createClient } from "@/src/lib/supabase/server";
 
@@ -99,7 +100,7 @@ export async function POST(request: NextRequest) {
       await logAuditEvent(event);
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
-      console.error("[mcp/invoke] audit failed:", message);
+      logger.error("[mcp/invoke] audit failed", { error: message });
     }
   };
 
@@ -191,7 +192,7 @@ export async function POST(request: NextRequest) {
       durationMs,
       errorClass: "execution_exception",
     });
-    console.error("[mcp/invoke] execution exception:", message);
+    logger.error("[mcp/invoke] execution exception", { error: message });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

@@ -8,6 +8,7 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import type { Json } from "@elbtronika/contracts";
 import { type NextRequest, NextResponse } from "next/server";
+import { logger } from "@/src/lib/logger";
 import { createAdminClient } from "@/src/lib/supabase/admin";
 
 // ---------------------------------------------------------------------------
@@ -210,7 +211,7 @@ async function handleSet(doc: SanitySet, supabase: ReturnType<typeof createAdmin
   }
 
   if (!djId) {
-    console.warn(`[sanity-webhook] handleSet: cannot resolve dj_id for set ${doc._id} — skipping`);
+    logger.warn(`[sanity-webhook] handleSet: cannot resolve dj_id for set ${doc._id} — skipping`);
     return;
   }
 
@@ -258,7 +259,7 @@ async function handleRoom(doc: SanityRoom, supabase: ReturnType<typeof createAdm
 export async function POST(request: NextRequest) {
   const secret = process.env.SANITY_WEBHOOK_SECRET;
   if (!secret) {
-    console.error("[sanity-webhook] SANITY_WEBHOOK_SECRET not configured");
+    logger.error("[sanity-webhook] SANITY_WEBHOOK_SECRET not configured");
     return NextResponse.json({ error: "Webhook not configured" }, { status: 500 });
   }
 
@@ -304,11 +305,13 @@ export async function POST(request: NextRequest) {
         break;
       default:
         // Unknown type — log and ignore (no error, Sanity may send other types)
-        console.warn("[sanity-webhook] Unhandled document type:", (doc as { _type: string })._type);
+        logger.warn("[sanity-webhook] Unhandled document type", {
+          detail: (doc as { _type: string })._type,
+        });
     }
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    console.error("[sanity-webhook] Upsert error:", message);
+    logger.error("[sanity-webhook] Upsert error", { error: message });
     // Mark the webhook event as errored
     await supabase
       .from("webhook_events")

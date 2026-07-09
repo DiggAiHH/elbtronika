@@ -4,6 +4,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { auditLog, checkUserRateLimit, hashText } from "@/src/lib/ai/server";
+import { logger } from "@/src/lib/logger";
 import { createClient } from "@/src/lib/supabase/server";
 
 const OverrideRequestSchema = z.object({
@@ -74,7 +75,7 @@ export async function POST(request: NextRequest) {
     .eq("id", body.decisionId);
 
   if (error) {
-    console.error("[ai/override] update error:", error.message);
+    logger.error("[ai/override] update error", { error: error.message });
     return NextResponse.json({ error: "Failed to record override" }, { status: 500 });
   }
 

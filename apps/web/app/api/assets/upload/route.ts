@@ -12,6 +12,7 @@ import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { logger } from "@/src/lib/logger";
 import { createClient } from "@/src/lib/supabase/server";
 
 // ---------------------------------------------------------------------------
@@ -172,7 +173,7 @@ export async function POST(request: NextRequest) {
     uploadUrl = await getSignedUrl(r2, command, { expiresIn: SIGNED_URL_TTL_SEC });
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    console.error("[assets/upload] R2 presign error:", message);
+    logger.error("[assets/upload] R2 presign error", { error: message });
     return NextResponse.json({ error: "Failed to generate upload URL" }, { status: 500 });
   }
 

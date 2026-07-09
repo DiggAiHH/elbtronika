@@ -17,6 +17,7 @@ import {
 } from "@elbtronika/mcp";
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { logger } from "@/src/lib/logger";
 import { createClient } from "@/src/lib/supabase/server";
 
 const MAX_CONTEXT_BYTES = 10_000;
@@ -115,7 +116,7 @@ export async function POST(request: NextRequest) {
     .single();
 
   if (insertError || !dbTask) {
-    console.error("[agent/task] insert error:", insertError?.message);
+    logger.error("[agent/task] insert error", { error: insertError?.message });
     return NextResponse.json({ error: "Failed to create task" }, { status: 500 });
   }
 
@@ -138,11 +139,15 @@ export async function POST(request: NextRequest) {
           const result = agent.getTask(memTask.id)?.result ?? null;
           await supabase
             .from("agent_tasks")
-            .update({ status: "completed", result: result as unknown as import("@elbtronika/contracts").Json, completed_at: new Date().toISOString() })
+            .update({
+              status: "completed",
+              result: result as unknown as import("@elbtronika/contracts").Json,
+              completed_at: new Date().toISOString(),
+            })
             .eq("id", taskId);
         } catch (err) {
           const errorMsg = err instanceof Error ? err.message : String(err);
-          console.error("[agent/task] execution error:", errorMsg);
+          logger.error("[agent/task] execution error", { error: errorMsg });
           await supabase
             .from("agent_tasks")
             .update({ status: "failed", error: errorMsg, completed_at: new Date().toISOString() })

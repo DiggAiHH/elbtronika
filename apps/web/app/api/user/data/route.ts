@@ -1,4 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
+import { logger } from "@/src/lib/logger";
 import { createClient } from "@/src/lib/supabase/server";
 
 /**
@@ -42,7 +43,7 @@ export async function GET(_request: NextRequest) {
 
     return NextResponse.json(exportData);
   } catch (err) {
-    console.error("[gdpr] Export error:", err);
+    logger.error("[gdpr] Export error", { error: err });
     return NextResponse.json({ error: "Export failed" }, { status: 500 });
   }
 }

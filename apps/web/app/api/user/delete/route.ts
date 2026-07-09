@@ -1,4 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
+import { logger } from "@/src/lib/logger";
 import { createClient } from "@/src/lib/supabase/server";
 
 /**
@@ -25,12 +26,12 @@ export async function POST(_request: NextRequest) {
     // Delete auth user
     const { error } = await supabase.auth.admin.deleteUser(user.id);
     if (error) {
-      console.warn("[gdpr] Soft-delete fallback for user:", user.id);
+      logger.warn("[gdpr] Soft-delete fallback for user", { detail: user.id });
     }
 
     return NextResponse.json({ success: true });
   } catch (err) {
-    console.error("[gdpr] Delete error:", err);
+    logger.error("[gdpr] Delete error", { error: err });
     return NextResponse.json({ error: "Deletion failed" }, { status: 500 });
   }
 }

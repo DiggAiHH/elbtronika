@@ -5,6 +5,7 @@ import { createRecommendationPrompt, generateJson } from "@elbtronika/ai";
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { auditLog, checkUserRateLimit, hashText } from "@/src/lib/ai/server";
+import { logger } from "@/src/lib/logger";
 import { createClient } from "@/src/lib/supabase/server";
 
 const RecommendRequestSchema = z.object({
@@ -113,7 +114,7 @@ export async function POST(request: NextRequest) {
     );
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    console.error("[ai/recommend] generation error:", message);
+    logger.error("[ai/recommend] generation error", { error: message });
     return NextResponse.json({ error: "AI generation failed" }, { status: 500 });
   }
 }

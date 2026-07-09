@@ -7,6 +7,7 @@ import {
   createCheckoutSession,
 } from "@elbtronika/payments";
 import { type NextRequest, NextResponse } from "next/server";
+import { logger } from "@/src/lib/logger";
 import { createClient } from "@/src/lib/supabase/server";
 
 // ---------------------------------------------------------------------------
@@ -112,7 +113,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (orderError || !order) {
-      console.error("[checkout] order creation failed:", orderError?.message);
+      logger.error("[checkout] order creation failed", { error: orderError?.message });
       return NextResponse.json({ error: "Failed to create order" }, { status: 500 });
     }
 
@@ -143,7 +144,7 @@ export async function POST(request: NextRequest) {
     );
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    console.error("[checkout] Stripe error:", message);
+    logger.error("[checkout] Stripe error", { error: message });
     return NextResponse.json({ error: "Payment provider error" }, { status: 500 });
   }
 }

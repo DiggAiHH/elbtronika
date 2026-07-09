@@ -7,6 +7,7 @@ import type { ArtFeatures } from "@elbtronika/flow";
 import { matchArtworks } from "@elbtronika/flow";
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { logger } from "@/src/lib/logger";
 import { createClient } from "@/src/lib/supabase/server";
 
 const MatchRequestSchema = z.object({
@@ -55,7 +56,9 @@ function toDominantColors(value: unknown): ArtFeatures["dominantColors"] {
   }
 
   const parsed = value
-    .filter((entry): entry is Record<string, unknown> => typeof entry === "object" && entry !== null)
+    .filter(
+      (entry): entry is Record<string, unknown> => typeof entry === "object" && entry !== null,
+    )
     .map((entry) => {
       const rawPercentage = toNumber(entry.percentage, 0);
       const normalizedPercentage =
@@ -251,8 +254,7 @@ export async function POST(request: NextRequest) {
         setId: body.setId,
         matches,
         totalAnalyzed: artworkInputs.length,
-        artworkFeaturesSource:
-          artworkFeaturesById.size > 0 ? "db+fallback" : "fallback-only",
+        artworkFeaturesSource: artworkFeaturesById.size > 0 ? "db+fallback" : "fallback-only",
         // Wave 5: callers can distinguish real analysis from simulated defaults
         audioSource,
       },
@@ -260,7 +262,7 @@ export async function POST(request: NextRequest) {
     );
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    console.error("[flow/match] error:", message);
+    logger.error("[flow/match] error", { error: message });
     return NextResponse.json({ error: "Matching failed" }, { status: 500 });
   }
 }
