@@ -35,7 +35,29 @@
 
 ---
 
-## 🔄 Heutige Aktion (09.07.2026 — Sprint 2: Checkout end-to-end)
+## 🔄 Heutige Aktion (09.07.2026 — Sprint 3: Datenbank & Typen)
+
+**Erledigt (repo-seitig):**
+- `investor_role`-Migration neu geschrieben: `ALTER TYPE profile_role ADD VALUE 'investor'` statt des kaputten CHECK-Constraints (falsche Werte gegen ENUM-Spalte — wäre an bestehenden Rows gescheitert)
+- Migrations-Dateinamen auf volle Timestamps in Wave-Reihenfolge (mcp_audit_log W1 → agent_tasks W3 → … → orders_session_id W7)
+- **RLS für die 3 Flow-Tabellen aktiviert** (letzte RLS-Lücke): public read, Writes spiegeln die API-RBAC (curator/admin + Set-DJ für audio_features), Helper `is_curator_or_admin()`
+- 3 Flow-Tabellen in `packages/contracts` types.ts (hand-patched im gen-Stil, markiert) → **alle 4 `as any` in flow-Routes entfernt**
+- Dabei gefixt: `flow/analyze`-Upsert schickte das Nicht-DB-Feld `source` mit und prüfte den Fehler nie — **der Write ist vermutlich seit jeher stillschweigend fehlgeschlagen**; `flow/match`-Insert-Fehler wird jetzt geloggt
+
+**⚠️ Wichtiger Befund — Schema-Drift (blockiert blindes `db push`):**
+Die Remote-Dev-DB (laut generierten Types) hat `price_eur/title/is_published/buyer_id/amount_eur/hls_url` und **enthält bereits** agent_tasks, mcp_audit_log, artworks.is_demo, orders.stripe_session_id. Die Repo-Dateien `0001_init.sql`–`0003_triggers.sql` + `seed.sql` beschreiben aber ein **anderes Schema** (`price_cents/title_de/status`) — sie wurden nie applied und passen weder zur Remote-DB noch zum App-Code. Ein `supabase db push` hätte kollidiert.
+**Echte offene Deltas für die Remote-DB: nur `20260429120000_flow_engine.sql` (3 Tabellen + RLS) und `20260430130000_investor_role.sql`.**
+
+**Nächste DB-Schritte (brauchen Credentials — CLI + Doppler sind lokal NICHT installiert):**
+1. `scoop install supabase` (oder Installer) + `doppler` einrichten
+2. `supabase link --project-ref srsxruutknqkzdmhonoa`
+3. `supabase db pull` → echte Baseline-Migration erzeugen, Fantasie-Baseline 0001–0003 ersetzen (Entscheidung dokumentieren!)
+4. Nur die 2 echten Deltas pushen; `supabase gen types` → hand-patch in contracts ersetzen
+5. `seed.sql` gegen das echte Schema neu schreiben (aktuell unbrauchbar)
+
+---
+
+## 🔄 Frühere Aktion (09.07.2026 — Sprint 2: Checkout end-to-end)
 
 **Der Kauf-Flow ist jetzt klickbar:** Shop-Grid → Artwork-Detail → „In den Warenkorb" → Drawer → „Zur Kasse" → Stripe (live) bzw. Success-Page (demo). Kein disabled-CTA, kein „Phase 10"-Stub mehr.
 
