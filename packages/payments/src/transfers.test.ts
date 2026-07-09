@@ -81,6 +81,28 @@ describe("createTransfers", () => {
     expect(result.artistTransfer.id).toBe("tr_artist");
     expect(result.djTransfer?.id).toBe("tr_dj");
   });
+
+  it("editions: two orders for the same artwork/price get DISTINCT idempotency keys", async () => {
+    const { createTransfers } = await import("./transfers");
+
+    await createTransfers({
+      paymentIntentId: "pi_edition_1",
+      artistAccountId: "acct_artist",
+      artistAmountCents: 6000,
+      orderId: "order_edition_1",
+    });
+    await createTransfers({
+      paymentIntentId: "pi_edition_2",
+      artistAccountId: "acct_artist",
+      artistAmountCents: 6000, // same amount — same artwork, second edition
+      orderId: "order_edition_2",
+    });
+
+    const keys = mockTransfersCreate.mock.calls.map((c) => c[1].idempotencyKey);
+    expect(keys[0]).not.toBe(keys[1]);
+    expect(keys[0]).toContain("order_edition_1");
+    expect(keys[1]).toContain("order_edition_2");
+  });
 });
 
 describe("createCheckoutSession", () => {
@@ -126,5 +148,26 @@ describe("createCheckoutSession", () => {
         idempotencyKey: expect.stringContaining("checkout_"),
       }),
     );
+  });
+
+  it("propagates order_id into payment_intent_data.metadata (webhook contract)", async () => {
+    const { createCheckoutSession } = await import("./transfers");
+    await createCheckoutSession({
+      artworkId: "aw_123",
+      artistStripeAccountId: "acct_artist",
+      priceCents: 10000,
+      title: "Test Artwork",
+      successUrl: "https://elbtronika.art/success",
+      cancelUrl: "https://elbtronika.art/cancel",
+      platformFeeCents: 2000,
+      orderId: "ord_456",
+    });
+
+    const sessionArg = mockSessionsCreate.mock.calls.at(-1)?.[0];
+    expect(sessionArg.payment_intent_data.metadata.order_id).toBe("ord_456");
+    expect(sessionArg.client_reference_id).toBe("ord_456");
+    // Separate Charges & Transfers: platform share stays implicitly — this
+    // param is invalid on checkout sessions and must never be sent.
+    expect(sessionArg).not.toHaveProperty("application_fee_amount");
   });
 });

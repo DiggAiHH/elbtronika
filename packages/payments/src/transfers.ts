@@ -137,18 +137,27 @@ export async function createCheckoutSession(
     payment_intent_data: {
       transfer_group: `artwork_${params.artworkId}`,
       metadata: {
+        // order_id is REQUIRED here: the payment_intent.succeeded webhook reads
+        // it to scope transfer idempotency keys per order. Without it, editions
+        // (second sale of the same artwork at the same price) would collide.
+        order_id: params.orderId,
         artwork_id: params.artworkId,
         artist_account: params.artistStripeAccountId,
         ...(params.djStripeAccountId ? { dj_account: params.djStripeAccountId } : {}),
       },
     },
     metadata: {
+      order_id: params.orderId,
       artwork_id: params.artworkId,
       artist_account: params.artistStripeAccountId,
       ...(params.djStripeAccountId ? { dj_account: params.djStripeAccountId } : {}),
     },
-    // Platform fee for Stripe Connect
-    ...(params.platformFeeCents > 0 ? { application_fee_amount: params.platformFeeCents } : {}),
+    // NOTE: no application_fee_amount here. This platform uses Separate
+    // Charges and Transfers: the full amount lands on the platform account,
+    // artist/DJ shares are moved via createTransfers(), and the platform
+    // share is simply the remainder. (application_fee_amount is only valid
+    // for destination charges and was rejected by Stripe as an unknown
+    // top-level session param anyway.)
     // Link Stripe session to internal order
     client_reference_id: params.orderId,
     ...(params.buyerEmail ? { customer_email: params.buyerEmail } : {}),

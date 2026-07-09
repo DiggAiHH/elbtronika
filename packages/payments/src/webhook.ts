@@ -64,8 +64,17 @@ export async function handlePaymentIntentSucceeded(
     return;
   }
 
-  // Prefer order_id from metadata (set since v1.x); fallback to artwork_id for legacy sessions
-  const orderId = pi.metadata?.order_id ?? artworkId;
+  // order_id scopes the transfer idempotency keys. NO fallback to artwork_id:
+  // with editions, a second sale of the same artwork at the same price would
+  // silently reuse the first sale's idempotency key and Stripe would swallow
+  // the artist's second payout. Better to fail loudly and retry after fixing.
+  const orderId = pi.metadata?.order_id;
+  if (!orderId) {
+    console.error(
+      `[webhook] payment_intent ${pi.id} has no order_id in metadata — refusing to create transfers (idempotency would collide across orders)`,
+    );
+    throw new Error(`Missing order_id metadata on payment_intent ${pi.id}`);
+  }
 
   const artistAccountId = await ctx.getArtistStripeAccount(artworkId);
   if (!artistAccountId) {

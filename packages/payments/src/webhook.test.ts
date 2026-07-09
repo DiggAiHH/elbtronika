@@ -78,6 +78,26 @@ describe("handlePaymentIntentSucceeded", () => {
     expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining("No artwork_id"));
     consoleSpy.mockRestore();
   });
+
+  it("throws and creates NO transfers when order_id is missing (editions idempotency guard)", async () => {
+    const { createTransfers } = await import("./transfers");
+    vi.mocked(createTransfers).mockClear();
+    const ctx = createMockCtx();
+    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    // Legacy-style PI: artwork_id present, order_id missing. The old fallback
+    // reused artwork_id as idempotency scope — second edition sale would have
+    // been swallowed by Stripe as a duplicate transfer.
+    await expect(
+      handlePaymentIntentSucceeded(
+        { id: "pi_legacy", amount: 10000, metadata: { artwork_id: "art_1" } },
+        ctx,
+      ),
+    ).rejects.toThrow(/order_id/);
+
+    expect(createTransfers).not.toHaveBeenCalled();
+    consoleSpy.mockRestore();
+  });
 });
 
 describe("handlePaymentIntentFailed", () => {
