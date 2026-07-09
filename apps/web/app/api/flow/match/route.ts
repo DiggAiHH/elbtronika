@@ -120,8 +120,8 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Fetch audio features if available (cast for new schema)
-    const { data: audioFeaturesRaw } = await (supabase as any)
+    // Fetch audio features if available
+    const { data: audioFeaturesRaw } = await supabase
       .from("audio_features")
       .select("bpm, key, valence, arousal, spectral_centroid, mood_tags")
       .eq("set_id", body.setId)
@@ -163,7 +163,7 @@ export async function POST(request: NextRequest) {
     };
 
     const artworkIds = artworks.map((aw) => aw.id);
-    const { data: artworkFeaturesRows } = await (supabase as any)
+    const { data: artworkFeaturesRows } = await supabase
       .from("artwork_features")
       .select(
         "artwork_id, dominant_colors, color_harmony, brightness, contrast, saturation, composition_score, symmetry_score, style_tags, mood_tags, complexity",
@@ -242,10 +242,10 @@ export async function POST(request: NextRequest) {
         similarity_score: m.similarityScore,
         match_reason: m.matchReason,
       }));
-      try {
-        await (supabase as any).from("music_art_matches").insert(inserts);
-      } catch {
-        /* best-effort */
+      const { error: insertError } = await supabase.from("music_art_matches").insert(inserts);
+      if (insertError) {
+        // best-effort persistence — matching result is still returned
+        logger.warn("[flow/match] match insert failed", { error: insertError.message });
       }
     }
 

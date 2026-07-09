@@ -99,10 +99,15 @@ export async function POST(request: NextRequest) {
       source: "simulated" as const,
     };
 
-    try {
-      await (supabase as any).from("audio_features").upsert(analysis, { onConflict: "set_id" });
-    } catch (err) {
-      logger.error("[flow/analyze] upsert error", { error: err });
+    // Persist WITHOUT the response-only `source` field — it is not a DB
+    // column. (The old `as any` cast hid exactly this: the upsert failed on
+    // every call with "column does not exist" and the error was never read.)
+    const { source: _source, ...dbRow } = analysis;
+    const { error: upsertError } = await supabase
+      .from("audio_features")
+      .upsert(dbRow, { onConflict: "set_id" });
+    if (upsertError) {
+      logger.error("[flow/analyze] upsert error", { error: upsertError.message });
     }
 
     return NextResponse.json(
