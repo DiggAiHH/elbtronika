@@ -115,6 +115,167 @@ export type Database = {
           },
         ];
       };
+      // HAND-PATCHED (Sprint 3, 2026-07-09): the three flow-engine tables from
+      // 20260429120000_flow_engine.sql, written in gen-types style. Replace by
+      // re-running `supabase gen types` once CLI access to the project exists —
+      // the output must match this shape.
+      audio_features: {
+        Row: {
+          set_id: string;
+          bpm: number | null;
+          key: string | null;
+          valence: number | null;
+          arousal: number | null;
+          spectral_centroid: number | null;
+          mood_tags: string[] | null;
+          embedding: Json | null;
+          analyzed_at: string | null;
+          created_at: string | null;
+          updated_at: string | null;
+        };
+        Insert: {
+          set_id: string;
+          bpm?: number | null;
+          key?: string | null;
+          valence?: number | null;
+          arousal?: number | null;
+          spectral_centroid?: number | null;
+          mood_tags?: string[] | null;
+          embedding?: Json | null;
+          analyzed_at?: string | null;
+          created_at?: string | null;
+          updated_at?: string | null;
+        };
+        Update: {
+          set_id?: string;
+          bpm?: number | null;
+          key?: string | null;
+          valence?: number | null;
+          arousal?: number | null;
+          spectral_centroid?: number | null;
+          mood_tags?: string[] | null;
+          embedding?: Json | null;
+          analyzed_at?: string | null;
+          created_at?: string | null;
+          updated_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "audio_features_set_id_fkey";
+            columns: ["set_id"];
+            isOneToOne: true;
+            referencedRelation: "sets";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      artwork_features: {
+        Row: {
+          artwork_id: string;
+          dominant_colors: Json | null;
+          color_harmony: string | null;
+          brightness: number | null;
+          contrast: number | null;
+          saturation: number | null;
+          composition_score: number | null;
+          symmetry_score: number | null;
+          style_tags: string[] | null;
+          mood_tags: string[] | null;
+          complexity: number | null;
+          embedding: Json | null;
+          analyzed_at: string | null;
+          created_at: string | null;
+          updated_at: string | null;
+        };
+        Insert: {
+          artwork_id: string;
+          dominant_colors?: Json | null;
+          color_harmony?: string | null;
+          brightness?: number | null;
+          contrast?: number | null;
+          saturation?: number | null;
+          composition_score?: number | null;
+          symmetry_score?: number | null;
+          style_tags?: string[] | null;
+          mood_tags?: string[] | null;
+          complexity?: number | null;
+          embedding?: Json | null;
+          analyzed_at?: string | null;
+          created_at?: string | null;
+          updated_at?: string | null;
+        };
+        Update: {
+          artwork_id?: string;
+          dominant_colors?: Json | null;
+          color_harmony?: string | null;
+          brightness?: number | null;
+          contrast?: number | null;
+          saturation?: number | null;
+          composition_score?: number | null;
+          symmetry_score?: number | null;
+          style_tags?: string[] | null;
+          mood_tags?: string[] | null;
+          complexity?: number | null;
+          embedding?: Json | null;
+          analyzed_at?: string | null;
+          created_at?: string | null;
+          updated_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "artwork_features_artwork_id_fkey";
+            columns: ["artwork_id"];
+            isOneToOne: true;
+            referencedRelation: "artworks";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      music_art_matches: {
+        Row: {
+          id: string;
+          set_id: string | null;
+          artwork_id: string | null;
+          similarity_score: number | null;
+          match_reason: string | null;
+          curator_approved: boolean | null;
+          created_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          set_id?: string | null;
+          artwork_id?: string | null;
+          similarity_score?: number | null;
+          match_reason?: string | null;
+          curator_approved?: boolean | null;
+          created_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          set_id?: string | null;
+          artwork_id?: string | null;
+          similarity_score?: number | null;
+          match_reason?: string | null;
+          curator_approved?: boolean | null;
+          created_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "music_art_matches_set_id_fkey";
+            columns: ["set_id"];
+            isOneToOne: false;
+            referencedRelation: "sets";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "music_art_matches_artwork_id_fkey";
+            columns: ["artwork_id"];
+            isOneToOne: false;
+            referencedRelation: "artworks";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       mcp_audit_log: {
         Row: {
           id: string;
