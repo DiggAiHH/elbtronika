@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useCallback, useState } from "react";
 
 function localeHref(locale: string, href: string) {
@@ -10,6 +11,7 @@ function localeHref(locale: string, href: string) {
 
 /* ─────────── HERO SECTION ─────────── */
 function HeroSection({ locale }: { locale: string }) {
+  const t = useTranslations("landing");
   return (
     <section className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden">
       {/* Background gradients */}
@@ -31,24 +33,23 @@ function HeroSection({ locale }: { locale: string }) {
       <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-8 animate-fade-in-up">
           <span className="w-2 h-2 rounded-full bg-[#e8a020] animate-pulse" />
-          <span className="text-xs font-medium text-white/60">Now Live — Berlin & Digital</span>
+          <span className="text-xs font-medium text-white/60">{t("badge")}</span>
         </div>
 
         <p className="text-sm md:text-base text-[#e8a020]/70 font-medium tracking-[0.2em] uppercase mb-4 animate-fade-in-up">
-          Curated sonic commerce
+          {t("kicker")}
         </p>
 
         <h1 className="text-5xl md:text-7xl lg:text-8xl font-semibold tracking-tight mb-6 animate-fade-in-up delay-100 font-[var(--font-display)] leading-[0.95]">
-          <span className="text-[#f2ede4]">Where</span>{" "}
-          <span className="text-[#e8a020]">Techno</span>
+          <span className="text-[#f2ede4]">{t("titleWhere")}</span>{" "}
+          <span className="text-[#e8a020]">{t("titleTechno")}</span>
           <br />
-          <span className="text-[#f2ede4]">Meets</span> <span className="text-[#e8a020]">Art</span>
+          <span className="text-[#f2ede4]">{t("titleMeets")}</span>{" "}
+          <span className="text-[#e8a020]">{t("titleArt")}</span>
         </h1>
 
         <p className="text-lg md:text-xl text-[#9a9590] max-w-2xl mx-auto mb-10 leading-relaxed animate-fade-in-up delay-200">
-          ELBTRONIKA is a premium art-tech platform where contemporary digital works and electronic
-          music culture are curated as one experience. Discover, collect, and verify provenance with
-          transparent economics.
+          {t("heroText")}
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in-up delay-300">
@@ -56,7 +57,7 @@ function HeroSection({ locale }: { locale: string }) {
             href={localeHref(locale, "/gallery")}
             className="group px-8 py-4 text-sm font-semibold text-[#050508] bg-[#e8a020] rounded-full hover:shadow-[0_0_40px_rgba(232,160,32,0.35)] transition-all duration-500 hover:scale-105"
           >
-            Enter Experience
+            {t("ctaEnter")}
             <span className="inline-block ml-2 transition-transform duration-300 group-hover:translate-x-1">
               →
             </span>
@@ -65,7 +66,7 @@ function HeroSection({ locale }: { locale: string }) {
             href={localeHref(locale, "/shop")}
             className="px-8 py-4 text-sm font-semibold text-[#f2ede4] border border-[#f2ede4]/20 rounded-full hover:bg-white/[0.05] hover:border-[#f2ede4]/40 transition-all duration-300"
           >
-            View Catalog
+            {t("ctaCatalog")}
           </Link>
         </div>
 
@@ -75,7 +76,9 @@ function HeroSection({ locale }: { locale: string }) {
 
         {/* Scroll indicator */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-fade-in delay-700">
-          <span className="text-[10px] uppercase tracking-[0.3em] text-white/20">Scroll</span>
+          <span className="text-[10px] uppercase tracking-[0.3em] text-white/20">
+            {t("scroll")}
+          </span>
           <div className="w-px h-8 bg-gradient-to-b from-white/20 to-transparent" />
         </div>
       </div>
@@ -84,19 +87,18 @@ function HeroSection({ locale }: { locale: string }) {
 }
 
 function TrustSplitPanel() {
+  const t = useTranslations("landing");
   const split = [
-    { label: "Artist", value: "60%", tone: "text-[#e8a020]" },
-    { label: "DJ", value: "20%", tone: "text-[#2aada8]" },
-    { label: "Platform", value: "20%", tone: "text-[#f2ede4]" },
+    { label: t("splitArtist"), value: "60%", tone: "text-[#e8a020]" },
+    { label: t("splitDj"), value: "20%", tone: "text-[#2aada8]" },
+    { label: t("splitPlatform"), value: "20%", tone: "text-[#f2ede4]" },
   ];
 
   return (
     <div className="mx-auto mt-10 max-w-2xl rounded-2xl border border-white/10 bg-[#0e0e12]/80 px-5 py-4 backdrop-blur animate-fade-in-up delay-400">
       <div className="flex items-center justify-between gap-3 pb-3 border-b border-white/10">
-        <p className="text-[11px] uppercase tracking-[0.24em] text-[#9a9590]">
-          Transparent Revenue Split
-        </p>
-        <p className="text-xs text-[#9a9590]">Trust by default</p>
+        <p className="text-[11px] uppercase tracking-[0.24em] text-[#9a9590]">{t("splitTitle")}</p>
+        <p className="text-xs text-[#9a9590]">{t("splitTrust")}</p>
       </div>
       <div className="grid grid-cols-3 gap-3 pt-3">
         {split.map((item) => (
@@ -115,28 +117,26 @@ function TrustSplitPanel() {
 
 /* ─────────── FEATURES SECTION ─────────── */
 function FeaturesSection({ locale }: { locale: string }) {
+  const t = useTranslations("landing");
   const features = [
     {
       icon: "🎨",
-      title: "Curated Gallery",
-      description:
-        "Immersive 3D gallery spaces where each room is paired with a unique DJ set. Art that responds to sound.",
+      title: t("feature1Title"),
+      description: t("feature1Desc"),
       href: "/gallery",
       color: "#e8a020",
     },
     {
       icon: "🛒",
-      title: "Artist Shop",
-      description:
-        "Collect limited-edition digital and physical artworks directly from visionary artists. Fair revenue split.",
+      title: t("feature2Title"),
+      description: t("feature2Desc"),
       href: "/shop",
       color: "#2aada8",
     },
     {
       icon: "🎵",
-      title: "AI Matching",
-      description:
-        "Our Hermes Agent analyzes audio features and artwork metadata to find perfect music-art pairings.",
+      title: t("feature3Title"),
+      description: t("feature3Desc"),
       href: "/dashboard/pm/curation",
       color: "#f2ede4",
     },
@@ -147,12 +147,10 @@ function FeaturesSection({ locale }: { locale: string }) {
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-20">
           <h2 className="text-3xl md:text-5xl font-semibold mb-4">
-            <span className="text-white">Three Ways to</span>{" "}
-            <span className="gradient-text">Experience</span>
+            <span className="text-white">{t("featuresTitlePre")}</span>{" "}
+            <span className="gradient-text">{t("featuresTitleHighlight")}</span>
           </h2>
-          <p className="text-white/40 max-w-xl mx-auto">
-            Gallery immersion, direct collection, or AI-powered curation — choose your entry point.
-          </p>
+          <p className="text-white/40 max-w-xl mx-auto">{t("featuresSubtitle")}</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -174,7 +172,7 @@ function FeaturesSection({ locale }: { locale: string }) {
               </h3>
               <p className="text-sm text-white/40 leading-relaxed mb-6">{f.description}</p>
               <span className="text-sm font-medium" style={{ color: f.color }}>
-                Explore →
+                {t("featureExplore")}
               </span>
 
               {/* Hover glow */}
@@ -194,11 +192,12 @@ function FeaturesSection({ locale }: { locale: string }) {
 
 /* ─────────── STATS SECTION ─────────── */
 function StatsSection() {
+  const t = useTranslations("landing");
   const stats = [
-    { value: "50+", label: "Artists" },
-    { value: "200+", label: "Artworks" },
-    { value: "12", label: "DJ Sets" },
-    { value: "4", label: "Gallery Rooms" },
+    { value: "50+", label: t("statArtists") },
+    { value: "200+", label: t("statArtworks") },
+    { value: "12", label: t("statSets") },
+    { value: "4", label: t("statRooms") },
   ];
 
   return (
@@ -223,22 +222,11 @@ function StatsSection() {
 
 /* ─────────── HOW IT WORKS ─────────── */
 function HowItWorksSection() {
+  const t = useTranslations("landing");
   const steps = [
-    {
-      num: "01",
-      title: "Explore",
-      desc: "Browse immersive gallery rooms, each paired with a curated DJ set.",
-    },
-    {
-      num: "02",
-      title: "Connect",
-      desc: "Our AI matches artworks to music based on mood, energy, and style.",
-    },
-    {
-      num: "03",
-      title: "Collect",
-      desc: "Purchase limited-edition pieces directly from the artist.",
-    },
+    { num: "01", title: t("step1Title"), desc: t("step1Desc") },
+    { num: "02", title: t("step2Title"), desc: t("step2Desc") },
+    { num: "03", title: t("step3Title"), desc: t("step3Desc") },
   ];
 
   return (
@@ -246,7 +234,8 @@ function HowItWorksSection() {
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-20">
           <h2 className="text-3xl md:text-5xl font-semibold mb-4">
-            <span className="text-white">How It</span> <span className="gradient-text">Works</span>
+            <span className="text-white">{t("howTitlePre")}</span>{" "}
+            <span className="gradient-text">{t("howTitleHighlight")}</span>
           </h2>
         </div>
 
@@ -273,6 +262,7 @@ function HowItWorksSection() {
 
 /* ─────────── CTA SECTION ─────────── */
 function CTASection({ locale }: { locale: string }) {
+  const t = useTranslations("landing");
   return (
     <section className="relative py-32 px-6 overflow-hidden">
       <div className="absolute inset-0">
@@ -281,25 +271,22 @@ function CTASection({ locale }: { locale: string }) {
 
       <div className="relative z-10 max-w-3xl mx-auto text-center">
         <h2 className="text-4xl md:text-6xl font-semibold mb-6">
-          <span className="text-white">Ready to</span>{" "}
-          <span className="gradient-text">Dive In?</span>
+          <span className="text-white">{t("ctaTitlePre")}</span>{" "}
+          <span className="gradient-text">{t("ctaTitleHighlight")}</span>
         </h2>
-        <p className="text-lg text-white/40 mb-10 max-w-xl mx-auto">
-          Join the intersection of electronic music and digital art. Your next favorite piece is
-          waiting.
-        </p>
+        <p className="text-lg text-white/40 mb-10 max-w-xl mx-auto">{t("ctaText")}</p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link
             href={localeHref(locale, "/gallery")}
             className="px-10 py-4 text-sm font-semibold text-[#050508] bg-[#e8a020] hover:bg-[#d38e12] rounded-full hover:shadow-[0_0_60px_rgba(232,160,32,0.4)] transition-all duration-500 hover:scale-105"
           >
-            Enter the Gallery
+            {t("ctaGallery")}
           </Link>
           <Link
             href={localeHref(locale, "/artist-onboarding/stripe")}
             className="px-10 py-4 text-sm font-semibold text-white border border-white/15 rounded-full hover:bg-white/[0.05] transition-all duration-300"
           >
-            Become an Artist
+            {t("ctaArtist")}
           </Link>
         </div>
       </div>
@@ -350,6 +337,7 @@ function MarqueeSection() {
 
 /* ─────────── SOUND TOGGLE ─────────── */
 function SoundToggle() {
+  const t = useTranslations("landing");
   const [audioEnabled, setAudioEnabled] = useState(false);
 
   const toggleAudio = useCallback(() => {
@@ -363,7 +351,7 @@ function SoundToggle() {
       type="button"
       onClick={toggleAudio}
       className="mt-8 flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 text-xs text-white/50 hover:text-white/80 hover:border-white/20 transition-all"
-      aria-label={audioEnabled ? "Disable sound" : "Enable sound"}
+      aria-label={audioEnabled ? t("soundDisable") : t("soundEnable")}
     >
       {audioEnabled ? (
         <svg
@@ -393,7 +381,7 @@ function SoundToggle() {
           <line x1="17" y1="9" x2="23" y2="15" />
         </svg>
       )}
-      <span>{audioEnabled ? "Sound on" : "Sound off"}</span>
+      <span>{audioEnabled ? t("soundOn") : t("soundOff")}</span>
     </button>
   );
 }
