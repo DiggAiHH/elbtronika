@@ -35,6 +35,18 @@ export default function MonitoringDashboard() {
         const res = await fetch("/api/health", { cache: "no-store" });
         const healthJson = await res.json();
 
+        // Real RUM p75 values (last 24h) — zeros until web_vitals is applied + has data.
+        let vitals = { lcp: 0, fid: 0, cls: 0, inp: 0 };
+        try {
+          const vitalsRes = await fetch("/api/analytics/vitals", { cache: "no-store" });
+          if (vitalsRes.ok) {
+            const v = await vitalsRes.json();
+            vitals = { lcp: v.lcp ?? 0, fid: v.fid ?? 0, cls: v.cls ?? 0, inp: v.inp ?? 0 };
+          }
+        } catch {
+          // best-effort — keep zeros
+        }
+
         const checks: HealthCheck[] = [
           {
             name: "Application",
@@ -55,7 +67,7 @@ export default function MonitoringDashboard() {
 
         setData({
           health: checks,
-          vitals: { lcp: 0, fid: 0, cls: 0, inp: 0 },
+          vitals,
           deploy: {
             version: healthJson.version ?? "unknown",
             deployedAt: healthJson.timestamp,

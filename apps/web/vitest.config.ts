@@ -22,6 +22,16 @@ export default defineConfig({
       reporter: ["text", "lcov", "html"],
       include: ["src/**/*.{ts,tsx}", "app/**/*.{ts,tsx}"],
       exclude: ["**/*.test.{ts,tsx}", "**/*.spec.{ts,tsx}", "**/node_modules/**"],
+      // Regression floor (Sprint 6): measured baseline 2026-07-09 was
+      // ~11.8% statements — the include covers every page/RSC, most of which
+      // only run in e2e. Raise these as behavior tests replace the fs-grep
+      // guards; never lower them.
+      thresholds: {
+        statements: 10,
+        branches: 9,
+        functions: 9,
+        lines: 10,
+      },
     },
   },
   resolve: {

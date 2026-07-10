@@ -115,10 +115,38 @@ export type Database = {
           },
         ];
       };
-      // HAND-PATCHED (Sprint 3, 2026-07-09): the three flow-engine tables from
-      // 20260429120000_flow_engine.sql, written in gen-types style. Replace by
+      // HAND-PATCHED (Sprint 3+6, 2026-07-09): flow-engine tables from
+      // 20260429120000_flow_engine.sql and web_vitals from
+      // 20260709120000_web_vitals.sql, written in gen-types style. Replace by
       // re-running `supabase gen types` once CLI access to the project exists —
       // the output must match this shape.
+      web_vitals: {
+        Row: {
+          id: string;
+          created_at: string;
+          metric: string;
+          value: number;
+          rating: string | null;
+          path: string | null;
+        };
+        Insert: {
+          id?: string;
+          created_at?: string;
+          metric: string;
+          value: number;
+          rating?: string | null;
+          path?: string | null;
+        };
+        Update: {
+          id?: string;
+          created_at?: string;
+          metric?: string;
+          value?: number;
+          rating?: string | null;
+          path?: string | null;
+        };
+        Relationships: [];
+      };
       audio_features: {
         Row: {
           set_id: string;
