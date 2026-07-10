@@ -10,15 +10,15 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@sanity/vision": "^4.0.0",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
-    "sanity": "^4.0.0",
-    "styled-components": "^6.1.0"
+    "@sanity/vision": "^4.22.0",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "sanity": "^4.22.0",
+    "styled-components": "^6.4.3"
   },
   "devDependencies": {
     "@sanity/eslint-config-studio": "^4.0.0",
-    "@types/react": "^19.0.0",
+    "@types/react": "^19.2.17",
     "typescript": "5.8.3"
   }
 }

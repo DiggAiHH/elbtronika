@@ -35,7 +35,21 @@
 
 ---
 
-## 🔄 Heutige Aktion (09.07.2026 — Sprint 4+5: Audio/Ehrlichkeit + Politur)
+## 🔄 Heutige Aktion (10.07.2026 — Restliste komplett: Sprint 5 Rest + Sprint 6)
+
+- **Landing-Page vollständig i18n** (44 Keys de/en, „landing"-Namespace); hero.test prüft jetzt beide Seiten des Kontrakts (Keys im Code, Copy in messages, de/en-Sync)
+- **Tote Packages entfernt:** packages/config + packages/sanity-studio (0 Importe, dritte Schema-Kopie); packages/browser als EXPERIMENTAL markiert; verwaiste apps/cms/schemas/exhibition.ts gelöscht
+- **ADR-Konsolidierung:** EIN Nummernkreis in docs/adr/ (0001–0033), Merge der Ordner docs/adrs + docs/architecture/adr, Mapping in docs/adr/INDEX.md; **Architekturplan v1.5** erstellt (schlank, fixiert offene v1.4-Fragen: VR/XR=Phase 23, Phase-18/19-Namen, Branch-/Deploy-Politik); README zeigt auf v1.5
+- **Web-Vitals-Persistenz:** Migration `20260709120000_web_vitals.sql` (RLS, kein PII), POST persistiert best-effort via Service-Role, GET liefert p75/24h, Monitoring-Dashboard zeigt echte RUM-Werte statt hartkodierter Nullen
+- **Test-Härtung:** Erster echter VERHALTENS-Test für /api/checkout/session (5 Fälle: 401, Preis-Manipulation 422, Demo-Mode ohne Stripe, Happy Path mit server-derived URLs, Payout-Guard) als Vorlage zum Ablösen der fs-grep-Guards; Coverage-Floor in vitest (Baseline 11,8 % gemessen, Schwelle 10 % — nur anheben!)
+- **Dependency-Pass (Dependabot 48 Vulns):** `pnpm update -r` in Ranges — next 15.5.20, react 19.2.7, stripe 22.3.1, sanity 4.22, vitest 4.1.10 u.v.m. Dabei gefixt: Stripe-API-Version-Pin auf `2026-06-24.dahlia`. Voll verifiziert: tsc 0, Web 93/93, Packages 83/83, Build grün. (Verbleibende Vulns nach CI-Lauf im Dependabot-Tab prüfen — Major-Bumps sind separater Schritt.)
+- **NODE_ENV-Aufklärung:** Variable ist NICHT maschinenweit gesetzt (User/Machine-Scope leer) — sie wird vom Electron-Prozessbaum der Desktop-App an Agent-Shells vererbt. Lous Terminals sind sauber; vitest-Guards bleiben.
+
+**Danach offen:** nur noch externe Schritte (Phase 0 Legal, Supabase-CLI+Credentials für db pull/push + gen types, Doppler prd, echte Demo-Assets, Lee-Termin) + Backlog (echte DSP-Analyse, restliche fs-grep-Guards ablösen, packages-Logger, Lighthouse-Baseline lokal).
+
+---
+
+## 🔄 Frühere Aktion (09.07.2026 — Sprint 4+5: Audio/Ehrlichkeit + Politur)
 
 **Sprint 4:**
 - HLS-Playback im Shop: `attachHlsToElement` in @elbtronika/audio, ArtworkAudioPlayer HLS-fähig — `.m3u8` war in Chrome/Firefox stumm (nacktes `<audio src>`)

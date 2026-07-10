@@ -5,7 +5,9 @@
 
 import Stripe from "stripe";
 
-const API_VERSION = "2026-04-22.dahlia" as const;
+// Pinned Stripe API version — must match the SDK's expected version literal
+// (bumped with stripe 22.3.1 during the 2026-07-09 dependency pass).
+const API_VERSION = "2026-06-24.dahlia" as const;
 
 function getSecretKey(): string {
   const key = process.env.STRIPE_SECRET_KEY;

@@ -22,14 +22,14 @@
     "dr:tiers": "node scripts/check-tiers.mjs"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.0.0",
-    "@commitlint/cli": "^19.0.0",
-    "@commitlint/config-conventional": "^19.0.0",
-    "@vitest/coverage-v8": "^4.1.5",
-    "husky": "^9.0.0",
-    "lint-staged": "^15.0.0",
-    "turbo": "^2.5.0",
-    "typescript": "^5.8.0"
+    "@biomejs/biome": "^2.5.3",
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
+    "@vitest/coverage-v8": "^4.1.10",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.2",
+    "turbo": "^2.10.4",
+    "typescript": "^5.9.3"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx,json,css,md}": [
