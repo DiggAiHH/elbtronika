@@ -45,7 +45,9 @@
 - **Dependency-Pass (Dependabot 48 Vulns):** `pnpm update -r` in Ranges — next 15.5.20, react 19.2.7, stripe 22.3.1, sanity 4.22, vitest 4.1.10 u.v.m. Dabei gefixt: Stripe-API-Version-Pin auf `2026-06-24.dahlia`. Voll verifiziert: tsc 0, Web 93/93, Packages 83/83, Build grün. (Verbleibende Vulns nach CI-Lauf im Dependabot-Tab prüfen — Major-Bumps sind separater Schritt.)
 - **NODE_ENV-Aufklärung:** Variable ist NICHT maschinenweit gesetzt (User/Machine-Scope leer) — sie wird vom Electron-Prozessbaum der Desktop-App an Agent-Shells vererbt. Lous Terminals sind sauber; vitest-Guards bleiben.
 
-**Danach offen:** nur noch externe Schritte (Phase 0 Legal, Supabase-CLI+Credentials für db pull/push + gen types, Doppler prd, echte Demo-Assets, Lee-Termin) + Backlog (echte DSP-Analyse, restliche fs-grep-Guards ablösen, packages-Logger, Lighthouse-Baseline lokal).
+**⚠️ GitHub Actions komplett gesperrt — Billing!** Alle CI-Läufe seit 09.07. failen nach 3 Sekunden mit: „The job was not started because your account is locked due to a billing issue." → **Lou: github.com → Settings → Billing prüfen** (Karte abgelaufen / Spending-Limit). Bis dahin ersetzt die lokale Verifikation (tsc/Tests/Build vor jedem Push, siehe CLAUDE.md) das CI-Gate.
+
+**Danach offen:** nur noch externe Schritte (GitHub-Billing entsperren, Phase 0 Legal, Supabase-CLI+Credentials für db pull/push + gen types, Doppler prd, echte Demo-Assets, Lee-Termin) + Backlog (echte DSP-Analyse, restliche fs-grep-Guards ablösen, packages-Logger, Lighthouse-Baseline lokal).
 
 ---
 
