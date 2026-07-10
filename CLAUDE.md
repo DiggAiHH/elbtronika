@@ -33,7 +33,7 @@ Next.js 15.5 App Router · React 19 · Tailwind v4 · Three.js/R3F v9 (WebGL, We
 
 1. **production-deploy.yml hat KEINEN push-Trigger mehr.** Prod-Deploys nur manuell (workflow_dispatch + "DEPLOY") bis Phase-21-Runbook (`docs/runbooks/live-switch-post-lee-ok.md`) durchlaufen ist. Nicht wieder anschalten.
 2. **Supabase:** Remote-DB ≠ Repo-Baseline! `0001_init.sql`–`0003` + `seed.sql` beschreiben ein nie appliedes Fantasie-Schema. Echte offene Deltas: nur `20260429120000_flow_engine.sql` + `20260430130000_investor_role.sql`. Vorgehen steht in STATUS.md (db pull → Baseline ersetzen → Deltas pushen).
-3. **Diese Windows-Maschine hat global `NODE_ENV=production`** → vitest lädt Production-React (React.act undefined). Die vitest-Configs (web/audio/three) erzwingen deshalb NODE_ENV=test. Empfehlung an Lou: Env-Var global löschen.
+3. **`NODE_ENV=production` wird vom Prozessbaum der Claude-Desktop-App (Electron) an Kindprozesse vererbt** (User-/Machine-Scope sind sauber — geprüft 2026-07-09). Folge: Agent-gestartete vitest-Läufe luden Production-React (React.act undefined). Die vitest-Configs (web/audio/three) erzwingen deshalb NODE_ENV=test — Guard nicht entfernen.
 4. Stripe: `order_id` MUSS in payment_intent_data.metadata (Editions-Idempotenz). Kein `application_fee_amount` auf Sessions (Separate Charges & Transfers: Plattform-Anteil = Rest).
 5. Simulierte Features sind als `source: "simulated"` gelabelt (flow/analyze, MCP-Audio). Labels nicht entfernen ohne echte DSP-Pipeline.
 6. GDPR: `/api/account/*` ist kanonisch (anonymisiert Orders statt Löschung — Aufbewahrungspflicht).

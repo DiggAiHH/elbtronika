@@ -137,7 +137,8 @@ Alle Feature-Branches gegen `feature/phase-11-ai`. Final-Merge nach Lee-OK.
 
 ## Docs
 
-- [Architekturplan v1.3](ELBTRONIKA_Architekturplan_v1.3.md)
+- [Architekturplan v1.5](ELBTRONIKA_Architekturplan_v1.5.md) — AKTIV (v1.0–v1.4 = Audit-Trail)
+- [Restarbeiten-Plan](PLAN_RESTARBEITEN_2026-07-09.md) · [ADR-Index](docs/adr/INDEX.md)
 - [Trust Harness](engineering-harness/HERMES_TRUST_HARNESS.md)
 - [Doppler prd Setup](docs/runbooks/doppler-prd-setup.md)
 - [Live-Switch Choreografie](docs/runbooks/live-switch-post-lee-ok.md)

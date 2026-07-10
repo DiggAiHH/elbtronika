@@ -1,5 +1,6 @@
 {
   "name": "@elbtronika/browser",
+  "description": "EXPERIMENTAL: self-healing Playwright browser harness for agents. Not imported by any app yet — kept for the agent roadmap (see PLAN_RESTARBEITEN §5 'Danach'). packages/config and packages/sanity-studio were removed as dead in Sprint 5.",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -17,13 +18,13 @@
   },
   "dependencies": {
     "@elbtronika/mcp": "workspace:*",
-    "playwright": "^1.50.0",
-    "zod": "^3.24.0"
+    "playwright": "^1.61.1",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.0.0",
-    "@types/node": "^22.0.0",
-    "typescript": "^5.8.3",
-    "vitest": "^4.1.5"
+    "@biomejs/biome": "^2.5.3",
+    "@types/node": "^22.20.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.10"
   }
 }
