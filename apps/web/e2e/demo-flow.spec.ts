@@ -36,10 +36,14 @@ test.describe("Demo Mode — Complete Investor Flow", () => {
     // Gallery page has 3D canvas + 400vh container — needs more than default 30s on mobile
     test.setTimeout(60000);
 
-    // CTA text: "Enter Experience" (hero) or "Enter the Gallery" (CTA section)
+    // CTA text: hero says "Enter Experience" / "Erlebnis starten"; the bottom
+    // CTA section says "Enter the Gallery" / "Galerie betreten". Matching the
+    // hero first keeps the click above the fold — scrolling to the bottom CTA
+    // was flaky on mobile (sections intercept the pointer mid-scroll).
     const enterGallery = page
       .locator("a", {
-        hasText: /Enter Experience|Enter the Gallery|Enter Gallery|Galerie betreten/i,
+        hasText:
+          /Enter Experience|Erlebnis starten|Enter the Gallery|Enter Gallery|Galerie betreten/i,
       })
       .first();
 
