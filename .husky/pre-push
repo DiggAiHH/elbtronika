@@ -4,10 +4,16 @@
 # Full build check: run scripts/local-ci.cmd manually before merges to main.
 # Emergency bypass (document why in the commit!): git push --no-verify
 #
-# stdin carries the ref lines git feeds to pre-push hooks — redirect it away
-# from cmd.exe, otherwise cmd executes "refs/heads/main ..." as a command
-# after the gate finishes.
+# Windows/git-bash notes:
+# - "//c" instead of "/c": MSYS path conversion would turn a single "/c"
+#   into "C:/", cmd would start interactively and never run the gate.
+# - "< /dev/null": stdin carries the ref lines git feeds to pre-push hooks;
+#   without the redirect cmd executes "refs/heads/main …" as a command.
 
 echo "[pre-push] local ci gate (fast) ..."
-cmd.exe /c "scripts\\local-ci.cmd fast" < /dev/null
-exit $?
+cmd.exe //c "scripts\\local-ci.cmd fast" < /dev/null
+status=$?
+if [ $status -ne 0 ]; then
+  echo "[pre-push] GATE RED — push blocked (bypass: git push --no-verify)"
+fi
+exit $status
