@@ -43,10 +43,12 @@ test.describe("Cart Flow", () => {
 
     if (await cartButton.isVisible().catch(() => false)) {
       await cartButton.click();
-      // Check if drawer opened
+      // Check if drawer opened. Scope by accessible name — the page can host
+      // several dialogs at once (cookie consent, walkthrough tour), so a bare
+      // [role='dialog'] violates strict mode.
       const drawer = page
         .locator('[data-testid="cart-drawer"]')
-        .or(page.locator("[role='dialog']"));
+        .or(page.getByRole("dialog", { name: /warenkorb|cart/i }));
       await expect(drawer).toBeVisible();
     }
   });
