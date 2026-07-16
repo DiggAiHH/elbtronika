@@ -3,8 +3,11 @@
  * JSON-RPC 2.0 over stdio and HTTP/SSE transports.
  */
 
+import { createLogger } from "@elbtronika/logger";
 import type { MCPError, MCPRequest, MCPResponse, MCPServerInfo, ToolDefinition } from "./types";
 import { McpErrorCode } from "./types";
+
+const log = createLogger("mcp/server");
 
 export interface MCPServerOptions {
   name: string;
@@ -41,7 +44,7 @@ export class MCPServer {
         .filter((l) => l.trim());
       for (const line of lines) {
         this.handleMessage(line).catch((err) => {
-          console.error("[mcp] stdio error:", err);
+          log.error("stdio error", { error: err instanceof Error ? err.message : String(err) });
         });
       }
     });

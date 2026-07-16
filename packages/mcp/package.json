@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@elbtronika/contracts": "workspace:*",
+    "@elbtronika/logger": "workspace:*",
     "zod": "^3.25.76"
   },
   "devDependencies": {

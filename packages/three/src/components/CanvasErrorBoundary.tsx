@@ -1,6 +1,9 @@
 "use client";
 
+import { createLogger } from "@elbtronika/logger";
 import { Component, type ReactNode } from "react";
+
+const log = createLogger("three/CanvasErrorBoundary");
 
 interface Props {
   children: ReactNode;
@@ -27,7 +30,10 @@ export class CanvasErrorBoundary extends Component<Props, State> {
   }
 
   override componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error("[CanvasErrorBoundary] R3F crash captured:", error, errorInfo);
+    log.error("R3F crash captured", {
+      error: error.message,
+      componentStack: errorInfo.componentStack,
+    });
   }
 
   override render() {

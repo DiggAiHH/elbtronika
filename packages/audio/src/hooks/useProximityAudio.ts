@@ -9,10 +9,13 @@
  * - Reads proximity Map directly (no duplicate state).
  */
 
+import { createLogger } from "@elbtronika/logger";
 import { useEffect, useRef } from "react";
 import { HLSLoader } from "../engine/HLSLoader";
 import { computeGain, SpatialAudioEngine } from "../engine/SpatialAudioEngine";
 import { useAudioStore } from "../store";
+
+const log = createLogger("audio/useProximityAudio");
 
 interface ProximityEntry {
   artworkId: string;
@@ -123,7 +126,10 @@ export function useProximityAudio(
                 }
               })
               .catch((err: unknown) => {
-                console.error(`[useProximityAudio] Failed to load HLS for ${art.artworkId}:`, err);
+                log.error("Failed to load HLS", {
+                  artworkId: art.artworkId,
+                  error: err instanceof Error ? err.message : String(err),
+                });
               });
           } else {
             // Update existing source
@@ -141,7 +147,10 @@ export function useProximityAudio(
               }
               if (loader.audioElement.paused) {
                 loader.audioElement.play().catch((err: unknown) => {
-                  console.warn(`[useProximityAudio] Play failed for ${art.artworkId}:`, err);
+                  log.warn("Play failed", {
+                    artworkId: art.artworkId,
+                    error: err instanceof Error ? err.message : String(err),
+                  });
                 });
               }
             }

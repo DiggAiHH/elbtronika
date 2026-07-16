@@ -49,7 +49,10 @@ describe("handleCheckoutSessionCompleted", () => {
 
     await handleCheckoutSessionCompleted({ id: "cs_1", payment_intent: null }, ctx);
 
-    expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining("No order found"));
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.stringContaining("No order found"),
+      expect.anything(),
+    );
     expect(ctx.updateOrder).not.toHaveBeenCalled();
     consoleSpy.mockRestore();
   });
@@ -75,7 +78,10 @@ describe("handlePaymentIntentSucceeded", () => {
 
     await handlePaymentIntentSucceeded({ id: "pi_1", amount: 10000, metadata: {} }, ctx);
 
-    expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining("No artwork_id"));
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.stringContaining("No artwork_id"),
+      expect.anything(),
+    );
     consoleSpy.mockRestore();
   });
 

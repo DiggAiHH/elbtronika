@@ -153,7 +153,7 @@ const nextConfig: NextConfig = {
     ];
   },
 
-  // Transpile workspace packages
+  // Transpile workspace packages (all TS-source packages imported by the app)
   transpilePackages: [
     "@elbtronika/ui",
     "@elbtronika/contracts",
@@ -161,6 +161,10 @@ const nextConfig: NextConfig = {
     "@elbtronika/mcp",
     "@elbtronika/agent",
     "@elbtronika/flow",
+    "@elbtronika/audio",
+    "@elbtronika/ai",
+    "@elbtronika/payments",
+    "@elbtronika/logger",
   ],
 };
 

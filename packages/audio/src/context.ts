@@ -7,6 +7,10 @@
  * 3. Session storage persists unlock state across reloads (not localStorage).
  */
 
+import { createLogger } from "@elbtronika/logger";
+
+const log = createLogger("audio");
+
 const SESSION_KEY = "elt_audio_unlocked";
 
 let audioContext: AudioContext | null = null;
@@ -17,7 +21,9 @@ export function getAudioContext(): AudioContext {
     try {
       audioContext = new AudioContext({ latencyHint: "interactive" });
     } catch (err) {
-      console.error("[audio] Failed to create AudioContext:", err);
+      log.error("Failed to create AudioContext", {
+        error: err instanceof Error ? err.message : String(err),
+      });
       throw new Error("AudioContext not supported in this browser");
     }
   }

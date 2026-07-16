@@ -1,13 +1,14 @@
 import { defineField, defineType } from "sanity";
 
+/** DJ — field names aligned with the web app's GROQ queries (2026-07-16). */
 export const dj = defineType({
   name: "dj",
   title: "DJ",
   type: "document",
   fields: [
     defineField({
-      name: "displayName",
-      title: "Display Name",
+      name: "name",
+      title: "Name",
       type: "string",
       validation: (Rule) => Rule.required(),
     }),
@@ -15,19 +16,19 @@ export const dj = defineType({
       name: "slug",
       title: "Slug",
       type: "slug",
-      options: { source: "displayName", maxLength: 96 },
+      options: { source: "name", maxLength: 96 },
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: "supabaseUserId",
-      title: "Supabase User ID",
+      name: "supabaseId",
+      title: "Supabase ID",
       type: "string",
+      description: "Links CMS DJ profile to the Supabase profile row",
     }),
     defineField({
       name: "bio",
       title: "Biography",
-      type: "array",
-      of: [{ type: "block" }],
+      type: "text",
     }),
     defineField({
       name: "avatar",
@@ -36,16 +37,32 @@ export const dj = defineType({
       options: { hotspot: true },
     }),
     defineField({
-      name: "genres",
-      title: "Genres",
+      name: "genreTags",
+      title: "Genre Tags",
       type: "array",
       of: [{ type: "string" }],
       options: { layout: "tags" },
     }),
     defineField({
-      name: "soundcloudUrl",
+      name: "website",
+      title: "Website",
+      type: "url",
+    }),
+    defineField({
+      name: "instagram",
+      title: "Instagram Handle",
+      type: "string",
+    }),
+    defineField({
+      name: "soundcloud",
       title: "SoundCloud URL",
       type: "url",
+    }),
+    defineField({
+      name: "isDemo",
+      title: "Demo Content",
+      type: "boolean",
+      initialValue: false,
     }),
     defineField({
       name: "stripeAccountId",
@@ -65,6 +82,6 @@ export const dj = defineType({
     }),
   ],
   preview: {
-    select: { title: "displayName", media: "avatar" },
+    select: { title: "name", media: "avatar" },
   },
 });

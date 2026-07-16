@@ -1,0 +1,8 @@
+#!/bin/sh
+# LOCAL CI GATE (GitHub Actions is billing-locked — this is the replacement).
+# Runs lint + typecheck + all unit tests before every push (~2-3 min).
+# Full build check: run scripts/local-ci.cmd manually before merges to main.
+# Emergency bypass (document why in the commit!): git push --no-verify
+
+echo "[pre-push] local ci gate (fast) ..."
+cmd.exe /c "scripts\\local-ci.cmd fast"

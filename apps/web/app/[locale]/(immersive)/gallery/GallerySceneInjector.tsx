@@ -1,13 +1,16 @@
 "use client";
 
 import type { ArtworkMeshProps } from "@elbtronika/three";
-import { Room1Scene, useThreeStore } from "@elbtronika/three";
+import { GalleryHall, useThreeStore } from "@elbtronika/three";
 import type { ComponentType } from "react";
 /**
- * GallerySceneInjector – pushes Room1 scene + mode into ThreeStore on mount.
+ * GallerySceneInjector – pushes the Main Hall scene + mode into ThreeStore on mount.
  *
  * This is the bridge between the SSR-fetched Sanity data and the client-side
  * Three.js canvas. It has no visible UI itself.
+ *
+ * Since 2026-07-16 the gallery renders the WHOLE collection (GalleryHall,
+ * up to 12 works arranged radially) instead of the first three artworks.
  */
 import { useEffect, useMemo } from "react";
 
@@ -46,7 +49,7 @@ export default function GallerySceneInjector({ artworks }: Props) {
   // Create a stable wrapper component that captures artwork data in closure.
   const SceneWrapper = useMemo<ComponentType<unknown>>(() => {
     return function SceneWrapperComponent() {
-      return <Room1Scene artworks={meshArtworks} />;
+      return <GalleryHall artworks={meshArtworks} />;
     };
   }, [meshArtworks]);
 

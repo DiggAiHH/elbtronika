@@ -1,25 +1,17 @@
 {
-  "name": "@elbtronika/payments",
+  "name": "@elbtronika/logger",
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "description": "Isomorphic structured logger for shared packages (browser + node). Same API as apps/web src/lib/logger.",
   "exports": {
-    ".": "./src/index.ts",
-    "./client": "./src/client.ts",
-    "./schemas": "./src/schemas.ts",
-    "./transfers": "./src/transfers.ts",
-    "./webhook": "./src/webhook.ts"
+    ".": "./src/index.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
     "lint": "biome check .",
     "test": "vitest run --passWithNoTests",
     "clean": "rm -rf dist"
-  },
-  "dependencies": {
-    "@elbtronika/logger": "workspace:*",
-    "stripe": "^22.3.1",
-    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.3",

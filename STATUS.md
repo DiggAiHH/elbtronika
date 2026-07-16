@@ -2,7 +2,7 @@
 
 > **Single Source of Truth.** Lou + alle AI-Agenten lesen diese File zuerst.
 > **Pflichtaktion vor jeder Session:** Lese diese File. Aktualisiere nach jedem Phasen-Schritt.
-> **Letztes Update:** 2026-06-26 (Opus 4.8 Audit & Cleanup — console→logger Migration, Lint-Fix, Branch-Analyse. Siehe `OPTIMIZATION_REPORT_2026-06-26.md`)
+> **Letztes Update:** 2026-07-16 (Verkaufs-Sprint: Demo-Kollektion + echte DSP-Analyse + WebGPU + Rechtsseiten. Siehe `GO_LIVE_CHECKLISTE_2026-07-16.md`)
 
 ---
 
@@ -35,7 +35,22 @@
 
 ---
 
-## 🔄 Heutige Aktion (10.07.2026 — Restliste komplett: Sprint 5 Rest + Sprint 6)
+## 🔄 Heutige Aktion (16.07.2026 — „Ready für Verkauf": Objekte + Frequenzen + 3D)
+
+- **Objekte:** Komplette Demo-Kollektion generiert (lizenzfrei): 8 Artworks, 8 Avatare, 3 Set-Cover, 3 Raum-Cover, 3 DJ-Sets + 3 Raum-Ambients (synthetisiert, 128/102/122 BPM). Drei Werke sind aus den echten Audiodaten abgeleitet (Spektrogramm-Pigment, 40-Hz-Architektur, Zerfalls-Wellenformen). Assets in `D:\Elbtronika\_assets_generated\`.
+- **Seeds:** `scripts/seed-sanity-demo.mjs` (Sanity war KOMPLETT LEER — 0 Dokumente!) + `scripts/seed-supabase-demo.mjs` (echte Spaltennamen, auth.users via Admin-API). Idempotent, deterministische UUIDs, alles `isDemo`. Blockiert nur noch auf Sanity-Token + Doppler-Login (Lou).
+- **Frequenzen:** Analyzer v2 in `packages/flow` — BPM-Oktavfehler gefixt (Autokorrelation normalisiert + Oktav-Faltung in [90,180); Techno wurde vorher als 60 BPM gemessen), Tonart jetzt echtes FFT-Chromagramm + Krumhansl-Profile (24 Keys, volle Camelot-Map) statt Centroid-Tabelle. 8 neue Verhaltens-Tests. `scripts/analyze-assets.mts` = echte Decode-Pipeline (ffmpeg → analyzeAudio/analyzeArt) für alle künftigen echten Uploads; alle Demo-Assets damit vermessen.
+- **Measured-first:** `/api/flow/analyze` liefert gemessene Features, wenn vorhanden; Simulation nur noch als Fallback. Migration `20260716120000_features_source.sql` (source-Spalte auf audio_features/artwork_features); contracts-Types hand-gepatcht bis `gen types`.
+- **3D:** `GalleryHall` — achteckiger Hauptsaal, zeigt die GESAMTE Kollektion (bis 12 Werke: 8 Wände + 4 Pfeiler) mit Museumsrahmen, LED-Bildleuchten (emissiv statt 12 Punktlichter), Frequenz-Puls-Ring im Boden, Fog. Galerie filtert jetzt wie der Shop nach ELT_MODE. **WebGPU real:** CanvasRoot nutzt three/webgpu WebGPURenderer, wenn ein Adapter existiert (Probe + einmaliger Remount), sonst WebGL wie bisher; `lib/renderer-mode` als Backend-Signal (pmndrs-Bloom nur unter WebGL); ACES-Tonemapping + sRGB auf beiden Pfaden.
+- **Recht:** `/impressum`, `/datenschutz`, `/agb` (de/en, Entwurf mit [EINTRAGEN]-Platzhaltern — Anwalts-Review laut Runbook vor Live).
+- **Qualität:** Biome-Fehler 0 (SVG-Titel, Tour-Dialog a11y, Checkout-Test-Mock); Logger-Migration vom 10.07. verifiziert und mit committet; CMS-Schemas an die Web-Queries angeglichen (image/genreTags/isDemo/durationMin).
+- **Verifiziert lokal:** tsc 0 (web/three/flow), Vitest flow 17/17 · three 6/6 · web 93/93, Build grün (local-ci). GitHub Actions weiter billing-locked.
+
+**Nächste Schritte (Lou, Reihenfolge):** GitHub-Billing → `doppler login` → Sanity-Token → Seeds+Analyse laufen lassen → Supabase-Deltas pushen → Stripe-KYC → Live-Switch nach Runbook. Details: `GO_LIVE_CHECKLISTE_2026-07-16.md`.
+
+---
+
+## 🔄 Frühere Aktion (10.07.2026 — Restliste komplett: Sprint 5 Rest + Sprint 6)
 
 - **Landing-Page vollständig i18n** (44 Keys de/en, „landing"-Namespace); hero.test prüft jetzt beide Seiten des Kontrakts (Keys im Code, Copy in messages, de/en-Sync)
 - **Tote Packages entfernt:** packages/config + packages/sanity-studio (0 Importe, dritte Schema-Kopie); packages/browser als EXPERIMENTAL markiert; verwaiste apps/cms/schemas/exhibition.ts gelöscht

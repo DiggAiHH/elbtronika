@@ -1,6 +1,13 @@
 /**
  * Audio Analysis API
  * POST /api/flow/analyze — Extract audio features from a track
+ *
+ * Measured-first (2026-07-16): if the set already has features with
+ * source = 'measured' (produced by the offline pipeline
+ * `scripts/analyze-assets.mts`, which decodes the audio with ffmpeg and runs
+ * the real packages/flow analyzeAudio()), those are returned verbatim.
+ * Only when no measurement exists does the deterministic simulation run —
+ * and it is persisted and labelled as source = 'simulated'.
  */
 
 import { type NextRequest, NextResponse } from "next/server";
@@ -82,8 +89,26 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // In production: download audio, analyze with @elbtronika/flow analyzeAudio().
-    // For now, generate deterministic simulated values based on set id for reproducibility.
+    // Measured-first: a real measurement never gets overwritten by simulation.
+    const { data: existing } = await supabase
+      .from("audio_features")
+      .select("*")
+      .eq("set_id", body.setId)
+      .single();
+
+    if (existing && (existing as { source?: string }).source === "measured") {
+      return NextResponse.json(
+        {
+          setId: body.setId,
+          analysis: existing,
+          source: "measured",
+          message: "Audio analysis loaded (measured with packages/flow analyzeAudio)",
+        },
+        { status: 200 },
+      );
+    }
+
+    // No measurement available: deterministic simulated values based on set id.
     const rng = mulberry32(seedFromString(body.setId));
     const analysis = {
       set_id: body.setId,
@@ -99,13 +124,9 @@ export async function POST(request: NextRequest) {
       source: "simulated" as const,
     };
 
-    // Persist WITHOUT the response-only `source` field — it is not a DB
-    // column. (The old `as any` cast hid exactly this: the upsert failed on
-    // every call with "column does not exist" and the error was never read.)
-    const { source: _source, ...dbRow } = analysis;
     const { error: upsertError } = await supabase
       .from("audio_features")
-      .upsert(dbRow, { onConflict: "set_id" });
+      .upsert(analysis, { onConflict: "set_id" });
     if (upsertError) {
       logger.error("[flow/analyze] upsert error", { error: upsertError.message });
     }

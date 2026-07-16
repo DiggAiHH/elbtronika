@@ -157,6 +157,7 @@ export type Database = {
           spectral_centroid: number | null;
           mood_tags: string[] | null;
           embedding: Json | null;
+          source: string;
           analyzed_at: string | null;
           created_at: string | null;
           updated_at: string | null;
@@ -170,6 +171,7 @@ export type Database = {
           spectral_centroid?: number | null;
           mood_tags?: string[] | null;
           embedding?: Json | null;
+          source?: string;
           analyzed_at?: string | null;
           created_at?: string | null;
           updated_at?: string | null;
@@ -183,6 +185,7 @@ export type Database = {
           spectral_centroid?: number | null;
           mood_tags?: string[] | null;
           embedding?: Json | null;
+          source?: string;
           analyzed_at?: string | null;
           created_at?: string | null;
           updated_at?: string | null;
@@ -211,6 +214,7 @@ export type Database = {
           mood_tags: string[] | null;
           complexity: number | null;
           embedding: Json | null;
+          source: string;
           analyzed_at: string | null;
           created_at: string | null;
           updated_at: string | null;
@@ -228,6 +232,7 @@ export type Database = {
           mood_tags?: string[] | null;
           complexity?: number | null;
           embedding?: Json | null;
+          source?: string;
           analyzed_at?: string | null;
           created_at?: string | null;
           updated_at?: string | null;
@@ -245,6 +250,7 @@ export type Database = {
           mood_tags?: string[] | null;
           complexity?: number | null;
           embedding?: Json | null;
+          source?: string;
           analyzed_at?: string | null;
           created_at?: string | null;
           updated_at?: string | null;

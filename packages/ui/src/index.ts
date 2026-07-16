@@ -2,14 +2,6 @@
 
 // ── Form Controls ──────────────────────────────────────────────────────────
 export { Button, type ButtonProps, buttonVariants } from "./components/button";
-export {
-  Tooltip,
-  type TooltipProps,
-  TooltipContent,
-  TooltipProvider,
-  TooltipRoot,
-  TooltipTrigger,
-} from "./components/tooltip";
 export { Checkbox, type CheckboxProps } from "./components/checkbox";
 export { DemoBanner, type DemoBannerProps } from "./components/DemoBanner";
 // ── Overlay & Feedback ─────────────────────────────────────────────────────
@@ -40,7 +32,6 @@ export {
 export { Select, type SelectProps } from "./components/select";
 export { Skeleton, type SkeletonProps } from "./components/skeleton";
 export { Slider, type SliderProps } from "./components/slider";
-
 export {
   Toast,
   ToastDescription,
@@ -49,6 +40,14 @@ export {
   ToastTitle,
   ToastViewport,
 } from "./components/toast";
+export {
+  Tooltip,
+  TooltipContent,
+  type TooltipProps,
+  TooltipProvider,
+  TooltipRoot,
+  TooltipTrigger,
+} from "./components/tooltip";
 // ── Typography ─────────────────────────────────────────────────────────────
 export {
   Caption,

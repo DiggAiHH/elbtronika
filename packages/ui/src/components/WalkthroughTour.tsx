@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export interface TourStep {
   title: string;
@@ -16,18 +16,36 @@ export interface WalkthroughTourProps {
 
 const defaultStepsDe: TourStep[] = [
   { title: "Willkommen", description: "Das ist ELBTRONIKA — wo Kunst auf Frequenz trifft." },
-  { title: "3D-Navigation", description: "Scrolle durch die Galerie. Die Kamera folgt deinem Blick." },
-  { title: "Audio-Proximity", description: "Je näher du einem Werk kommst, desto intensiver der Sound." },
+  {
+    title: "3D-Navigation",
+    description: "Scrolle durch die Galerie. Die Kamera folgt deinem Blick.",
+  },
+  {
+    title: "Audio-Proximity",
+    description: "Je näher du einem Werk kommst, desto intensiver der Sound.",
+  },
   { title: "Artwork-Detail", description: "Klicke auf ein Werk — Story, Künstler, Preis." },
-  { title: "Checkout", description: "Erwerbe limitierte Werke. Der Split ist transparent: 60/20/20." },
+  {
+    title: "Checkout",
+    description: "Erwerbe limitierte Werke. Der Split ist transparent: 60/20/20.",
+  },
 ];
 
 const defaultStepsEn: TourStep[] = [
   { title: "Welcome", description: "This is ELBTRONIKA — where art meets frequency." },
-  { title: "3D Navigation", description: "Scroll through the gallery. The camera follows your gaze." },
-  { title: "Audio Proximity", description: "The closer you get to a piece, the more intense the sound." },
+  {
+    title: "3D Navigation",
+    description: "Scroll through the gallery. The camera follows your gaze.",
+  },
+  {
+    title: "Audio Proximity",
+    description: "The closer you get to a piece, the more intense the sound.",
+  },
   { title: "Artwork Detail", description: "Click a piece — story, artist, price." },
-  { title: "Checkout", description: "Acquire limited editions. The split is transparent: 60/20/20." },
+  {
+    title: "Checkout",
+    description: "Acquire limited editions. The split is transparent: 60/20/20.",
+  },
 ];
 
 export function WalkthroughTour({
@@ -39,7 +57,8 @@ export function WalkthroughTour({
   const [isVisible, setIsVisible] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
 
-  const effectiveSteps = steps.length > 0 ? steps : locale === "de" ? defaultStepsDe : defaultStepsEn;
+  const effectiveSteps =
+    steps.length > 0 ? steps : locale === "de" ? defaultStepsDe : defaultStepsEn;
 
   useEffect(() => {
     const dismissed = localStorage.getItem(storageKey);
@@ -76,19 +95,26 @@ export function WalkthroughTour({
   const isLast = currentStep === effectiveSteps.length - 1;
 
   return (
+    // biome-ignore lint/a11y/noStaticElementInteractions: backdrop click-to-dismiss is a convenience on top of the accessible buttons + Escape handling below.
     <div
       data-testid="walkthrough-tour"
+      role="dialog"
+      aria-modal="true"
+      aria-label={step.title}
       className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm"
       onClick={(e) => {
         if (e.target === e.currentTarget) dismiss();
+      }}
+      onKeyDown={(e) => {
+        if (e.key === "Escape") dismiss();
       }}
     >
       <div className="relative w-full max-w-md mx-4 rounded-2xl bg-[#0a0a0f] border border-white/[0.08] p-6 shadow-2xl">
         {/* Step indicator */}
         <div className="flex gap-1.5 mb-6">
-          {effectiveSteps.map((_, i) => (
+          {effectiveSteps.map((s, i) => (
             <div
-              key={i}
+              key={s.title}
               className={`h-1 rounded-full flex-1 transition-colors ${
                 i <= currentStep ? "bg-[#00f5d4]" : "bg-white/10"
               }`}
@@ -103,6 +129,7 @@ export function WalkthroughTour({
         {/* Actions */}
         <div className="flex items-center justify-between">
           <button
+            type="button"
             onClick={dismiss}
             className="text-xs text-white/40 hover:text-white/70 transition-colors"
           >
@@ -112,6 +139,7 @@ export function WalkthroughTour({
           <div className="flex gap-2">
             {currentStep > 0 && (
               <button
+                type="button"
                 onClick={prevStep}
                 className="px-4 py-2 text-xs font-medium text-white/70 border border-white/10 rounded-lg hover:bg-white/[0.05] transition-colors"
               >
@@ -119,16 +147,11 @@ export function WalkthroughTour({
               </button>
             )}
             <button
+              type="button"
               onClick={nextStep}
               className="px-4 py-2 text-xs font-semibold text-[#050508] bg-gradient-to-r from-[#00f5d4] to-[#00d4b8] rounded-lg hover:shadow-[0_0_20px_rgba(0,245,212,0.3)] transition-all"
             >
-              {isLast
-                ? locale === "de"
-                  ? "Fertig"
-                  : "Done"
-                : locale === "de"
-                  ? "Weiter"
-                  : "Next"}
+              {isLast ? (locale === "de" ? "Fertig" : "Done") : locale === "de" ? "Weiter" : "Next"}
             </button>
           </div>
         </div>

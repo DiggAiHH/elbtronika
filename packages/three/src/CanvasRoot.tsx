@@ -15,14 +15,28 @@
  * - useMemo prevents inline-style object recreation.
  * - LobbyScene is lazy-loaded (only needed when activeScene is null).
  * - prefers-reduced-motion disables the opacity transition for accessibility.
+ *
+ * WEBGPU (2026-07-16): rule 4 is real now. The canvas starts on the proven
+ * WebGL path (identical to before), a capability probe runs once, and when
+ * an adapter exists the canvas remounts exactly once with three's
+ * WebGPURenderer (dynamic import of "three/webgpu" keeps it out of the
+ * WebGL bundle). Every backend-dependent consumer reads useRendererMode()
+ * from lib/renderer-mode — e.g. the WebGL-only pmndrs Bloom pass.
+ * Rendering intent (colour + tone mapping) is identical on both backends:
+ * sRGB output, ACES filmic tone mapping.
  */
 
+import { createLogger } from "@elbtronika/logger";
 import { AdaptiveDpr, PerformanceMonitor, Preload } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
-import { lazy, memo, Suspense, useCallback, useMemo } from "react";
+import { lazy, memo, Suspense, useCallback, useEffect, useMemo, useState } from "react";
+import { ACESFilmicToneMapping, SRGBColorSpace } from "three";
 import { CanvasErrorBoundary } from "./components/CanvasErrorBoundary";
 import { useWebGPUDetection } from "./hooks/useWebGPUDetection";
+import { detectWebGPU, markRendererMode } from "./lib/renderer-mode";
 import { useThreeStore } from "./store";
+
+const log = createLogger("three/CanvasRoot");
 
 /** Lazy-loaded dev-only FPS stats – tree-shaken in production */
 const DevStats = lazy(() => import("@react-three/drei").then((mod) => ({ default: mod.Stats })));
@@ -48,10 +62,72 @@ const ActiveSceneRenderer = memo(function ActiveSceneRenderer() {
   );
 });
 
+/** Shared rendering intent for both backends. */
+function applyRenderIntent(renderer: {
+  outputColorSpace?: unknown;
+  toneMapping?: unknown;
+  toneMappingExposure?: number;
+  setClearColor?: (color: number, alpha: number) => void;
+}) {
+  renderer.outputColorSpace = SRGBColorSpace;
+  renderer.toneMapping = ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.1;
+  renderer.setClearColor?.(0x0a0a0b, 1);
+}
+
+/**
+ * Async renderer factory for the WebGPU path. Falls back to the default
+ * WebGL renderer construction if "three/webgpu" is unavailable or init fails.
+ */
+async function createWebGPURenderer(props: { canvas?: unknown } & Record<string, unknown>) {
+  try {
+    const { WebGPURenderer } = await import("three/webgpu");
+    const renderer = new WebGPURenderer({
+      canvas: props.canvas as never,
+      antialias: true,
+    });
+    await renderer.init();
+    markRendererMode("webgpu");
+    log.info("WebGPURenderer active");
+    applyRenderIntent(renderer as never);
+    return renderer;
+  } catch (err) {
+    log.warn("WebGPU init failed — falling back to WebGL", {
+      error: err instanceof Error ? err.message : String(err),
+    });
+    const { WebGLRenderer } = await import("three");
+    const renderer = new WebGLRenderer({
+      canvas: props.canvas as never,
+      antialias: true,
+      powerPreference: "high-performance",
+    });
+    markRendererMode("webgl");
+    applyRenderIntent(renderer as never);
+    return renderer;
+  }
+}
+
 export const CanvasRoot = memo(function CanvasRoot() {
   const mode = useThreeStore((s) => s.mode);
-  // WebGPU detection (available via hook for future use)
+  // WebGPU detection cookie for SSR heuristics (kept for compatibility)
   useWebGPUDetection();
+
+  // Real capability probe → switch the canvas to the WebGPU factory once.
+  const [gpuReady, setGpuReady] = useState(false);
+  useEffect(() => {
+    let cancelled = false;
+    detectWebGPU().then((supported) => {
+      if (cancelled) return;
+      if (supported) {
+        setGpuReady(true);
+      } else {
+        markRendererMode("webgl");
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // Respect user's motion preference (WCAG 2.1 Criterion 2.2.2)
   const prefersReducedMotion = useMemo(() => {
@@ -77,11 +153,30 @@ export const CanvasRoot = memo(function CanvasRoot() {
   );
 
   const handleCreated = useCallback(
-    (state: { gl: { setClearColor: (color: number, alpha: number) => void } }) => {
-      state.gl.setClearColor(0x0a0a0b, 1);
+    (state: {
+      gl: {
+        setClearColor?: (color: number, alpha: number) => void;
+        isWebGPURenderer?: boolean;
+      };
+    }) => {
+      applyRenderIntent(state.gl as never);
+      if (!state.gl.isWebGPURenderer) {
+        markRendererMode("webgl");
+      }
     },
     [],
   );
+
+  const glProp = useMemo(() => {
+    if (gpuReady) {
+      return (props: Record<string, unknown>) => createWebGPURenderer(props);
+    }
+    // Default WebGL options — identical to the pre-WebGPU behaviour.
+    return {
+      antialias: true,
+      powerPreference: "high-performance" as const,
+    };
+  }, [gpuReady]);
 
   return (
     <div
@@ -92,12 +187,10 @@ export const CanvasRoot = memo(function CanvasRoot() {
     >
       <CanvasErrorBoundary>
         <Canvas
-          gl={{
-            antialias: true,
-            powerPreference: "high-performance",
-          }}
+          key={gpuReady ? "webgpu" : "webgl"}
+          gl={glProp as never}
           camera={{ position: [0, 1.6, 5], fov: 60, near: 0.1, far: 500 }}
-          shadows
+          shadows="soft"
           dpr={[1, 2]}
           performance={{ min: 0.5 }}
           onCreated={handleCreated}
@@ -107,13 +200,11 @@ export const CanvasRoot = memo(function CanvasRoot() {
           <AdaptiveDpr pixelated />
           <PerformanceMonitor
             onDecline={() => {
-              // eslint-disable-next-line no-console
-              console.warn("[CanvasRoot] Performance declined – DPR reduced by AdaptiveDpr");
+              log.warn("Performance declined – DPR reduced by AdaptiveDpr");
             }}
             flipflops={3}
             onFallback={() => {
-              // eslint-disable-next-line no-console
-              console.warn("[CanvasRoot] Entering fallback quality mode");
+              log.warn("Entering fallback quality mode");
             }}
           />
 

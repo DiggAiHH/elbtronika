@@ -23,11 +23,14 @@ function chainFor(table: string) {
   chain.eq = vi.fn(self);
   chain.update = vi.fn(self);
   chain.insert = vi.fn((row: unknown) => {
-    (insertedRows[table] ??= []).push(row);
+    const rows = insertedRows[table] ?? [];
+    rows.push(row);
+    insertedRows[table] = rows;
     return chain;
   });
   chain.single = vi.fn(async () => result);
   // awaited directly (e.g. the orders update)
+  // biome-ignore lint/suspicious/noThenProperty: Supabase query builders are thenables; the mock must be awaitable to mirror the real client.
   chain.then = (resolve: (v: TableResult) => unknown) => Promise.resolve(result).then(resolve);
   return chain;
 }
@@ -111,9 +114,7 @@ describe("POST /api/checkout/session — behavior", () => {
 
   it("rejects tampered prices with 422 and creates no order", async () => {
     authAsBuyer();
-    const res = await POST(
-      makeRequest({ artworkId: ARTWORK_ID, priceCents: 1, locale: "de" }),
-    );
+    const res = await POST(makeRequest({ artworkId: ARTWORK_ID, priceCents: 1, locale: "de" }));
     expect(res.status).toBe(422);
     expect(insertedRows.orders ?? []).toHaveLength(0);
     expect(mockCreateCheckoutSession).not.toHaveBeenCalled();

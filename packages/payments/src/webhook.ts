@@ -3,7 +3,10 @@
  * Pure logic — no HTTP framework coupling. Can be used in Next.js, Edge Functions, etc.
  */
 
+import { createLogger } from "@elbtronika/logger";
 import { computeRevenueSplit, createTransfers } from "./transfers";
+
+const log = createLogger("payments/webhook");
 
 export interface WebhookContext {
   updateOrder: (params: {
@@ -33,7 +36,7 @@ export async function handleCheckoutSessionCompleted(
   const s = session as { id: string; payment_intent: string | null };
   const order = await ctx.getOrderBySessionId(s.id);
   if (!order) {
-    console.warn(`[webhook] No order found for session ${s.id}`);
+    log.warn("No order found for checkout session", { sessionId: s.id });
     return;
   }
 
@@ -60,7 +63,7 @@ export async function handlePaymentIntentSucceeded(
   const pi = paymentIntent as { metadata?: Record<string, string>; amount: number; id: string };
   const artworkId = pi.metadata?.artwork_id;
   if (!artworkId) {
-    console.warn("[webhook] No artwork_id in payment_intent metadata");
+    log.warn("No artwork_id in payment_intent metadata");
     return;
   }
 
@@ -70,15 +73,16 @@ export async function handlePaymentIntentSucceeded(
   // the artist's second payout. Better to fail loudly and retry after fixing.
   const orderId = pi.metadata?.order_id;
   if (!orderId) {
-    console.error(
-      `[webhook] payment_intent ${pi.id} has no order_id in metadata — refusing to create transfers (idempotency would collide across orders)`,
+    log.error(
+      "payment_intent has no order_id in metadata — refusing to create transfers (idempotency would collide across orders)",
+      { paymentIntentId: pi.id },
     );
     throw new Error(`Missing order_id metadata on payment_intent ${pi.id}`);
   }
 
   const artistAccountId = await ctx.getArtistStripeAccount(artworkId);
   if (!artistAccountId) {
-    console.warn(`[webhook] No Stripe account for artwork ${artworkId}`);
+    log.warn("No Stripe account for artwork", { artworkId });
     return;
   }
 
@@ -96,9 +100,9 @@ export async function handlePaymentIntentSucceeded(
       orderId,
     });
 
-    console.log(`[webhook] Transfers created for payment ${pi.id}`);
+    log.info("Transfers created", { paymentIntentId: pi.id });
   } catch (err) {
-    console.error("[webhook] Transfer failed:", err);
+    log.error("Transfer failed", { error: err instanceof Error ? err.message : String(err) });
     throw err;
   }
 }

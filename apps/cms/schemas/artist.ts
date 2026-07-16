@@ -1,13 +1,14 @@
 import { defineField, defineType } from "sanity";
 
+/** Artist — field names aligned with the web app's GROQ queries (2026-07-16). */
 export const artist = defineType({
   name: "artist",
   title: "Artist",
   type: "document",
   fields: [
     defineField({
-      name: "displayName",
-      title: "Display Name",
+      name: "name",
+      title: "Name",
       type: "string",
       validation: (Rule) => Rule.required(),
     }),
@@ -15,26 +16,32 @@ export const artist = defineType({
       name: "slug",
       title: "Slug",
       type: "slug",
-      options: { source: "displayName", maxLength: 96 },
+      options: { source: "name", maxLength: 96 },
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: "supabaseUserId",
-      title: "Supabase User ID",
+      name: "supabaseId",
+      title: "Supabase ID",
       type: "string",
-      description: "Links CMS artist profile to Supabase auth user",
+      description: "Links CMS artist profile to the Supabase profile row",
     }),
     defineField({
       name: "bio",
       title: "Biography",
-      type: "array",
-      of: [{ type: "block" }],
+      type: "text",
     }),
     defineField({
       name: "avatar",
       title: "Avatar",
       type: "image",
       options: { hotspot: true },
+    }),
+    defineField({
+      name: "genreTags",
+      title: "Genre Tags",
+      type: "array",
+      of: [{ type: "string" }],
+      options: { layout: "tags" },
     }),
     defineField({
       name: "website",
@@ -45,6 +52,12 @@ export const artist = defineType({
       name: "instagram",
       title: "Instagram Handle",
       type: "string",
+    }),
+    defineField({
+      name: "isDemo",
+      title: "Demo Content",
+      type: "boolean",
+      initialValue: false,
     }),
     defineField({
       name: "stripeAccountId",
@@ -65,6 +78,6 @@ export const artist = defineType({
     }),
   ],
   preview: {
-    select: { title: "displayName", media: "avatar" },
+    select: { title: "name", media: "avatar" },
   },
 });

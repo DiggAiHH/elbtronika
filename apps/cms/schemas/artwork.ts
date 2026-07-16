@@ -1,5 +1,12 @@
 import { defineField, defineType } from "sanity";
 
+/**
+ * Artwork — aligned with the web app's GROQ queries (2026-07-16).
+ * The web reads: image, genreTags, isDemo, featuredInRoom, description, story.
+ * Legacy names (mainImage/tags/room) drifted apart from the runtime — this
+ * schema is the single source now; the seed script writes both dialects so
+ * older documents stay editable.
+ */
 export const artwork = defineType({
   name: "artwork",
   title: "Artwork",
@@ -28,11 +35,17 @@ export const artwork = defineType({
     defineField({
       name: "description",
       title: "Description",
-      type: "array",
-      of: [{ type: "block" }],
+      type: "text",
+      description: "Short curatorial description shown on shop + detail pages",
     }),
     defineField({
-      name: "mainImage",
+      name: "story",
+      title: "Story",
+      type: "text",
+      description: "Long-form artist narrative shown in artwork detail view",
+    }),
+    defineField({
+      name: "image",
       title: "Main Image",
       type: "image",
       options: { hotspot: true },
@@ -43,6 +56,12 @@ export const artwork = defineType({
       title: "Additional Images",
       type: "array",
       of: [{ type: "image", options: { hotspot: true } }],
+    }),
+    defineField({
+      name: "supabaseId",
+      title: "Supabase ID",
+      type: "string",
+      description: "UUID of the commerce row (orders/features) in Supabase",
     }),
     defineField({
       name: "r2Key",
@@ -94,8 +113,15 @@ export const artwork = defineType({
       initialValue: "draft",
     }),
     defineField({
-      name: "tags",
-      title: "Tags",
+      name: "isDemo",
+      title: "Demo Content",
+      type: "boolean",
+      description: "Demo artworks are shown in demo mode and hidden in live mode",
+      initialValue: false,
+    }),
+    defineField({
+      name: "genreTags",
+      title: "Genre Tags",
       type: "array",
       of: [{ type: "string" }],
       options: { layout: "tags" },
@@ -115,7 +141,7 @@ export const artwork = defineType({
       description: "DJ set that plays spatially when visitor is near this artwork",
     }),
     defineField({
-      name: "room",
+      name: "featuredInRoom",
       title: "Room",
       type: "reference",
       to: [{ type: "room" }],
@@ -149,21 +175,12 @@ export const artwork = defineType({
       description:
         "KTX2-compressed textures stored in R2 — populated after upload pipeline processing",
     }),
-
-    // --- Story (rich narrative, separate from short description) ---
-    defineField({
-      name: "story",
-      title: "Story",
-      type: "array",
-      of: [{ type: "block" }],
-      description: "Long-form artist narrative shown in artwork detail view",
-    }),
   ],
   preview: {
     select: {
       title: "title",
-      artist: "artist.displayName",
-      media: "mainImage",
+      artist: "artist.name",
+      media: "image",
     },
     prepare({ title, artist, media }) {
       return { title, subtitle: artist, media };

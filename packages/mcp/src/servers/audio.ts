@@ -16,7 +16,7 @@ import type { ToolDefinition } from "../types";
 // Seeded pseudo-random number generator (mulberry32).
 // Produces deterministic results for the same trackId across calls.
 function mulberry32(seed: number): () => number {
-  return function () {
+  return () => {
     seed |= 0;
     seed = (seed + 0x6d2b79f5) | 0;
     let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
@@ -37,17 +37,50 @@ function seedFromString(s: string): number {
 const KEYS = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
 const MODES = ["major", "minor"] as const;
 const CAMELOT_MAP: Record<string, string> = {
-  "C major": "8B", "C minor": "5A", "C# major": "3B", "C# minor": "12A",
-  "D major": "10B", "D minor": "7A", "D# major": "5B", "D# minor": "2A",
-  "E major": "12B", "E minor": "9A", "F major": "7B", "F minor": "4A",
-  "F# major": "2B", "F# minor": "11A", "G major": "9B", "G minor": "6A",
-  "G# major": "4B", "G# minor": "1A", "A major": "11B", "A minor": "8A",
-  "A# major": "6B", "A# minor": "3A", "B major": "1B", "B minor": "10A",
+  "C major": "8B",
+  "C minor": "5A",
+  "C# major": "3B",
+  "C# minor": "12A",
+  "D major": "10B",
+  "D minor": "7A",
+  "D# major": "5B",
+  "D# minor": "2A",
+  "E major": "12B",
+  "E minor": "9A",
+  "F major": "7B",
+  "F minor": "4A",
+  "F# major": "2B",
+  "F# minor": "11A",
+  "G major": "9B",
+  "G minor": "6A",
+  "G# major": "4B",
+  "G# minor": "1A",
+  "A major": "11B",
+  "A minor": "8A",
+  "A# major": "6B",
+  "A# minor": "3A",
+  "B major": "1B",
+  "B minor": "10A",
 };
 const FREQ_RANGES = ["sub-bass", "bass", "low-mid", "mid", "high-mid", "high"] as const;
 const GENRES = ["techno", "house", "ambient", "drum-and-bass", "trance", "minimal", "deep-house"];
-const ALL_MOOD_TAGS = ["dark", "bright", "energetic", "ambient", "intense", "chill", "hypnotic",
-  "driving", "ethereal", "melancholic", "euphoric", "gritty", "lush", "industrial", "organic"];
+const ALL_MOOD_TAGS = [
+  "dark",
+  "bright",
+  "energetic",
+  "ambient",
+  "intense",
+  "chill",
+  "hypnotic",
+  "driving",
+  "ethereal",
+  "melancholic",
+  "euphoric",
+  "gritty",
+  "lush",
+  "industrial",
+  "organic",
+];
 
 function analyzeTrack(trackId: string) {
   const rand = mulberry32(seedFromString(trackId));
@@ -56,8 +89,8 @@ function analyzeTrack(trackId: string) {
   const mode = MODES[Math.floor(rand() * MODES.length)] ?? "minor";
   const keyStr = `${keyRoot} ${mode}`;
   const camelot = CAMELOT_MAP[keyStr] ?? "8A";
-  const valence = Number((rand()).toFixed(3));
-  const arousal = Number((rand()).toFixed(3));
+  const valence = Number(rand().toFixed(3));
+  const arousal = Number(rand().toFixed(3));
   const spectralCentroid = Math.round(800 + rand() * 6400);
   const spectralRolloff = Math.round(spectralCentroid * (1.2 + rand() * 0.8));
   const zeroCrossingRate = Number((rand() * 0.3).toFixed(4));
@@ -103,7 +136,7 @@ const tools: ToolDefinition[] = [
     },
     handler: async (params) => {
       const p = AnalyzeTrackSchema.parse(params);
-        return analyzeTrack(p.trackId);
+      return analyzeTrack(p.trackId);
     },
   },
   {
@@ -144,7 +177,9 @@ const tools: ToolDefinition[] = [
         trackId,
         key: analysis.key,
         camelot: analysis.camelot,
-        confidence: Number((0.8 + mulberry32(seedFromString(`${trackId}_key`))() * 0.18).toFixed(3)),
+        confidence: Number(
+          (0.8 + mulberry32(seedFromString(`${trackId}_key`))() * 0.18).toFixed(3),
+        ),
         source: "simulated" as const,
       };
     },
