@@ -23,15 +23,9 @@ const footerLinks: {
     { label: "Artists", href: "/about" },
   ],
   legal: [
-    {
-      label: "Privacy by Architecture",
-      href: "/press",
-      note: "Current privacy posture and compliance status.",
-    },
-    {
-      label: "Legal Review",
-      note: "German legal texts are pending final attorney review before launch.",
-    },
+    { label: "Impressum", href: "/impressum" },
+    { label: "Datenschutz", href: "/datenschutz" },
+    { label: "AGB", href: "/agb" },
     {
       label: "Legal Contact",
       href: "mailto:hallo@elbtronika.de?subject=ELBTRONIKA%20Legal%20Request",
